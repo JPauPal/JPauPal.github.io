@@ -311,6 +311,7 @@
 
     <div class="container">
         <div class="avatar-container">
+            <!-- Defaults to Chaos -->
             <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
         </div>
 
@@ -380,7 +381,7 @@
                 <span class="msg-title">Patreon</span>
                 <span class="msg-desc">Exclusive perks and support.</span>
             </a>
-            <a href="https://ko-fi.com/jpaupal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="Ko-fi.com/jpaupal" class="message-btn" target="_blank" onclick="playClick()">
                 <span class="msg-title">Ko-fi</span>
                 <span class="msg-desc">Buy me a coffee.</span>
             </a>
@@ -400,7 +401,7 @@
 
         const avatarData = {
             'chaos':  { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3' },
-            'hollow': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3' },
+            'hollowborn': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3' },
             'legion': { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3' },
             'nation': { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3' },
             'doom':   { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3' }
@@ -409,7 +410,7 @@
         let isMuted = true;
         let currentTheme = new Audio();
         currentTheme.loop = true;
-        currentTheme.volume = 0.1; // Lowered background volume
+        currentTheme.volume = 0.1;
 
         function toggleSound() {
             isMuted = !isMuted;
@@ -426,7 +427,7 @@
         function playClick() { 
             if (!isMuted) {
                 const sfx = new Audio(audioSources.click);
-                sfx.volume = 0.2; // Lowered sfx volume
+                sfx.volume = 0.2;
                 sfx.play();
             }
         }
@@ -434,7 +435,7 @@
         function playRoll() { 
             if (!isMuted) {
                 const sfx = new Audio(audioSources.roll);
-                sfx.volume = 0.2; // Lowered sfx volume
+                sfx.volume = 0.2;
                 sfx.play();
             }
         }
@@ -499,29 +500,82 @@
             constructor() { this.reset(); this.y = Math.random() * canvas.height; }
             reset() {
                 this.x = Math.random() * canvas.width;
-                this.y = (currentParticleType === 'ember' || currentParticleType === 'wisp') ? canvas.height + 10 : -10;
-                this.type = currentParticleType; this.opacity = Math.random() * 0.8 + 0.2;
-                if (this.type === 'chaos') { this.size = Math.random() * 4 + 2; this.speedX = (Math.random() * 6) - 3; this.speedY = (Math.random() * 6) - 3; }
-                else if (this.type === 'ember') { this.size = Math.random() * 3 + 1; this.speedX = (Math.random() * 1) - 0.5; this.speedY = -(Math.random() * 2 + 1); }
-                else if (this.type === 'wisp') { this.size = Math.random() * 5 + 3; this.speedY = -(Math.random() * 1.5 + 0.5); this.speedX = 0; this.angle = Math.random() * 2; }
-                else if (this.type === 'blood') { this.size = Math.random() * 2 + 1; this.speedX = 0; this.speedY = Math.random() * 6 + 4; }
-                else { this.size = Math.random() * 10 + 5; this.speedX = Math.random() - 0.5; this.speedY = Math.random() - 0.5; this.angle = 0; }
+                this.type = currentParticleType; 
+                this.opacity = Math.random() * 0.8 + 0.2;
+
+                // Fixed: Chaos and Shadow start anywhere to prevent getting stuck at top
+                if (this.type === 'chaos' || this.type === 'shadow') {
+                    this.y = Math.random() * canvas.height;
+                } else {
+                    this.y = (this.type === 'ember' || this.type === 'wisp') ? canvas.height + 10 : -10;
+                }
+
+                if (this.type === 'chaos') { 
+                    this.size = Math.random() * 4 + 2; 
+                    this.speedX = (Math.random() * 6) - 3; 
+                    this.speedY = (Math.random() * 6) - 3; 
+                }
+                else if (this.type === 'ember') { 
+                    this.size = Math.random() * 3 + 1; 
+                    this.speedX = (Math.random() * 1) - 0.5; 
+                    this.speedY = -(Math.random() * 2 + 1); 
+                }
+                else if (this.type === 'wisp') { 
+                    this.size = Math.random() * 5 + 3; 
+                    this.speedY = -(Math.random() * 1.5 + 0.5); 
+                    this.speedX = 0; 
+                    this.angle = Math.random() * 2; 
+                }
+                else if (this.type === 'blood') { 
+                    this.size = Math.random() * 2 + 1; 
+                    this.speedX = 0; 
+                    this.speedY = Math.random() * 6 + 4; 
+                }
+                else { 
+                    this.size = Math.random() * 10 + 5; 
+                    this.speedX = Math.random() - 0.5; 
+                    this.speedY = Math.random() - 0.5; 
+                    this.angle = 0; 
+                }
             }
             update() {
-                if (this.type === 'chaos' && Math.random() < 0.05) { this.speedX = (Math.random() * 6) - 3; this.speedY = (Math.random() * 6) - 3; }
-                if (this.type === 'wisp') { this.angle += 0.05; this.x += Math.sin(this.angle) * 1.5; }
-                if (this.type === 'shadow') { this.angle += 0.03; this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; }
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.y < -20 || this.y > canvas.height + 20) this.reset();
+                if (this.type === 'chaos' && Math.random() < 0.05) { 
+                    this.speedX = (Math.random() * 6) - 3; 
+                    this.speedY = (Math.random() * 6) - 3; 
+                }
+                if (this.type === 'wisp') { 
+                    this.angle += 0.05; 
+                    this.x += Math.sin(this.angle) * 1.5; 
+                }
+                if (this.type === 'shadow') { 
+                    this.angle += 0.03; 
+                    this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; 
+                }
+                this.x += this.speedX; 
+                this.y += this.speedY;
+
+                // Wrap-around for multi-direction types
+                if (this.type === 'chaos' || this.type === 'shadow') {
+                    if (this.x < -50) this.x = canvas.width + 50;
+                    if (this.x > canvas.width + 50) this.x = -50;
+                    if (this.y < -50) this.y = canvas.height + 50;
+                    if (this.y > canvas.height + 50) this.y = -50;
+                } else {
+                    if (this.y < -20 || this.y > canvas.height + 20) this.reset();
+                }
             }
             draw() {
-                ctx.globalAlpha = this.opacity; ctx.fillStyle = currentParticleColor;
-                ctx.shadowBlur = (this.type === 'wisp' || this.type === 'shadow') ? 25 : 12; ctx.shadowColor = currentParticleColor;
+                ctx.globalAlpha = this.opacity; 
+                ctx.fillStyle = currentParticleColor;
+                ctx.shadowBlur = (this.type === 'wisp' || this.type === 'shadow') ? 25 : 12; 
+                ctx.shadowColor = currentParticleColor;
                 ctx.beginPath();
                 if (this.type === 'chaos') ctx.rect(this.x, this.y, this.size, this.size);
                 else if (this.type === 'blood') ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
                 else ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
+                ctx.fill(); 
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = 1.0;
             }
         }
         function initParticles() {
