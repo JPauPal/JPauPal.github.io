@@ -146,9 +146,33 @@
         }
 
         p.subtitle {
-            margin-bottom: 35px;
+            margin-bottom: 20px; /* Reduced from 35px to fit the new badges */
             font-size: 1.1rem;
             color: #aaa;
+        }
+
+        /* Player Info Badges */
+        .info-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .badge {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--accent-color);
+            color: #d0d0d0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .badge span {
+            color: var(--accent-color);
+            font-weight: bold;
         }
 
         /* Sections */
@@ -233,6 +257,12 @@
         <h1>JPauPal</h1>
         <p class="subtitle">Welcome to my central hub.</p>
 
+        <!-- Player Info Badges -->
+        <div class="info-badges">
+            <div class="badge">LVL: <span id="player-level">21</span></div>
+            <div class="badge">CLASS: <span>GAMER</span></div>
+        </div>
+
         <!-- Socials & Media -->
         <div class="link-section">
             <h2>Socials & Media</h2>
@@ -305,6 +335,12 @@
             'nation': { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood' },
             'doom':   { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow' }
         };
+
+        // Preload all GIF images to prevent delay on swap
+        Object.values(avatarData).forEach(data => {
+            const img = new Image();
+            img.src = data.src;
+        });
 
         // State
         let currentParticleColor = avatarData['base'].color;
@@ -466,6 +502,25 @@
         // Init
         initParticles();
         animateParticles();
+
+        // Auto-Updating Age (Level) Logic
+        function updateLevel() {
+            // November 7, 2004 (You are 21 right now, turns 22 on Nov 7)
+            const birthDate = new Date('2004-11-07');
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            
+            // If the current month is before Nov, or it's Nov but before the 7th, subtract 1
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            document.getElementById('player-level').innerText = age;
+        }
+        
+        // Run the calculation instantly
+        updateLevel();
     </script>
 
 </body>
