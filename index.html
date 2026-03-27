@@ -117,12 +117,26 @@
             backdrop-filter: blur(10px);
         }
 
-        /* --- STABILIZED AVATAR SECTION --- */
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        /* --- STABILIZED AVATAR SECTION WITH POP ANIMATION --- */
         .avatar-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 25px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Pop-out state */
+        .avatar-area.pop-hidden {
+            transform: scale(0.5);
+            opacity: 0;
         }
 
         .avatar-container {
@@ -175,6 +189,7 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             text-shadow: 0 0 15px var(--accent-color);
+            transition: text-shadow 0.5s ease;
         }
 
         p.subtitle { margin-bottom: 20px; font-size: 1.1rem; color: #aaa; }
@@ -269,16 +284,25 @@
         .msg-title { font-weight: 800; font-size: 1.15rem; letter-spacing: 1px; }
         .msg-desc { font-size: 0.9rem; color: #a0a0b0; margin-top: 4px; }
 
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-            z-index: 1000; display: none; justify-content: center; align-items: center;
+        .credits-box {
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            font-family: 'Oxanium', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.6;
         }
-        .modal.show { display: flex; }
-        .modal-content {
-            background: rgba(20, 20, 25, 0.95); border-top: 4px solid #d90429; padding: 30px; 
-            border-radius: 12px; width: 90%; max-width: 500px; text-align: left;
+
+        .credits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 10px;
+            text-align: left;
         }
+
+        .credit-item b { color: var(--accent-color); }
     </style>
 </head>
 <body>
@@ -289,18 +313,6 @@
         <span id="sound-icon">🔇</span>
     </button>
 
-    <div id="shameModal" class="modal" onclick="closeModalOutside(event)">
-        <div class="modal-content">
-            <h2 style="color: #d90429; border: none; margin-top: 0;">Wall of Shame</h2>
-            <div style="padding: 15px; background: rgba(0,0,0,0.3); border-left: 3px solid #d90429; border-radius: 4px;">
-                <p><strong>Loonie</strong></p>
-                <p style="font-size: 0.85rem; color: #888;">ID: 1485484728470736906</p>
-                <p style="margin-top: 5px; font-style: italic;">Reason: Tried to do a CS AWP Scam</p>
-            </div>
-            <button class="roll-faction-btn" style="width: 100%; margin-top: 20px; border-color: #d90429; color: #d90429;" onclick="closeShameModal()">Close</button>
-        </div>
-    </div>
-
     <div class="container">
         <!-- Universe Selector -->
         <div class="universe-selector">
@@ -308,7 +320,7 @@
             <button class="universe-btn" onclick="setUniverse('overwatch')" id="btn-overwatch">🛡️ Overwatch</button>
         </div>
 
-        <div class="avatar-area">
+        <div id="main-display" class="avatar-area">
             <div class="avatar-container">
                 <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
             </div>
@@ -404,8 +416,22 @@
             </a>
         </div>
 
-        <div class="link-section" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
-            <button class="roll-faction-btn" style="border-color: #d90429; color: #d90429;" onclick="openShameModal(); playClick();">⚠️ Wall of Shame ⚠️</button>
+        <div class="link-section">
+            <h2>Song Credits</h2>
+            <div class="credits-box">
+                <div class="credits-grid">
+                    <div class="credit-item"><b>Sigma:</b></div> <div class="credit-item">Adrift Among Infinite Stars - Scott Buckley</div>
+                    <div class="credit-item"><b>Moira:</b></div> <div class="credit-item">Falling - Infraction x Aim To Head</div>
+                    <div class="credit-item"><b>Reinhardt:</b></div> <div class="credit-item">Leaving for Valhalla - Alexander Nakarada</div>
+                    <div class="credit-item"><b>Junkrat:</b></div> <div class="credit-item">Cyber Attack - Infraction</div>
+                    <div class="credit-item"><b>Roadhog:</b></div> <div class="credit-item">Hackers - Karl Casey (White Bat Audio)</div>
+                    <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
+                    <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
+                    <div class="credit-item"><b>Doom:</b></div> <div class="credit-item">Growing Shadows - myuu</div>
+                    <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Sleep Demon - Infraction</div>
+                    <div class="credit-item"><b>Hollowborn:</b></div> <div class="credit-item">Interstellar - Ross Bugden</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -422,12 +448,11 @@
             'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3', class: 'Void Highlord', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Nation' },
             'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3', class: 'Verus Doomknight', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Doom' },
             
-            // OVERWATCH HEROES
-            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog! Hook, line, and sinker.', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'OverwatchTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away! It\'s a perfect day for some mayhem!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'OverwatchTheme.mp3', class: 'Damage', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory! REINHARDT REINHARDT REINHARDT!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'OverwatchTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Science will reveal the truth. Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'OverwatchTheme.mp3', class: 'Support', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me! What is that melody?!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'OverwatchTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' }
+            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog! Hook, line, and sinker.', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away! It\'s a perfect day for some mayhem!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory! REINHARDT REINHARDT REINHARDT!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Science will reveal the truth. Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me! What is that melody?!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' }
         };
 
         let isMuted = true;
@@ -465,35 +490,42 @@
         let currentParticleColor = avatarData['chaos'].color;
         let currentParticleType = avatarData['chaos'].pType;
 
+        // POP ANIMATION WRAPPER
         function changeAvatar(type) {
-            currentFactionKey = type;
-            const data = avatarData[type];
-            document.getElementById('main-avatar').src = data.src;
-            document.documentElement.style.setProperty('--accent-color', data.color);
-            document.documentElement.style.setProperty('--main-font', data.font);
-            document.documentElement.style.setProperty('--border-radius', data.radius);
-            document.getElementById('lore-message').innerText = `"${data.lore}"`;
+            const display = document.getElementById('main-display');
             
-            document.getElementById('faction-label').innerText = data.fLabel;
-            document.getElementById('class-label').innerText = data.cLabel;
-            
-            // Display hero name if in Overwatch, otherwise faction name
-            const displayValue = (currentUniverse === 'overwatch') ? type.charAt(0).toUpperCase() + type.slice(1) : data.fDisplay;
-            document.getElementById('current-faction-name').innerText = displayValue.toUpperCase();
-            document.getElementById('player-class').innerText = data.class.toUpperCase();
-            
-            currentParticleColor = data.color;
-            currentParticleType = data.pType;
+            // Step 1: Disappear (Pop Out)
+            display.classList.add('pop-hidden');
 
-            const playerLevelBadge = document.getElementById('player-level-badge');
-            if (currentUniverse === 'overwatch') {
-                playerLevelBadge.style.display = 'none';
-            } else {
-                playerLevelBadge.style.display = 'block';
-            }
+            // Step 2: Swap content while invisible (after slight delay)
+            setTimeout(() => {
+                currentFactionKey = type;
+                const data = avatarData[type];
+                document.getElementById('main-avatar').src = data.src;
+                document.documentElement.style.setProperty('--accent-color', data.color);
+                document.documentElement.style.setProperty('--main-font', data.font);
+                document.documentElement.style.setProperty('--border-radius', data.radius);
+                document.getElementById('lore-message').innerText = `"${data.lore}"`;
+                
+                document.getElementById('faction-label').innerText = data.fLabel;
+                document.getElementById('class-label').innerText = data.cLabel;
+                
+                const displayValue = (currentUniverse === 'overwatch') ? type.charAt(0).toUpperCase() + type.slice(1) : data.fDisplay;
+                document.getElementById('current-faction-name').innerText = displayValue.toUpperCase();
+                document.getElementById('player-class').innerText = data.class.toUpperCase();
+                
+                currentParticleColor = data.color;
+                currentParticleType = data.pType;
 
-            initParticles();
-            updateTheme(type);
+                const playerLevelBadge = document.getElementById('player-level-badge');
+                playerLevelBadge.style.display = (currentUniverse === 'overwatch') ? 'none' : 'block';
+
+                initParticles();
+                updateTheme(type);
+
+                // Step 3: Reappear (Pop In)
+                display.classList.remove('pop-hidden');
+            }, 250); 
         }
 
         function setUniverse(u) {
@@ -532,10 +564,6 @@
             changeAvatar(rand);
             playRoll();
         }
-
-        function openShameModal() { document.getElementById('shameModal').style.display = 'flex'; }
-        function closeShameModal() { document.getElementById('shameModal').style.display = 'none'; }
-        function closeModalOutside(e) { if(e.target.id === 'shameModal') closeShameModal(); }
 
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
