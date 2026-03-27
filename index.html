@@ -724,9 +724,17 @@
                 onAuthStateChanged(auth, (u) => { if(u){ currentUser = u; loadComments(); } });
             } catch (err) {
                 console.error("Detailed Firebase Error:", err);
+                
+                let fixMsg = "(Check the chat for how to fix this!)";
+                if (err.code === 'auth/configuration-not-found') {
+                    fixMsg = "<b>Quick Fix:</b> Go to your Firebase Console -> Authentication -> Sign-in method. Make sure you enabled 'Anonymous' and hit Save!";
+                } else if (err.code === 'auth/unauthorized-domain') {
+                    fixMsg = "<b>Quick Fix:</b> Go to Firebase Console -> Authentication -> Settings -> Authorized domains. Add this website's URL to the list.";
+                }
+
                 document.getElementById('comments-list').innerHTML = `
-                    <p style="color: #d90429; font-size: 0.9rem;"><b>Connection Error:</b> ${err.message}</p>
-                    <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">(Check the chat for how to fix this!)</p>
+                    <p style="color: #d90429; font-size: 0.9rem;"><b>Error:</b> ${err.code || err.message}</p>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">${fixMsg}</p>
                 `;
             }
         }
