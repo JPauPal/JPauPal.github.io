@@ -848,47 +848,9 @@
         const alreadyMsg = document.getElementById('already-commented-msg');
         const submitBtn = document.getElementById('submit-comment-btn');
 
-        // Simple mock mode for environments where Firebase preview config is disabled
-        let useMockMode = false;
-        let mockComments = JSON.parse(localStorage.getItem('pau_hub_mock_comments')) || [];
-
-        function renderMockComments() {
-            listEl.innerHTML = '';
-            let hasMockCommented = localStorage.getItem('pau_hub_mock_has_commented') === 'true';
-
-            if (mockComments.length === 0) {
-                listEl.innerHTML = '<p style="color: #888; font-style: italic; font-family: \'Oxanium\', sans-serif;">The log is currently empty. Be the first!</p>';
-            } else {
-                mockComments.forEach(c => {
-                    const div = document.createElement('div');
-                    div.className = 'comment-entry';
-                    // Generate a color based on the timestamp
-                    const hue = Math.floor(Math.abs(c.timestamp) % 360) || 120;
-                    div.innerHTML = `
-                        <span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${Math.abs(c.timestamp).toString().substring(0,5)}</span>
-                        <span class="comment-text">${escapeHTML(c.text)}</span>
-                    `;
-                    listEl.appendChild(div);
-                });
-            }
-
-            if (hasMockCommented) {
-                formArea.style.display = 'none';
-                alreadyMsg.style.display = 'block';
-            } else {
-                formArea.style.display = 'block';
-                alreadyMsg.style.display = 'none';
-            }
-            
-            // Persist the mock comments so they don't disappear on reload
-            localStorage.setItem('pau_hub_mock_comments', JSON.stringify(mockComments));
-        }
-
         async function initFirebase() {
             if (typeof __firebase_config === 'undefined') {
-                console.warn("Cloud features missing. Falling back to local offline mode.");
-                useMockMode = true;
-                renderMockComments();
+                listEl.innerHTML = '<p style="color: #d90429; font-family: \'Oxanium\', sans-serif;">Cloud connection unavailable. Ensure you are viewing this inside the Hub environment.</p>';
                 return;
             }
 
@@ -1006,17 +968,6 @@
             }
 
             submitBtn.innerText = "Signing...";
-
-            // Fallback mock logic for preview mode (Now persists to localStorage)
-            if (useMockMode) {
-                mockComments.unshift({ text: text, timestamp: Date.now() });
-                localStorage.setItem('pau_hub_mock_has_commented', 'true');
-                input.value = '';
-                renderMockComments();
-                submitBtn.innerText = "Sign Log";
-                submitBtn.disabled = false;
-                return;
-            }
 
             if (!currentUser || !db) {
                 submitBtn.innerText = "Sign Log";
