@@ -837,11 +837,12 @@
     <!-- Firebase Backend for Visitor Log -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db = null, auth = null, currentUser = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // Set a permanent ID for your app's comments
+        const appId = 'paus-hub-visitor-log';
         
         const listEl = document.getElementById('comments-list');
         const formArea = document.getElementById('comment-form-area');
@@ -849,24 +850,25 @@
         const submitBtn = document.getElementById('submit-comment-btn');
 
         async function initFirebase() {
-            if (typeof __firebase_config === 'undefined') {
-                listEl.innerHTML = '<p style="color: #d90429; font-family: \'Oxanium\', sans-serif;">Cloud connection unavailable. Ensure you are viewing this inside the Hub environment.</p>';
-                return;
-            }
-
             try {
-                const firebaseConfig = JSON.parse(__firebase_config);
+                // YOUR CUSTOM FIREBASE CONFIG
+                const firebaseConfig = {
+                  apiKey: "AIzaSyCpn_hqmAJmLxTUo2EjQsx24RFcy6FyVQs",
+                  authDomain: "page-62e15.firebaseapp.com",
+                  projectId: "page-62e15",
+                  storageBucket: "page-62e15.firebasestorage.app",
+                  messagingSenderId: "869246385753",
+                  appId: "1:869246385753:web:d02116dbe812298096fb48"
+                };
+                
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
                 listEl.innerHTML = '<p style="color: #888; font-style: italic; font-family: \'Oxanium\', sans-serif;">Authenticating user...</p>';
 
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Standard anonymous sign-in for external hosting
+                await signInAnonymously(auth);
 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
