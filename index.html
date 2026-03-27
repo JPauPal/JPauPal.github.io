@@ -243,6 +243,37 @@
             transform: translateY(-2px);
         }
 
+        /* Wall of Shame List */
+        .shame-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .shame-list li {
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid #d90429; /* Kept permanently red for danger */
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #ccc;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .shame-list strong {
+            color: #d90429 !important; /* Force red regardless of theme */
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+        
+        .shame-reason {
+            color: #a0a0b0;
+            font-style: italic;
+        }
+
         /* Links */
         .message-btn {
             display: flex;
@@ -388,6 +419,24 @@
                 <span class="msg-title">Ko-fi</span>
                 <span class="msg-desc">Leave a tip or buy me a coffee to support the grind.</span>
             </a>
+        </div>
+
+        <!-- Wall of Shame -->
+        <div class="link-section">
+            <h2>Wall of Shame</h2>
+            <div class="bio-box">
+                <p>A permanent record of those who chose the path of dishonor. Scammers, griefers, and exceptionally toxic individuals.</p>
+                <ul class="shame-list">
+                    <li>
+                        <strong>[ExampleUsername1]</strong>
+                        <span class="shame-reason">Reason: Scamming / Fake Trading</span>
+                    </li>
+                    <li>
+                        <strong>[ExampleUsername2]</strong>
+                        <span class="shame-reason">Reason: Extreme Toxicity / Griefing</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
