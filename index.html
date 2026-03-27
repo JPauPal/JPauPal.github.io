@@ -375,7 +375,6 @@
             overflow-y: auto;
             padding-right: 10px;
         }
-        /* Scrollbar styles for comments */
         .comments-list-container::-webkit-scrollbar { width: 6px; }
         .comments-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
         .comments-list-container::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
@@ -485,11 +484,10 @@
             </a>
         </div>
 
-        <!-- NEW VISITOR LOG SECTION -->
+        <!-- VISITOR LOG SECTION -->
         <div class="link-section">
             <h2>Visitor Log</h2>
             <div class="bio-box" style="text-align: center;">
-                
                 <div id="comment-form-area" style="display: none;">
                     <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
                     <div id="comment-error-msg" style="display: none; color: #d90429; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;">Please keep it clean! Troll comments are not allowed.</div>
@@ -498,7 +496,6 @@
                 <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">
                     You have already left your mark.
                 </div>
-
                 <div id="comments-list" class="comments-list-container">
                     <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to servers...</p>
                 </div>
@@ -537,7 +534,7 @@
         </div>
     </div>
 
-    <!-- UI/Logic Script -->
+    <!-- Logic Script -->
     <script>
         const audioSources = {
             click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
@@ -551,18 +548,17 @@
             'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3', class: 'Void Highlord', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Nation' },
             'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3', class: 'Verus Doomknight', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Doom' },
             
-            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog! Hook, line, and sinker.', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away! It\'s a perfect day for some mayhem!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory! REINHARDT REINHARDT REINHARDT!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Science will reveal the truth. Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me! What is that melody?!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog! Hook, line, and sinker.', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank (Lvl 44)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away! It\'s a perfect day for some mayhem!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage (Lvl 38)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory! REINHARDT REINHARDT REINHARDT!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support (Lvl 24)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank (Lvl 21)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
 
-            // ARK MOBS
             'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly, tank like a... well, gasbag.', font: "'Metal Mania', cursive", pType: 'wisp', theme: 'ARKTheme.mp3', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains. Apex predator energy.', font: "'Metal Mania', cursive", pType: 'ember', theme: 'ARKTheme.mp3', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up. It\'s already too late.', font: "'Metal Mania', cursive", pType: 'blood', theme: 'ARKTheme.mp3', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen of the jungle.', font: "'Metal Mania', cursive", pType: 'spark', theme: 'ARKTheme.mp3', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage, ruler of the radiation zones.', font: "'Metal Mania', cursive", pType: 'shadow', theme: 'ARKTheme.mp3', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
+            'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains.', font: "'Metal Mania', cursive", pType: 'ember', theme: 'ARKTheme.mp3', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up.', font: "'Metal Mania', cursive", pType: 'blood', theme: 'ARKTheme.mp3', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen.', font: "'Metal Mania', cursive", pType: 'spark', theme: 'ARKTheme.mp3', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage.', font: "'Metal Mania', cursive", pType: 'shadow', theme: 'ARKTheme.mp3', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
         };
 
         let isMuted = true;
@@ -571,24 +567,15 @@
         currentTheme.volume = 0.1;
         let currentUniverse = 'aqw';
 
-        // AQW Style Loop Enforcement
         currentTheme.addEventListener('ended', function() {
-            if (!isMuted) {
-                this.currentTime = 0;
-                this.play();
-            }
+            if (!isMuted) { this.currentTime = 0; this.play(); }
         });
 
         function toggleSound() {
             isMuted = !isMuted;
             const icon = document.getElementById('sound-icon');
-            if (isMuted) {
-                currentTheme.pause();
-                icon.innerText = '🔇';
-            } else {
-                icon.innerText = '🔊';
-                updateTheme(currentFactionKey);
-            }
+            if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; }
+            else { icon.innerText = '🔊'; updateTheme(currentFactionKey); }
         }
 
         function playClick() { if(!isMuted) { const a = new Audio(audioSources.click); a.volume = 0.2; a.play(); } }
@@ -597,25 +584,17 @@
         function updateTheme(key) {
             if (isMuted) return;
             const path = avatarData[key].theme;
-            if (currentTheme.src.includes(path)) {
-                currentTheme.loop = true;
-                return;
-            }
-            currentTheme.pause();
-            currentTheme.src = path;
-            currentTheme.loop = true;
-            currentTheme.play().catch(() => {});
+            if (currentTheme.src.includes(path)) return;
+            currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {});
         }
 
         let currentFactionKey = 'chaos';
         let currentParticleColor = avatarData['chaos'].color;
         let currentParticleType = avatarData['chaos'].pType;
 
-        // POP ANIMATION WRAPPER
         function changeAvatar(type) {
             const display = document.getElementById('main-display');
             display.classList.add('pop-hidden');
-
             setTimeout(() => {
                 currentFactionKey = type;
                 const data = avatarData[type];
@@ -624,49 +603,27 @@
                 document.documentElement.style.setProperty('--main-font', data.font);
                 document.documentElement.style.setProperty('--border-radius', data.radius);
                 document.getElementById('lore-message').innerText = `"${data.lore}"`;
-                
                 document.getElementById('faction-label').innerText = data.fLabel;
                 document.getElementById('class-label').innerText = data.cLabel;
-                
-                // Name display logic
-                let displayName = data.fDisplay;
-                if (currentUniverse === 'overwatch' || currentUniverse === 'ark') {
-                    displayName = type.charAt(0).toUpperCase() + type.slice(1);
-                }
-                
+                let displayName = (currentUniverse === 'aqw') ? data.fDisplay : type.charAt(0).toUpperCase() + type.slice(1);
                 document.getElementById('current-faction-name').innerText = displayName.toUpperCase();
                 document.getElementById('player-class').innerText = data.class.toUpperCase();
-                
                 currentParticleColor = data.color;
                 currentParticleType = data.pType;
-
-                const playerLevelBadge = document.getElementById('player-level-badge');
-                playerLevelBadge.style.display = (currentUniverse === 'aqw') ? 'block' : 'none';
-
-                initParticles();
-                updateTheme(type);
-
+                document.getElementById('player-level-badge').style.display = (currentUniverse === 'aqw') ? 'block' : 'none';
+                initParticles(); updateTheme(type);
                 display.classList.remove('pop-hidden');
             }, 250); 
         }
 
         function setUniverse(u) {
             currentUniverse = u;
-            const btns = document.querySelectorAll('.universe-btn');
-            btns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.universe-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + u).classList.add('active');
-            
             const rollBtn = document.getElementById('roll-btn-main');
-            if(u === 'overwatch') {
-                rollBtn.innerText = "Switch Hero";
-                changeAvatar('roadhog'); 
-            } else if (u === 'ark') {
-                rollBtn.innerText = "Next Mob";
-                changeAvatar('gasbags');
-            } else {
-                rollBtn.innerText = "Roll Faction";
-                randomAvatarAQW();
-            }
+            if(u === 'overwatch') { rollBtn.innerText = "Switch Hero"; changeAvatar('roadhog'); }
+            else if (u === 'ark') { rollBtn.innerText = "Next Mob"; changeAvatar('gasbags'); }
+            else { rollBtn.innerText = "Roll Faction"; randomAvatarAQW(); }
             playClick();
         }
 
@@ -676,28 +633,9 @@
             else randomAvatarARK();
         }
 
-        function randomAvatarAQW() {
-            const keys = ['chaos', 'hollowborn', 'legion', 'nation', 'doom'];
-            const rand = keys[Math.floor(Math.random() * keys.length)];
-            changeAvatar(rand);
-            playRoll();
-        }
-
-        function randomAvatarOW() {
-            const keys = ['roadhog', 'junkrat', 'reinhardt', 'moira', 'sigma'];
-            const others = keys.filter(k => k !== currentFactionKey);
-            const rand = others[Math.floor(Math.random() * others.length)];
-            changeAvatar(rand);
-            playRoll();
-        }
-
-        function randomAvatarARK() {
-            const keys = ['gasbags', 'acrocanthosaurus', 'thylacoleo', 'rhyniognatha', 'rockdrake'];
-            const others = keys.filter(k => k !== currentFactionKey);
-            const rand = others[Math.floor(Math.random() * others.length)];
-            changeAvatar(rand);
-            playRoll();
-        }
+        function randomAvatarAQW() { const k = ['chaos','hollowborn','legion','nation','doom']; changeAvatar(k[Math.floor(Math.random()*k.length)]); playRoll(); }
+        function randomAvatarOW() { const k = ['roadhog','junkrat','reinhardt','moira','sigma']; changeAvatar(k.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*4)]); playRoll(); }
+        function randomAvatarARK() { const k = ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']; changeAvatar(k.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*4)]); playRoll(); }
 
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
@@ -711,147 +649,66 @@
                 this.x = Math.random() * canvas.width;
                 this.type = currentParticleType;
                 this.opacity = Math.random() * 0.8 + 0.2;
-                
-                if (['chaos', 'shadow', 'scrap', 'bomb', 'shield', 'gravity', 'orb', 'spark'].includes(this.type)) {
-                    this.y = Math.random() * canvas.height;
-                } else {
-                    this.y = (this.type === 'ember' || this.type === 'wisp') ? canvas.height + 10 : -10;
-                }
-
-                if (this.type === 'chaos') { 
-                    this.size = Math.random() * 4 + 2; 
-                    this.speedX = (Math.random() * 4) - 2; 
-                    this.speedY = (Math.random() * 4) - 2; 
-                }
-                else if (this.type === 'scrap') {
-                    this.size = Math.random() * 5 + 2;
-                    this.speedX = (Math.random() * 4) - 2;
-                    this.speedY = Math.random() * 2 + 1; 
-                }
-                else if (this.type === 'bomb') {
-                    this.size = Math.random() * 3 + 1;
-                    this.speedX = (Math.random() * 10) - 5;
-                    this.speedY = (Math.random() * 10) - 5;
-                }
-                else if (this.type === 'gravity') {
-                    this.size = Math.random() * 6 + 2;
-                    this.speedX = (Math.random() * 2) - 1;
-                    this.speedY = (Math.random() * 2) - 1;
-                    this.angle = Math.random() * 360;
-                }
-                else if (this.type === 'spark') {
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = (Math.random() * 6) - 3;
-                    this.speedY = (Math.random() * 6) - 3;
-                }
-                else if (this.type === 'shield') {
-                    this.size = Math.random() * 8 + 4;
-                    this.speedX = (Math.random() * 1) - 0.5;
-                    this.speedY = -(Math.random() * 0.5 + 0.2);
-                }
-                else if (this.type === 'ember') { 
-                    this.size = Math.random() * 3 + 1; 
-                    this.speedX = (Math.random() * 1) - 0.5; 
-                    this.speedY = -(Math.random() * 2 + 1); 
-                }
-                else if (this.type === 'wisp') { 
-                    this.size = Math.random() * 5 + 3; 
-                    this.speedY = -(Math.random() * 1 + 0.5); 
-                    this.speedX = 0; 
-                    this.angle = Math.random() * 2; 
-                }
-                else if (this.type === 'blood') { 
-                    this.size = Math.random() * 2 + 1; 
-                    this.speedX = 0; 
-                    this.speedY = Math.random() * 5 + 3; 
-                }
-                else { 
-                    this.size = Math.random() * 10 + 5; 
-                    this.speedX = Math.random() - 0.5; 
-                    this.speedY = Math.random() - 0.5; 
-                    this.angle = 0; 
-                }
+                if (['chaos','shadow','scrap','bomb','shield','gravity','orb','spark'].includes(this.type)) this.y = Math.random() * canvas.height;
+                else this.y = (this.type === 'ember' || this.type === 'wisp') ? canvas.height + 10 : -10;
+                if (this.type === 'chaos') { this.size = Math.random() * 4 + 2; this.speedX = (Math.random() * 4) - 2; this.speedY = (Math.random() * 4) - 2; }
+                else if (this.type === 'scrap') { this.size = Math.random() * 5 + 2; this.speedX = (Math.random() * 4) - 2; this.speedY = Math.random() * 2 + 1; }
+                else if (this.type === 'bomb') { this.size = Math.random() * 3 + 1; this.speedX = (Math.random() * 10) - 5; this.speedY = (Math.random() * 10) - 5; }
+                else if (this.type === 'gravity') { this.size = Math.random() * 6 + 2; this.speedX = (Math.random() * 2) - 1; this.speedY = (Math.random() * 2) - 1; this.angle = Math.random() * 360; }
+                else if (this.type === 'spark') { this.size = Math.random() * 2 + 1; this.speedX = (Math.random() * 6) - 3; this.speedY = (Math.random() * 6) - 3; }
+                else if (this.type === 'shield') { this.size = Math.random() * 8 + 4; this.speedX = (Math.random() * 1) - 0.5; this.speedY = -(Math.random() * 0.5 + 0.2); }
+                else if (this.type === 'ember') { this.size = Math.random() * 3 + 1; this.speedX = (Math.random() * 1) - 0.5; this.speedY = -(Math.random() * 2 + 1); }
+                else if (this.type === 'wisp') { this.size = Math.random() * 5 + 3; this.speedY = -(Math.random() * 1 + 0.5); this.speedX = 0; this.angle = Math.random() * 2; }
+                else if (this.type === 'blood') { this.size = Math.random() * 2 + 1; this.speedX = 0; this.speedY = Math.random() * 5 + 3; }
+                else { this.size = Math.random() * 10 + 5; this.speedX = Math.random() - 0.5; this.speedY = Math.random() - 0.5; }
             }
             update() {
                 if (this.type === 'wisp') { this.angle += 0.05; this.x += Math.sin(this.angle) * 1.5; }
                 if (this.type === 'shadow') { this.angle += 0.03; this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; }
                 if (this.type === 'gravity') { this.angle += 0.02; this.x += Math.cos(this.angle) * 2; this.y += Math.sin(this.angle) * 2; }
-                
                 this.x += this.speedX; this.y += this.speedY;
-                
                 if (this.y < -30 || this.y > canvas.height + 30 || this.x < -30 || this.x > canvas.width + 30) this.reset();
             }
             draw() {
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = currentParticleColor;
-                ctx.shadowBlur = (['wisp', 'shadow', 'bomb', 'shield', 'gravity', 'spark'].includes(this.type)) ? 20 : 0;
-                ctx.shadowColor = currentParticleColor;
-                ctx.beginPath();
-                
+                ctx.globalAlpha = this.opacity; ctx.fillStyle = currentParticleColor;
+                ctx.shadowBlur = (['wisp','shadow','bomb','shield','gravity','spark'].includes(this.type)) ? 20 : 0;
+                ctx.shadowColor = currentParticleColor; ctx.beginPath();
                 if (this.type === 'blood') ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
-                else if (['chaos', 'scrap', 'gravity', 'spark'].includes(this.type)) ctx.rect(this.x, this.y, this.size, this.size);
+                else if (['chaos','scrap','gravity','spark'].includes(this.type)) ctx.rect(this.x, this.y, this.size, this.size);
                 else if (this.type === 'shield') {
-                    ctx.moveTo(this.x, this.y - this.size);
-                    ctx.lineTo(this.x + this.size, this.y - this.size/2);
-                    ctx.lineTo(this.x + this.size, this.y + this.size/2);
-                    ctx.lineTo(this.x, this.y + this.size);
-                    ctx.lineTo(this.x - this.size, this.y + this.size/2);
-                    ctx.lineTo(this.x - this.size, this.y - this.size/2);
+                    ctx.moveTo(this.x, this.y - this.size); ctx.lineTo(this.x + this.size, this.y - this.size/2);
+                    ctx.lineTo(this.x + this.size, this.y + this.size/2); ctx.lineTo(this.x, this.y + this.size);
+                    ctx.lineTo(this.x - this.size, this.y + this.size/2); ctx.lineTo(this.x - this.size, this.y - this.size/2);
                     ctx.closePath();
-                }
-                else ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                } else ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill(); ctx.shadowBlur = 0;
             }
         }
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < 60; i++) particlesArray.push(new Particle());
-        }
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
+        function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
         window.onload = () => {
-            // Local Storage Visit Counter
-            let visits = localStorage.getItem('pau_hub_visits');
-            if (!visits) {
-                visits = 1;
-                localStorage.setItem('pau_hub_visits', visits);
-            }
+            let visits = localStorage.getItem('pau_hub_visits') || 1;
+            localStorage.setItem('pau_hub_visits', visits);
             document.getElementById('visit-count').innerText = visits;
-
-            const birth = new Date('2004-11-07');
-            const now = new Date();
+            const birth = new Date('2004-11-07'); const now = new Date();
             let age = now.getFullYear() - birth.getFullYear();
             if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
             document.getElementById('player-level').innerText = age;
-            setUniverse('aqw');
-            initParticles();
-            animate();
+            setUniverse('aqw'); initParticles(); animate();
         };
     </script>
 
-    <!-- Firebase Backend for Visitor Log -->
+    <!-- Firebase Backend -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db = null, auth = null, currentUser = null;
-        // Set a permanent ID for your app's comments
         const appId = 'paus-hub-visitor-log';
         
-        const listEl = document.getElementById('comments-list');
-        const formArea = document.getElementById('comment-form-area');
-        const alreadyMsg = document.getElementById('already-commented-msg');
-        const submitBtn = document.getElementById('submit-comment-btn');
-
         async function initFirebase() {
             try {
-                // YOUR CUSTOM FIREBASE CONFIG
                 const firebaseConfig = {
                   apiKey: "AIzaSyCpn_hqmAJmLxTUo2EjQsx24RFcy6FyVQs",
                   authDomain: "page-62e15.firebaseapp.com",
@@ -862,135 +719,55 @@
                 };
                 
                 const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                listEl.innerHTML = '<p style="color: #888; font-style: italic; font-family: \'Oxanium\', sans-serif;">Authenticating user...</p>';
-
-                // Standard anonymous sign-in for external hosting
+                auth = getAuth(app); db = getFirestore(app);
                 await signInAnonymously(auth);
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUser = user;
-                        loadComments();
-                    }
-                });
+                onAuthStateChanged(auth, (u) => { if(u){ currentUser = u; loadComments(); } });
             } catch (err) {
-                console.error("Firebase connection error:", err);
-                listEl.innerHTML = '<p style="color: #d90429; font-family: \'Oxanium\', sans-serif;">Failed to connect to the cloud log.</p>';
+                console.error("Detailed Firebase Error:", err);
+                document.getElementById('comments-list').innerHTML = `
+                    <p style="color: #d90429; font-size: 0.9rem;"><b>Connection Error:</b> ${err.message}</p>
+                    <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">(Check the chat for how to fix this!)</p>
+                `;
             }
         }
 
         function loadComments() {
             if (!currentUser || !db) return;
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-            
-            listEl.innerHTML = '<p style="color: #888; font-style: italic; font-family: \'Oxanium\', sans-serif;">Fetching visitor records...</p>';
-            
             onSnapshot(commentsRef, (snapshot) => {
-                listEl.innerHTML = '';
-                let hasCommented = false;
-                let comments = [];
-
-                snapshot.forEach(doc => {
-                    comments.push({ id: doc.id, ...doc.data() });
-                    if (doc.id === currentUser.uid) {
-                        hasCommented = true;
-                    }
+                const list = document.getElementById('comments-list');
+                list.innerHTML = ''; let hasCommented = false; let comments = [];
+                snapshot.forEach(doc => { 
+                    comments.push({ id: doc.id, ...doc.data() }); 
+                    if (doc.id === currentUser.uid) hasCommented = true;
                 });
-
-                // Sort by timestamp (newest first)
                 comments.sort((a, b) => b.timestamp - a.timestamp);
-
-                if (comments.length === 0) {
-                    listEl.innerHTML = '<p style="color: #888; font-style: italic; font-family: \'Oxanium\', sans-serif;">The log is currently empty. Be the first!</p>';
-                } else {
+                if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
+                else {
                     comments.forEach(c => {
-                        const div = document.createElement('div');
-                        div.className = 'comment-entry';
+                        const div = document.createElement('div'); div.className = 'comment-entry';
                         const hue = Math.floor(parseInt(c.id.substring(0, 6), 16) % 360) || 120;
-                        div.innerHTML = `
-                            <span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${c.id.substring(0,5)}</span>
-                            <span class="comment-text">${escapeHTML(c.text)}</span>
-                        `;
-                        listEl.appendChild(div);
+                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${c.id.substring(0,5)}</span><span class="comment-text">${escapeHTML(c.text)}</span>`;
+                        list.appendChild(div);
                     });
                 }
-
-                if (hasCommented) {
-                    formArea.style.display = 'none';
-                    alreadyMsg.style.display = 'block';
-                } else {
-                    formArea.style.display = 'block';
-                    alreadyMsg.style.display = 'none';
-                }
-            }, (error) => {
-                console.error("Error loading visitor log:", error);
-                listEl.innerHTML = '<p style="color: #d90429; font-family: \'Oxanium\', sans-serif;">Error loading log. Could be a network block.</p>';
+                document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
+                document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
             });
         }
 
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag));
-        }
+        function escapeHTML(s) { return s.replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t)); }
 
-        const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'nigger', 'faggot', 'slut', 'whore', 'kys', 'retard', 'kill yourself', 'nazi'];
-        
-        async function containsTrollContent(text) {
-            const lower = text.toLowerCase();
-            if (blockedWords.some(word => lower.includes(word))) return true;
-
-            try {
-                const response = await fetch(`https://www.purgomalum.com/service/containsprofanity?text=${encodeURIComponent(text)}`);
-                const isProfane = await response.text();
-                return isProfane === 'true';
-            } catch (e) {
-                console.error("API Check failed", e);
-                return false;
-            }
-        }
-
-        submitBtn.addEventListener('click', async () => {
-            const input = document.getElementById('comment-input');
-            const errorMsg = document.getElementById('comment-error-msg');
-            const text = input.value.trim();
-            
-            errorMsg.style.display = 'none';
-            if (!text) return;
-
-            submitBtn.innerText = "Checking...";
-            submitBtn.disabled = true;
-
-            if (await containsTrollContent(text)) {
-                errorMsg.style.display = 'block';
-                submitBtn.innerText = "Sign Log";
-                submitBtn.disabled = false;
-                return;
-            }
-
-            submitBtn.innerText = "Signing...";
-
-            if (!currentUser || !db) {
-                submitBtn.innerText = "Sign Log";
-                submitBtn.disabled = false;
-                return;
-            }
-
+        document.getElementById('submit-comment-btn').addEventListener('click', async () => {
+            const input = document.getElementById('comment-input'); const text = input.value.trim();
+            if (!text || !currentUser || !db) return;
+            document.getElementById('submit-comment-btn').disabled = true;
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
-                await setDoc(docRef, {
-                    text: text,
-                    timestamp: Date.now(),
-                    userId: currentUser.uid
-                });
+                await setDoc(docRef, { text: text, timestamp: Date.now(), userId: currentUser.uid });
                 input.value = '';
-            } catch (e) {
-                console.error("Error posting to log", e);
-            }
-            
-            submitBtn.innerText = "Sign Log";
-            submitBtn.disabled = false;
+            } catch (e) { console.error(e); }
+            document.getElementById('submit-comment-btn').disabled = false;
         });
 
         initFirebase();
