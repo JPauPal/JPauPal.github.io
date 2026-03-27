@@ -461,6 +461,14 @@
         currentTheme.volume = 0.1;
         let currentUniverse = 'aqw';
 
+        // AQW Style Loop Enforcement
+        currentTheme.addEventListener('ended', function() {
+            if (!isMuted) {
+                this.currentTime = 0;
+                this.play();
+            }
+        });
+
         function toggleSound() {
             isMuted = !isMuted;
             const icon = document.getElementById('sound-icon');
@@ -479,7 +487,10 @@
         function updateTheme(key) {
             if (isMuted) return;
             const path = avatarData[key].theme;
-            if (currentTheme.src.includes(path)) return;
+            if (currentTheme.src.includes(path)) {
+                currentTheme.loop = true;
+                return;
+            }
             currentTheme.pause();
             currentTheme.src = path;
             currentTheme.loop = true;
