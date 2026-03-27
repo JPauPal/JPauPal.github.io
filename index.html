@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPauPal's Hub</title>
+    <title>Pau's Hub</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&display=swap" rel="stylesheet">
@@ -49,12 +49,9 @@
         /* Particles */
         #particle-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0; pointer-events: none;
         }
 
         .container {
@@ -67,8 +64,7 @@
         /* Sound UI */
         .sound-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 20px; right: 20px;
             background: var(--panel-bg);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
@@ -76,11 +72,8 @@
             border-radius: 50%;
             cursor: pointer;
             z-index: 1001;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
@@ -90,47 +83,53 @@
             box-shadow: 0 0 15px var(--accent-color);
         }
 
-        /* Avatar Box */
+        /* --- STABILIZED AVATAR SECTION --- */
+        .avatar-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
         .avatar-container {
-            width: 100%;
-            max-width: 320px;
+            width: 320px;
+            height: 320px; /* Locked height prevents jumping */
             margin: 0 auto 15px auto;
             border-radius: 15px;
             overflow: hidden;
             filter: drop-shadow(0 0 25px var(--accent-color));
             transition: filter 0.5s ease;
             position: relative;
-            z-index: 5;
-        }
-
-        .avatar-container:hover {
-            filter: drop-shadow(0 0 35px var(--accent-color));
-            z-index: 10;
         }
 
         .avatar {
-            width: 100%;
-            height: auto;
+            width: 100%; height: 100%;
+            object-fit: cover;
             display: block;
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             transform-origin: 50% 22%;
         }
 
-        .avatar-container:hover .avatar {
-            transform: scale(2.2);
+        .avatar-container:hover .avatar { transform: scale(2.2); }
+
+        .lore-box {
+            height: 50px; /* Fixed vertical space for lore text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
         }
 
-        /* Lore & Text */
         .lore-text {
             font-size: 1.1rem;
             font-style: italic;
             color: #d0d0d0;
-            margin-bottom: 20px;
             letter-spacing: 1px;
             text-shadow: 0 0 10px var(--accent-color);
             transition: all 0.5s ease;
-            min-height: 28px;
         }
+
+        /* --- END STABILIZED SECTION --- */
 
         h1 {
             font-size: 3rem;
@@ -143,19 +142,15 @@
             transition: text-shadow 0.5s ease;
         }
 
-        p.subtitle {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            color: #aaa;
-        }
+        p.subtitle { margin-bottom: 20px; font-size: 1.1rem; color: #aaa; }
 
-        /* Badges */
         .info-badges {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 35px;
+            min-height: 40px;
         }
 
         .badge {
@@ -167,15 +162,11 @@
             font-size: 0.9rem;
             letter-spacing: 1px;
             transition: all 0.5s ease;
+            min-width: 140px; /* Consistency */
         }
         
-        .badge span {
-            color: var(--accent-color);
-            font-weight: bold;
-            transition: color 0.5s ease;
-        }
+        .badge span { color: var(--accent-color); font-weight: bold; transition: color 0.5s ease; }
 
-        /* Faction Roll Button */
         .roll-faction-btn {
             background-color: #000000;
             border: 2px solid var(--accent-color);
@@ -194,16 +185,11 @@
         }
 
         .roll-faction-btn:hover {
-            box-shadow: 0 0 15px var(--accent-color), inset 0 0 10px rgba(255, 255, 255, 0.1);
-            text-shadow: 0 0 8px var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
             transform: translateY(-2px);
         }
 
-        /* Content Boxes */
-        .link-section {
-            margin-bottom: 40px;
-            text-align: left;
-        }
+        .link-section { margin-bottom: 40px; text-align: left; }
 
         h2 {
             color: var(--accent-color);
@@ -228,20 +214,13 @@
             transition: border-color 0.5s ease;
         }
 
-        .bio-box p { font-size: 0.95rem; color: #d0d0d0; line-height: 1.6; margin-bottom: 15px; }
-        .bio-box strong { color: var(--accent-color); transition: color 0.5s ease; }
-
-        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
         .skill-tag {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; color: #fff; transition: all 0.3s ease;
         }
-        .skill-tag:hover {
-            border-color: var(--accent-color); color: var(--accent-color); background: rgba(0, 0, 0, 0.4); transform: translateY(-2px);
-        }
 
-        /* Message Link Buttons */
         .message-btn {
             display: flex; flex-direction: column; text-decoration: none; color: #ffffff;
             background: var(--panel-bg); border-left: 4px solid var(--accent-color);
@@ -250,41 +229,25 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .message-btn:hover {
-            background: rgba(255, 255, 255, 0.08); transform: translateX(10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5); border-left-color: #fff;
-        }
-
+        .message-btn:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(10px); }
         .msg-title { font-weight: 800; font-size: 1.15rem; letter-spacing: 1px; transition: color 0.3s ease; }
         .message-btn:hover .msg-title { color: var(--accent-color); }
-        .msg-desc { font-size: 0.9rem; color: #a0a0b0; margin-top: 4px; font-weight: 400; }
+        .msg-desc { font-size: 0.9rem; color: #a0a0b0; margin-top: 4px; }
 
-        /* Wall of Shame */
-        .shame-btn { border-color: #d90429 !important; color: #d90429 !important; font-size: 1rem; margin-top: 20px; }
-        .shame-btn:hover { box-shadow: 0 0 15px #d90429, inset 0 0 10px rgba(255, 255, 255, 0.1) !important; text-shadow: 0 0 8px #d90429 !important; }
+        /* Shame UI */
+        .shame-btn { border-color: #d90429 !important; color: #d90429 !important; margin-top: 20px; }
+        .shame-btn:hover { box-shadow: 0 0 15px #d90429 !important; }
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-            z-index: 1000; display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            z-index: 1000; display: none; justify-content: center; align-items: center;
         }
-        .modal.show { opacity: 1; visibility: visible; }
+        .modal.show { display: flex; }
         .modal-content {
-            background: rgba(20, 20, 25, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #d90429; padding: 30px; border-radius: 12px;
-            width: 90%; max-width: 500px; transform: translateY(-20px); transition: transform 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: left; position: relative;
+            background: rgba(20, 20, 25, 0.95); border-top: 4px solid #d90429; padding: 30px; 
+            border-radius: 12px; width: 90%; max-width: 500px; text-align: left;
         }
-        .modal.show .modal-content { transform: translateY(0); }
-        .close-btn { position: absolute; top: 15px; right: 20px; color: #aaa; font-size: 1.8rem; cursor: pointer; }
-        .close-btn:hover { color: #d90429; }
-        .shame-list { list-style: none; margin-top: 15px; }
-        .shame-list li {
-            padding: 12px 15px; background: rgba(0, 0, 0, 0.4); border-left: 3px solid #d90429;
-            margin-bottom: 10px; border-radius: 4px; font-size: 0.9rem; color: #ccc; display: flex; flex-direction: column; gap: 4px;
-        }
-        .shame-list strong { color: #d90429; font-size: 1.05rem; }
     </style>
 </head>
 <body>
@@ -297,33 +260,34 @@
 
     <div id="shameModal" class="modal" onclick="closeModalOutside(event)">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeShameModal()">&times;</span>
             <h2 style="color: #d90429; border: none; margin-top: 0;">Wall of Shame</h2>
-            <ul class="shame-list">
-                <li>
-                    <strong>Loonie</strong>
-                    <span style="color: #a0a0b0;">ID: 1485484728470736906</span>
-                    <span style="font-style: italic;">Reason: Tried to do a CS AWP Scam</span>
-                </li>
-            </ul>
+            <div style="padding: 15px; background: rgba(0,0,0,0.3); border-left: 3px solid #d90429; border-radius: 4px;">
+                <p><strong>Loonie</strong></p>
+                <p style="font-size: 0.85rem; color: #888;">ID: 1485484728470736906</p>
+                <p style="margin-top: 5px; font-style: italic;">Reason: Tried to do a CS AWP Scam</p>
+            </div>
+            <button class="roll-faction-btn shame-btn" style="width: 100%; margin-top: 20px;" onclick="closeShameModal()">Close</button>
         </div>
     </div>
 
     <div class="container">
-        <div class="avatar-container">
-            <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
+        <div class="avatar-area">
+            <div class="avatar-container">
+                <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
+            </div>
+            <div class="lore-box">
+                <p id="lore-message" class="lore-text">"Embrace the madness. Chaos consumes all."</p>
+            </div>
+            <button class="roll-faction-btn" onclick="randomAvatar()">Roll Faction</button>
         </div>
-
-        <p id="lore-message" class="lore-text">"Embrace the madness. Chaos consumes all."</p>
-        <button class="roll-faction-btn" onclick="randomAvatar()">Roll Faction</button>
 
         <h1>JPauPal</h1>
         <p class="subtitle">Welcome to my central hub.</p>
 
         <div class="info-badges">
             <div class="badge">LVL: <span id="player-level">21</span></div>
-            <div class="badge">CLASS: <span id="player-class" style="text-transform: uppercase;">CHAOS AVENGER</span></div>
-            <div class="badge">FACTION: <span id="current-faction-name" style="text-transform: uppercase;">CHAOS</span></div>
+            <div class="badge">CLASS: <span id="player-class">CHAOS AVENGER</span></div>
+            <div class="badge">FACTION: <span id="current-faction-name">CHAOS</span></div>
         </div>
 
         <div class="link-section">
@@ -341,19 +305,19 @@
 
         <div class="link-section">
             <h2>Socials & Media</h2>
-            <a href="https://www.youtube.com/@JPauPal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://www.youtube.com/@JPauPal" class="message-btn" target="_blank">
                 <span class="msg-title">YouTube</span>
                 <span class="msg-desc">Latest video content and highlights.</span>
             </a>
-            <a href="https://twitch.tv/JPauPal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://twitch.tv/JPauPal" class="message-btn" target="_blank">
                 <span class="msg-title">Twitch</span>
                 <span class="msg-desc">Live streams and gameplay.</span>
             </a>
-            <a href="https://tiktok.com/@JPauPal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://tiktok.com/@JPauPal" class="message-btn" target="_blank">
                 <span class="msg-title">TikTok</span>
                 <span class="msg-desc">Short clips and gaming moments.</span>
             </a>
-            <a href="https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9" class="message-btn" target="_blank">
                 <span class="msg-title">Spotify</span>
                 <span class="msg-desc">Gaming and chill playlists.</span>
             </a>
@@ -361,15 +325,15 @@
 
         <div class="link-section">
             <h2>Gaming</h2>
-            <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="message-btn" target="_blank">
                 <span class="msg-title">AQW CharPage</span>
                 <span class="msg-desc">View my character loadouts.</span>
             </a>
-            <a href="https://steamcommunity.com/id/JPauPal/" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://steamcommunity.com/id/JPauPal/" class="message-btn" target="_blank">
                 <span class="msg-title">Steam</span>
                 <span class="msg-desc">My game library and reviews.</span>
             </a>
-            <a href="https://www.roblox.com/users/130118683/profile" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://www.roblox.com/users/130118683/profile" class="message-btn" target="_blank">
                 <span class="msg-title">Roblox</span>
                 <span class="msg-desc">Join me on Roblox.</span>
             </a>
@@ -377,11 +341,11 @@
 
         <div class="link-section">
             <h2>Support Me</h2>
-            <a href="https://patreon.com/Jpaupal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://patreon.com/Jpaupal" class="message-btn" target="_blank">
                 <span class="msg-title">Patreon</span>
                 <span class="msg-desc">Exclusive perks and support.</span>
             </a>
-            <a href="https://ko-fi.com/jpaupal" class="message-btn" target="_blank" onclick="playClick()">
+            <a href="https://ko-fi.com/jpaupal" class="message-btn" target="_blank">
                 <span class="msg-title">Ko-fi</span>
                 <span class="msg-desc">Buy me a coffee.</span>
             </a>
@@ -393,7 +357,6 @@
     </div>
 
     <script>
-        // Audio
         const audioSources = {
             click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
             roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3'
@@ -420,80 +383,53 @@
                 icon.innerText = '🔇';
             } else {
                 icon.innerText = '🔊';
-                updateTheme(currentFactionKey || 'chaos');
+                updateTheme(currentFactionKey);
             }
         }
 
-        function playClick() { 
-            if (!isMuted) {
-                const sfx = new Audio(audioSources.click);
-                sfx.volume = 0.2;
-                sfx.play();
-            }
-        }
-        
-        function playRoll() { 
-            if (!isMuted) {
-                const sfx = new Audio(audioSources.roll);
-                sfx.volume = 0.2;
-                sfx.play();
-            }
-        }
+        function playClick() { if(!isMuted) { const a = new Audio(audioSources.click); a.volume = 0.2; a.play(); } }
+        function playRoll() { if(!isMuted) { const a = new Audio(audioSources.roll); a.volume = 0.2; a.play(); } }
 
         function updateTheme(key) {
             if (isMuted) return;
-            const themePath = avatarData[key].theme;
-            if (currentTheme.src.includes(themePath)) return;
-            
+            const path = avatarData[key].theme;
+            if (currentTheme.src.includes(path)) return;
             currentTheme.pause();
-            currentTheme.src = themePath;
-            currentTheme.play().catch(e => console.log("Audio play blocked."));
+            currentTheme.src = path;
+            currentTheme.play().catch(() => {});
         }
 
-        // Faction Switching
         let currentFactionKey = 'chaos';
         let currentParticleColor = avatarData['chaos'].color;
         let currentParticleType = avatarData['chaos'].pType;
 
         function changeAvatar(type) {
             currentFactionKey = type;
-            document.getElementById('main-avatar').src = avatarData[type].src;
-            document.documentElement.style.setProperty('--accent-color', avatarData[type].color);
-            document.documentElement.style.setProperty('--main-font', avatarData[type].font);
-            document.getElementById('lore-message').innerText = `"${avatarData[type].lore}"`;
-            
-            // Update the Badge Texts
-            document.getElementById('current-faction-name').innerText = type;
-            document.getElementById('player-class').innerText = avatarData[type].class;
-
-            currentParticleColor = avatarData[type].color;
-            currentParticleType = avatarData[type].pType;
+            const data = avatarData[type];
+            document.getElementById('main-avatar').src = data.src;
+            document.documentElement.style.setProperty('--accent-color', data.color);
+            document.documentElement.style.setProperty('--main-font', data.font);
+            document.getElementById('lore-message').innerText = `"${data.lore}"`;
+            document.getElementById('current-faction-name').innerText = type.toUpperCase();
+            document.getElementById('player-class').innerText = data.class.toUpperCase();
+            currentParticleColor = data.color;
+            currentParticleType = data.pType;
             initParticles();
             updateTheme(type);
         }
 
         function randomAvatar() {
             const keys = Object.keys(avatarData);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            changeAvatar(randomKey);
+            const rand = keys[Math.floor(Math.random() * keys.length)];
+            changeAvatar(rand);
             playRoll();
         }
 
-        // Modals
-        function openShameModal() { document.getElementById('shameModal').classList.add('show'); document.body.style.overflow = 'hidden'; }
-        function closeShameModal() { document.getElementById('shameModal').classList.remove('show'); document.body.style.overflow = 'auto'; }
-        function closeModalOutside(e) { if (e.target.id === 'shameModal') closeShameModal(); }
+        function openShameModal() { document.getElementById('shameModal').style.display = 'flex'; }
+        function closeShameModal() { document.getElementById('shameModal').style.display = 'none'; }
+        function closeModalOutside(e) { if(e.target.id === 'shameModal') closeShameModal(); }
 
-        // Level
-        function updateLevel() {
-            const birthDate = new Date('2004-11-07');
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            if (today.getMonth() < 10 || (today.getMonth() === 10 && today.getDate() < 7)) age--;
-            document.getElementById('player-level').innerText = age;
-        }
-
-        // Particles
+        // --- FULL PARTICLE SYSTEM ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -504,9 +440,8 @@
             constructor() { this.reset(); this.y = Math.random() * canvas.height; }
             reset() {
                 this.x = Math.random() * canvas.width;
-                this.type = currentParticleType; 
+                this.type = currentParticleType;
                 this.opacity = Math.random() * 0.8 + 0.2;
-
                 if (this.type === 'chaos' || this.type === 'shadow') {
                     this.y = Math.random() * canvas.height;
                 } else {
@@ -515,8 +450,8 @@
 
                 if (this.type === 'chaos') { 
                     this.size = Math.random() * 4 + 2; 
-                    this.speedX = (Math.random() * 6) - 3; 
-                    this.speedY = (Math.random() * 6) - 3; 
+                    this.speedX = (Math.random() * 4) - 2; 
+                    this.speedY = (Math.random() * 4) - 2; 
                 }
                 else if (this.type === 'ember') { 
                     this.size = Math.random() * 3 + 1; 
@@ -525,14 +460,14 @@
                 }
                 else if (this.type === 'wisp') { 
                     this.size = Math.random() * 5 + 3; 
-                    this.speedY = -(Math.random() * 1.5 + 0.5); 
+                    this.speedY = -(Math.random() * 1 + 0.5); 
                     this.speedX = 0; 
                     this.angle = Math.random() * 2; 
                 }
                 else if (this.type === 'blood') { 
                     this.size = Math.random() * 2 + 1; 
                     this.speedX = 0; 
-                    this.speedY = Math.random() * 6 + 4; 
+                    this.speedY = Math.random() * 5 + 3; 
                 }
                 else { 
                     this.size = Math.random() * 10 + 5; 
@@ -542,58 +477,44 @@
                 }
             }
             update() {
-                if (this.type === 'chaos' && Math.random() < 0.05) { 
-                    this.speedX = (Math.random() * 6) - 3; 
-                    this.speedY = (Math.random() * 6) - 3; 
-                }
-                if (this.type === 'wisp') { 
-                    this.angle += 0.05; 
-                    this.x += Math.sin(this.angle) * 1.5; 
-                }
-                if (this.type === 'shadow') { 
-                    this.angle += 0.03; 
-                    this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; 
-                }
-                this.x += this.speedX; 
-                this.y += this.speedY;
-
-                if (this.type === 'chaos' || this.type === 'shadow') {
-                    if (this.x < -50) this.x = canvas.width + 50;
-                    if (this.x > canvas.width + 50) this.x = -50;
-                    if (this.y < -50) this.y = canvas.height + 50;
-                    if (this.y > canvas.height + 50) this.y = -50;
-                } else {
-                    if (this.y < -20 || this.y > canvas.height + 20) this.reset();
-                }
+                if (this.type === 'wisp') { this.angle += 0.05; this.x += Math.sin(this.angle) * 1.5; }
+                if (this.type === 'shadow') { this.angle += 0.03; this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; }
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.y < -30 || this.y > canvas.height + 30 || this.x < -30 || this.x > canvas.width + 30) this.reset();
             }
             draw() {
-                ctx.globalAlpha = this.opacity; 
+                ctx.globalAlpha = this.opacity;
                 ctx.fillStyle = currentParticleColor;
-                ctx.shadowBlur = (this.type === 'wisp' || this.type === 'shadow') ? 25 : 12; 
+                ctx.shadowBlur = (this.type === 'wisp' || this.type === 'shadow') ? 20 : 10;
                 ctx.shadowColor = currentParticleColor;
                 ctx.beginPath();
-                if (this.type === 'chaos') ctx.rect(this.x, this.y, this.size, this.size);
-                else if (this.type === 'blood') ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
+                if (this.type === 'blood') ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
+                else if (this.type === 'chaos') ctx.rect(this.x, this.y, this.size, this.size);
                 else ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill(); 
-                ctx.shadowBlur = 0; 
-                ctx.globalAlpha = 1.0;
+                ctx.fill();
+                ctx.shadowBlur = 0;
             }
         }
+
         function initParticles() {
             particlesArray = [];
-            for (let i = 0; i < (currentParticleType === 'blood' ? 100 : 60); i++) particlesArray.push(new Particle());
+            for (let i = 0; i < 60; i++) particlesArray.push(new Particle());
         }
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
 
-        // INITIALIZATION
         window.onload = () => {
-            updateLevel();
-            randomAvatar(); 
+            const birth = new Date('2004-11-07');
+            const now = new Date();
+            let age = now.getFullYear() - birth.getFullYear();
+            if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
+            document.getElementById('player-level').innerText = age;
+            
+            randomAvatar();
             initParticles();
             animate();
         };
