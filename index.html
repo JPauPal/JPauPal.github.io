@@ -311,7 +311,6 @@
 
     <div class="container">
         <div class="avatar-container">
-            <!-- Defaults to Chaos -->
             <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
         </div>
 
@@ -324,6 +323,8 @@
         <div class="info-badges">
             <div class="badge">LVL: <span id="player-level">21</span></div>
             <div class="badge">CLASS: <span>SURVIVOR</span></div>
+            <!-- Dynamic Faction Display Badge -->
+            <div class="badge">FACTION: <span id="current-faction-name" style="text-transform: uppercase;">CHAOS</span></div>
         </div>
 
         <div class="link-section">
@@ -400,11 +401,11 @@
         };
 
         const avatarData = {
-            'chaos':  { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3' },
+            'chaos':      { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3' },
             'hollowborn': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3' },
-            'legion': { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3' },
-            'nation': { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3' },
-            'doom':   { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3' }
+            'legion':     { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3' },
+            'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3' },
+            'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3' }
         };
 
         let isMuted = true;
@@ -461,6 +462,10 @@
             document.documentElement.style.setProperty('--accent-color', avatarData[type].color);
             document.documentElement.style.setProperty('--main-font', avatarData[type].font);
             document.getElementById('lore-message').innerText = `"${avatarData[type].lore}"`;
+            
+            // Update the Faction Name Text
+            document.getElementById('current-faction-name').innerText = type;
+
             currentParticleColor = avatarData[type].color;
             currentParticleType = avatarData[type].pType;
             initParticles();
@@ -487,7 +492,6 @@
             if (today.getMonth() < 10 || (today.getMonth() === 10 && today.getDate() < 7)) age--;
             document.getElementById('player-level').innerText = age;
         }
-        updateLevel();
 
         // Particles
         const canvas = document.getElementById('particle-canvas');
@@ -503,7 +507,6 @@
                 this.type = currentParticleType; 
                 this.opacity = Math.random() * 0.8 + 0.2;
 
-                // Fixed: Chaos and Shadow start anywhere to prevent getting stuck at top
                 if (this.type === 'chaos' || this.type === 'shadow') {
                     this.y = Math.random() * canvas.height;
                 } else {
@@ -554,7 +557,6 @@
                 this.x += this.speedX; 
                 this.y += this.speedY;
 
-                // Wrap-around for multi-direction types
                 if (this.type === 'chaos' || this.type === 'shadow') {
                     if (this.x < -50) this.x = canvas.width + 50;
                     if (this.x > canvas.width + 50) this.x = -50;
@@ -587,7 +589,14 @@
             particlesArray.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
-        initParticles(); animate();
+
+        // INITIALIZATION
+        window.onload = () => {
+            updateLevel();
+            randomAvatar(); // This handles the "Random Pick on Refresh"
+            initParticles();
+            animate();
+        };
     </script>
 </body>
 </html>
