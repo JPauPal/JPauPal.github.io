@@ -6,13 +6,13 @@
     <title>JPauPal's Hub</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Orbitron:wght@400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&display=swap" rel="stylesheet">
     
     <style>
         /* Theme Variables */
         :root {
-            --accent-color: #00d2ff;
-            --main-font: 'Orbitron', sans-serif;
+            --accent-color: #b5179e; /* Default to Chaos */
+            --main-font: 'Permanent Marker', cursive; /* Default to Chaos */
             --bg-color: #0b0c10;
             --panel-bg: rgba(25, 30, 40, 0.6);
         }
@@ -295,11 +295,11 @@
         
         <!-- Avatar Wrapper -->
         <div class="avatar-container">
-            <img src="MyAvatar.gif" id="main-avatar" alt="My AQW Avatar" class="avatar">
+            <img src="MyAvatarChaos.gif" id="main-avatar" alt="My AQW Avatar" class="avatar">
         </div>
 
         <!-- Lore -->
-        <p id="lore-message" class="lore-text">"The stars align, and the frost takes hold."</p>
+        <p id="lore-message" class="lore-text">"Embrace the madness. Chaos consumes all."</p>
 
         <!-- Faction Button -->
         <button class="roll-faction-btn" onclick="randomAvatar()">Roll Faction</button>
@@ -410,9 +410,8 @@
         
         updateLevel();
 
-        // Avatar & Theme
+        // Avatar & Theme (Base/SpaceArmy removed)
         const avatarData = {
-            'base':   { src: 'MyAvatar.gif', color: '#00d2ff', lore: 'The stars align, and the frost takes hold.', font: "'Orbitron', sans-serif", pType: 'ice' },
             'chaos':  { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos' },
             'hollow': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember' },
             'legion': { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp' },
@@ -426,9 +425,9 @@
             img.src = data.src;
         });
 
-        // State
-        let currentParticleColor = avatarData['base'].color;
-        let currentParticleType = avatarData['base'].pType;
+        // State initialized to Chaos
+        let currentParticleColor = avatarData['chaos'].color;
+        let currentParticleType = avatarData['chaos'].pType;
 
         function changeAvatar(type) {
             document.getElementById('main-avatar').src = avatarData[type].src;
@@ -443,8 +442,7 @@
         }
 
         function randomAvatar() {
-            // Exclude base from roll
-            const factionKeys = Object.keys(avatarData).filter(key => key !== 'base');
+            const factionKeys = Object.keys(avatarData);
             const randomKey = factionKeys[Math.floor(Math.random() * factionKeys.length)];
             changeAvatar(randomKey);
         }
@@ -476,11 +474,7 @@
                 this.angle = Math.random() * Math.PI * 2;
                 this.opacity = Math.random() * 0.8 + 0.2;
 
-                if (this.type === 'ice') {
-                    this.size = Math.random() * 3 + 2;
-                    this.speedX = (Math.random() * 1) - 0.5;
-                    this.speedY = (Math.random() * 1.5) + 0.5;
-                } else if (this.type === 'chaos') {
+                if (this.type === 'chaos') {
                     this.size = Math.random() * 4 + 2;
                     this.speedX = (Math.random() * 6) - 3;
                     this.speedY = (Math.random() * 6) - 3;
@@ -524,7 +518,7 @@
                 // Wrapping
                 if (this.type === 'ember' || this.type === 'wisp') {
                     if (this.y < -20) this.reset();
-                } else if (this.type === 'blood' || this.type === 'ice') {
+                } else if (this.type === 'blood') {
                     if (this.y > canvas.height + 20) this.reset();
                 } else {
                     if (this.x < -20) this.x = canvas.width + 20;
@@ -543,12 +537,7 @@
                 ctx.shadowColor = currentParticleColor;
                 
                 ctx.beginPath();
-                if (this.type === 'ice') {
-                    ctx.moveTo(this.x, this.y - this.size);
-                    ctx.lineTo(this.x + this.size, this.y);
-                    ctx.lineTo(this.x, this.y + this.size);
-                    ctx.lineTo(this.x - this.size, this.y);
-                } else if (this.type === 'chaos') {
+                if (this.type === 'chaos') {
                     ctx.rect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
                 } else if (this.type === 'blood') {
                     ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
