@@ -122,6 +122,31 @@
             box-shadow: 0 0 15px var(--accent-color);
         }
 
+        /* Visit Counter Badge */
+        .visit-counter {
+            position: fixed;
+            bottom: 20px; 
+            left: 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-color);
+            color: #d0d0d0;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.5s ease, background 0.5s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .visit-counter span {
+            color: var(--accent-color);
+            font-weight: bold;
+            transition: color 0.5s ease;
+        }
+
         /* --- STABILIZED AVATAR SECTION WITH POP ANIMATION --- */
         .avatar-area {
             display: flex;
@@ -311,6 +336,10 @@
     <button class="sound-toggle" onclick="toggleSound()">
         <span id="sound-icon">🔇</span>
     </button>
+    
+    <div class="visit-counter">
+        Visits: <span id="visit-count">1</span>
+    </div>
 
     <div class="container">
         <!-- Universe Selector -->
@@ -719,6 +748,15 @@
             requestAnimationFrame(animate);
         }
         window.onload = () => {
+            // Local Storage Visit Counter
+            let hasVisited = localStorage.getItem('pau_hub_visited');
+            if (!hasVisited) {
+                localStorage.setItem('pau_hub_visited', 'true');
+                document.getElementById('visit-count').innerText = "1";
+            } else {
+                document.getElementById('visit-count').innerText = "RETURNING";
+            }
+
             const birth = new Date('2004-11-07');
             const now = new Date();
             let age = now.getFullYear() - birth.getFullYear();
