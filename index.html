@@ -370,7 +370,7 @@
             </a>
             <a href="https://www.roblox.com/users/130118683/profile" class="message-btn" target="_blank" onclick="playClick()">
                 <span class="msg-title">Roblox</span>
-                <span class="msg-desc">Join me on my Roblox adventures.</span>
+                <span class="msg-desc">Join me on Roblox.</span>
             </a>
         </div>
 
@@ -409,7 +409,7 @@
         let isMuted = true;
         let currentTheme = new Audio();
         currentTheme.loop = true;
-        currentTheme.volume = 0.3;
+        currentTheme.volume = 0.1; // Lowered background volume
 
         function toggleSound() {
             isMuted = !isMuted;
@@ -423,8 +423,21 @@
             }
         }
 
-        function playClick() { if (!isMuted) new Audio(audioSources.click).play(); }
-        function playRoll() { if (!isMuted) new Audio(audioSources.roll).play(); }
+        function playClick() { 
+            if (!isMuted) {
+                const sfx = new Audio(audioSources.click);
+                sfx.volume = 0.2; // Lowered sfx volume
+                sfx.play();
+            }
+        }
+        
+        function playRoll() { 
+            if (!isMuted) {
+                const sfx = new Audio(audioSources.roll);
+                sfx.volume = 0.2; // Lowered sfx volume
+                sfx.play();
+            }
+        }
 
         function updateTheme(key) {
             if (isMuted) return;
