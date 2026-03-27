@@ -109,7 +109,7 @@
             min-height: 28px;
         }
 
-        /* Faction Button */
+        /* Standard Buttons */
         .roll-faction-btn {
             background-color: #000000;
             border: 2px solid var(--accent-color);
@@ -243,17 +243,90 @@
             transform: translateY(-2px);
         }
 
-        /* Wall of Shame List */
+        /* Wall of Shame Specific Button & Modal */
+        .shame-btn {
+            border-color: #d90429 !important;
+            color: #d90429 !important;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+        
+        .shame-btn:hover {
+            box-shadow: 0 0 15px #d90429, inset 0 0 10px rgba(255, 255, 255, 0.1) !important;
+            text-shadow: 0 0 8px #d90429 !important;
+        }
+
+        /* Modal Background */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Content Box */
+        .modal-content {
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #d90429;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: left;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #aaa;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #d90429;
+        }
+
         .shame-list {
             list-style: none;
             padding: 0;
             margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .shame-list li {
             padding: 12px 15px;
             background: rgba(0, 0, 0, 0.4);
-            border-left: 3px solid #d90429; /* Kept permanently red for danger */
+            border-left: 3px solid #d90429;
             margin-bottom: 10px;
             border-radius: 4px;
             font-size: 0.9rem;
@@ -264,7 +337,7 @@
         }
 
         .shame-list strong {
-            color: #d90429 !important; /* Force red regardless of theme */
+            color: #d90429;
             font-size: 1.05rem;
             letter-spacing: 1px;
         }
@@ -321,6 +394,24 @@
 
     <!-- Particles -->
     <canvas id="particle-canvas"></canvas>
+
+    <!-- Wall of Shame Modal (Hidden by default) -->
+    <div id="shameModal" class="modal" onclick="closeModalOutside(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeShameModal()">&times;</span>
+            <h2 style="color: #d90429; margin-top: 0; border: none; font-size: 1.8rem;">Wall of Shame</h2>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                A permanent record of those who chose the path of dishonor. Scammers, griefers, and exceptionally toxic individuals.
+            </p>
+            <ul class="shame-list">
+                <li>
+                    <strong>Loonie</strong>
+                    <span class="shame-reason">ID: 1485484728470736906</span>
+                    <span class="shame-reason">Reason: Tried to do a CS AWP Scam</span>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <div class="container">
         
@@ -421,27 +512,33 @@
             </a>
         </div>
 
-        <!-- Wall of Shame -->
-        <div class="link-section">
-            <h2>Wall of Shame</h2>
-            <div class="bio-box">
-                <p>A permanent record of those who chose the path of dishonor. Scammers, griefers, and exceptionally toxic individuals.</p>
-                <ul class="shame-list">
-                    <li>
-                        <strong>[ExampleUsername1]</strong>
-                        <span class="shame-reason">Reason: Scamming / Fake Trading</span>
-                    </li>
-                    <li>
-                        <strong>[ExampleUsername2]</strong>
-                        <span class="shame-reason">Reason: Extreme Toxicity / Griefing</span>
-                    </li>
-                </ul>
-            </div>
+        <!-- Wall of Shame Button -->
+        <div class="link-section" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+            <button class="roll-faction-btn shame-btn" onclick="openShameModal()">⚠️ Wall of Shame ⚠️</button>
         </div>
     </div>
 
     <!-- Scripts -->
     <script>
+        // Modal Logic
+        function openShameModal() {
+            document.getElementById('shameModal').classList.add('show');
+            // Prevent body from scrolling while modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeShameModal() {
+            document.getElementById('shameModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeModalOutside(event) {
+            // Closes the modal if user clicks on the dark background overlay
+            if (event.target === document.getElementById('shameModal')) {
+                closeShameModal();
+            }
+        }
+
         // Auto-Updating Age (Level) Logic
         function updateLevel() {
             // Birthdate: Nov 7, 2004
