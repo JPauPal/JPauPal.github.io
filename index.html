@@ -66,24 +66,35 @@
             position: relative;
         }
 
-        /* Avatar */
-        .avatar {
+        /* Avatar Container (The Frame) */
+        .avatar-container {
+            width: 100%;
             max-width: 320px;
-            height: auto;
+            margin: 0 auto 15px auto;
             border-radius: 15px;
+            overflow: hidden; /* This crops the image inside it, creating the portrait effect */
             filter: drop-shadow(0 0 25px var(--accent-color));
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease;
-            margin-bottom: 15px;
+            transition: filter 0.5s ease;
             position: relative;
             z-index: 5;
-            /* Face zoom origin */
-            transform-origin: 50% 25%; 
         }
 
-        .avatar:hover {
-            transform: scale(1.8);
-            z-index: 10;
+        .avatar-container:hover {
             filter: drop-shadow(0 0 35px var(--accent-color));
+            z-index: 10;
+        }
+
+        /* Avatar Image (The Picture Inside) */
+        .avatar {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: 50% 22%; /* Focuses the zoom on the face area */
+        }
+
+        .avatar-container:hover .avatar {
+            transform: scale(2.2); /* Zooms the character inside the fixed frame */
         }
 
         /* Lore Text */
@@ -207,8 +218,11 @@
     <canvas id="particle-canvas"></canvas>
 
     <div class="container">
-        <!-- Avatar -->
-        <img src="MyAvatar.gif" id="main-avatar" alt="My AQW Avatar" class="avatar">
+        
+        <!-- Avatar Wrapper -->
+        <div class="avatar-container">
+            <img src="MyAvatar.gif" id="main-avatar" alt="My AQW Avatar" class="avatar">
+        </div>
 
         <!-- Lore -->
         <p id="lore-message" class="lore-text">"The stars align, and the frost takes hold."</p>
