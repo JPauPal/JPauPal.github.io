@@ -749,13 +749,12 @@
         }
         window.onload = () => {
             // Local Storage Visit Counter
-            let hasVisited = localStorage.getItem('pau_hub_visited');
-            if (!hasVisited) {
-                localStorage.setItem('pau_hub_visited', 'true');
-                document.getElementById('visit-count').innerText = "1";
-            } else {
-                document.getElementById('visit-count').innerText = "RETURNING";
+            let visits = localStorage.getItem('pau_hub_visits');
+            if (!visits) {
+                visits = 1;
+                localStorage.setItem('pau_hub_visits', visits);
             }
+            document.getElementById('visit-count').innerText = visits;
 
             const birth = new Date('2004-11-07');
             const now = new Date();
