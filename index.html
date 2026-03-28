@@ -335,8 +335,9 @@
             scareDiv.style.display = 'flex';
             scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
-            // Using Google's official public sound library to guarantee it plays anywhere
-            const scareSound = new Audio('https://actions.google.com/sounds/v1/horror/female_scream.ogg'); 
+            // Bypassing the isMuted check so it always plays loudly!
+            // Looking for your downloaded local file named 'michaelmyers.mp3'
+            const scareSound = new Audio('michaelmyers.mp3'); 
             scareSound.volume = 1.0;
             scareSound.play().catch(e => console.error("Sound failed to play:", e));
 
