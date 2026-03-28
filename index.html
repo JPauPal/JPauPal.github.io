@@ -119,9 +119,13 @@
             max-height: 0; overflow: hidden; transition: all 0.4s ease;
             background: rgba(0,0,0,0.8); border-radius: 8px; width: 100%;
             font-family: 'Oxanium', sans-serif; font-size: 0.95rem; text-align: center;
-            color: #fff; margin-top: 0; border: 1px solid transparent;
+            color: #fff; margin-top: 0; border: 0px solid transparent; opacity: 0; padding: 0 12px;
         }
-        .id-dropdown.active { max-height: 60px; margin-top: 10px; padding: 12px; border: 1px solid var(--brand-color); box-shadow: 0 0 15px var(--brand-color); }
+        .id-dropdown.active { 
+            max-height: 60px; margin-top: 10px; padding: 12px; 
+            border: 1px solid var(--brand-color); box-shadow: 0 0 15px var(--brand-color); 
+            opacity: 1; 
+        }
 
         /* Comments Styling */
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -218,13 +222,13 @@
             <h2>Gaming</h2>
             <div class="brand-grid">
                 <!-- AQW Dragon -->
-                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-solid fa-dragon"></i></a>
+                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-sharp-duotone fa-solid fa-dragon"></i></a>
                 <a href="https://steamcommunity.com/id/JPauPal/" class="sq-btn btn-steam" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
-                <!-- Official Roblox Tilted Square -->
+                <!-- Solid Roblox Vector Path (No rendering artifact lines) -->
                 <a href="https://www.roblox.com/users/130118683/profile" class="sq-btn btn-roblox" target="_blank" title="Roblox">
-                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M5.4 2.2L21.8 5.4L18.6 21.8L2.2 18.6L5.4 2.2ZM13.8 14.8L9.2 13.8L10.2 9.2L14.8 10.2L13.8 14.8Z" fill-rule="evenodd"/></svg>
+                    <svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.887 1.884l17.23 4.417-4.417 17.23-17.23-4.417 4.417-17.23zm8.796 12.87l-4.416-1.133 1.132-4.417 4.417 1.133-1.133 4.417z"/></svg>
                 </a>
-                <!-- Official Riot Games Fist -->
+                <!-- Official FontAwesome Riot Fist -->
                 <div class="sq-btn btn-riot" onclick="toggleID('riot')" title="Riot Tag">
                     <i class="fa-sharp fa-solid fa-hand-fist"></i>
                 </div>
@@ -267,14 +271,15 @@
                 <summary class="roll-faction-btn" style="font-size: 1rem; padding: 10px 20px;">🎶 View Song Credits</summary>
                 <div class="credits-box">
                     <div class="credits-grid">
-                        <div class="credit-item"><b>ARK:</b></div> <div class="credit-item">Primal Nature - Darren Curtis</div>
                         <div class="credit-item"><b>Sigma:</b></div> <div class="credit-item">Adrift Among Infinite Stars - Scott Buckley</div>
                         <div class="credit-item"><b>Moira:</b></div> <div class="credit-item">Falling - Infraction x Aim To Head</div>
                         <div class="credit-item"><b>Reinhardt:</b></div> <div class="credit-item">Leaving for Valhalla - Alexander Nakarada</div>
-                        <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
-                        <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
+                        <div class="credit-item"><b>Junkrat:</b></div> <div class="credit-item">Hellcat - Desmeon</div>
+                        <div class="credit-item"><b>Roadhog:</b></div> <div class="credit-item">Hackers - Karl Casey (White Bat Audio)</div>
+                        <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Sleep Demon - White Bat Audio</div>
+                        <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
                         <div class="credit-item"><b>Doom:</b></div> <div class="credit-item">Growing Shadows - myuu</div>
-                        <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Sleep Demon - Infraction</div>
+                        <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
                         <div class="credit-item"><b>Hollowborn:</b></div> <div class="credit-item">Interstellar - Ross Bugden</div>
                     </div>
                 </div>
@@ -296,18 +301,26 @@
             'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
             'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support (Lvl 24)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
             'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank (Lvl 21)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly...', font: "'Metal Mania', cursive", pType: 'wisp', theme: 'ARKTheme.mp3', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains.', font: "'Metal Mania', cursive", pType: 'ember', theme: 'ARKTheme.mp3', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up.', font: "'Metal Mania', cursive", pType: 'blood', theme: 'ARKTheme.mp3', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen.', font: "'Metal Mania', cursive", pType: 'spark', theme: 'ARKTheme.mp3', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage.', font: "'Metal Mania', cursive", pType: 'shadow', theme: 'ARKTheme.mp3', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
+            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly...', font: "'Metal Mania', cursive", pType: 'wisp', theme: '', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains.', font: "'Metal Mania', cursive", pType: 'ember', theme: '', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up.', font: "'Metal Mania', cursive", pType: 'blood', theme: '', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen.', font: "'Metal Mania', cursive", pType: 'spark', theme: '', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage.', font: "'Metal Mania', cursive", pType: 'shadow', theme: '', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
         };
 
         let isMuted = true, currentTheme = new Audio(); currentTheme.loop = true; currentTheme.volume = 0.1; let currentUniverse = 'aqw';
         function toggleSound() { isMuted = !isMuted; const icon = document.getElementById('sound-icon'); if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; } else { icon.innerText = '🔊'; updateTheme(currentFactionKey); } }
         function playClick() { if(!isMuted) { const a = new Audio(audioSources.click); a.volume = 0.2; a.play(); } }
         function playRoll() { if(!isMuted) { const a = new Audio(audioSources.roll); a.volume = 0.2; a.play(); } }
-        function updateTheme(key) { if (isMuted) return; const path = avatarData[key].theme; if (currentTheme.src.includes(path)) return; currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {}); }
+        
+        function updateTheme(key) { 
+            if (isMuted) return; 
+            const path = avatarData[key].theme; 
+            if (!path) { currentTheme.pause(); currentTheme.src = ''; return; }
+            if (currentTheme.src.includes(path)) return; 
+            currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {}); 
+        }
+        
         let currentFactionKey = 'chaos', currentParticleColor = avatarData['chaos'].color, currentParticleType = avatarData['chaos'].pType;
 
         function toggleID(id) { playClick(); const panel = document.getElementById('id-' + id); const isActive = panel.classList.contains('active'); document.querySelectorAll('.id-dropdown').forEach(d => d.classList.remove('active')); if (!isActive) panel.classList.add('active'); }
@@ -385,8 +398,8 @@
         function initGlobalCounter() {
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
             onSnapshot(statsRef, docSnap => { if(docSnap.exists()) document.getElementById('visit-count').innerText = docSnap.data().visits; });
-            if (!localStorage.getItem('pau_hub_global_visit_v21')) {
-                localStorage.setItem('pau_hub_global_visit_v21', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
+            if (!localStorage.getItem('pau_hub_global_visit_v24')) {
+                localStorage.setItem('pau_hub_global_visit_v24', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
             }
         }
 
