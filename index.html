@@ -265,6 +265,13 @@
             transform: translateY(-2px);
         }
 
+        .roll-faction-btn:disabled {
+            border-color: #555;
+            color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         .link-section { margin-bottom: 40px; text-align: left; }
 
         h2 {
@@ -491,7 +498,7 @@
                 <div id="comment-form-area" style="display: none;">
                     <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
                     <div id="comment-error-msg" style="display: none; color: #d90429; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
-                    <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;">Sign Log</button>
+                    <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;" disabled>Connecting...</button>
                 </div>
                 <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">
                     You have already left your mark.
@@ -687,10 +694,12 @@
         function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
         window.onload = () => {
-            let visits = parseInt(localStorage.getItem('pau_hub_visits') || '0');
+            // Updated key name to completely force a cache reset test
+            let visits = parseInt(localStorage.getItem('pau_hub_visits_v2') || '0');
             visits += 1;
-            localStorage.setItem('pau_hub_visits', visits);
+            localStorage.setItem('pau_hub_visits_v2', visits);
             document.getElementById('visit-count').innerText = visits;
+            
             const birth = new Date('2004-11-07'); const now = new Date();
             let age = now.getFullYear() - birth.getFullYear();
             if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
@@ -722,7 +731,15 @@
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app); db = getFirestore(app);
                 await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => { if(u){ currentUser = u; loadComments(); } });
+                
+                onAuthStateChanged(auth, (u) => { 
+                    if(u){ 
+                        currentUser = u; 
+                        document.getElementById('submit-comment-btn').innerText = "Sign Log";
+                        document.getElementById('submit-comment-btn').disabled = false;
+                        loadComments(); 
+                    } 
+                });
             } catch (err) {
                 console.error("Detailed Firebase Error:", err);
                 
@@ -786,7 +803,14 @@
             const errorMsg = document.getElementById('comment-error-msg');
             const text = input.value.trim();
             errorMsg.style.display = 'none';
-            if (!text || !currentUser || !db) return;
+            
+            if (!currentUser) {
+                errorMsg.innerText = "Still connecting to Firebase... Please wait.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            if (!text || !db) return;
             
             document.getElementById('submit-comment-btn').disabled = true;
             
@@ -800,7 +824,7 @@
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
                 
-                // 5-second timeout to detect Brave Shields / Adblockers blocking the network
+                // 5-second timeout to detect Adblockers blocking the network
                 const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 5000));
                 
                 await Promise.race([
@@ -812,9 +836,9 @@
             } catch (e) { 
                 console.error("Write Error:", e); 
                 if (e.message === "NETWORK_TIMEOUT") {
-                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (Brave Shields or an Adblocker) is preventing data from reaching the cloud. Please turn it off to sign the log.";
+                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (like Brave Shields or an Adblocker) is preventing data from reaching the cloud. Please turn it off to sign the log.";
                 } else {
-                    errorMsg.innerText = "Failed to save! Make sure your Security Rules are correct and Brave Shields are off.";
+                    errorMsg.innerText = "Failed to save! Make sure your Security Rules are set to public testing.";
                 }
                 errorMsg.style.display = 'block';
             }
