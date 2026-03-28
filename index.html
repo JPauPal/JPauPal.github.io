@@ -50,9 +50,6 @@
         .sound-toggle { position: fixed; top: 20px; right: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 50%; cursor: pointer; z-index: 1001; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; }
         .sound-toggle:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-color); }
 
-        .visit-counter { position: fixed; bottom: 20px; left: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 8px 18px; border-radius: 25px; font-size: 0.9rem; z-index: 1001; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
-        .visit-counter span { color: var(--accent-color); font-weight: bold; }
-
         .avatar-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; }
         .avatar-area.pop-hidden { transform: scale(0.5); opacity: 0; }
         .avatar-container { width: 320px; height: 320px; margin: 0 auto 15px auto; border-radius: var(--border-radius); overflow: hidden; filter: drop-shadow(0 0 25px var(--accent-color)); transition: all 0.5s ease; background: rgba(0,0,0,0.2); }
@@ -69,14 +66,11 @@
         .badge { background: rgba(0, 0, 0, 0.5); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; min-width: 140px; text-align: center; transition: border-color 0.5s ease; }
         .badge b { color: var(--accent-color); font-weight: bold; }
 
-        .roll-faction-btn { background-color: #000000; border: 2px solid var(--accent-color); color: var(--accent-color); padding: 10px 30px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); }
+        .roll-faction-btn { background-color: #000000; border: 2px solid var(--accent-color); color: var(--accent-color); padding: 10px 30px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .roll-faction-btn:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
 
         .link-section { margin-bottom: 40px; text-align: left; width: 100%; }
         h2 { color: var(--accent-color); margin-bottom: 15px; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; display: inline-block; transition: color 0.5s ease; }
-
-        @keyframes pulseLive { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 255, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); } }
-        .live-dot { display: inline-block; width: 10px; height: 10px; background-color: #00ff00; border-radius: 50%; margin-left: 8px; vertical-align: middle; animation: pulseLive 2s infinite; }
 
         .bio-box { background: var(--panel-bg); border-left: 4px solid var(--accent-color); padding: 20px; border-radius: 0 var(--border-radius) var(--border-radius) 0; margin-bottom: 12px; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
 
@@ -127,28 +121,11 @@
             opacity: 1; 
         }
 
-        /* Comments Styling */
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .comment-entry { background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent-color); padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0; font-family: 'Oxanium', sans-serif; text-align: left; animation: slideIn 0.4s ease-out forwards; }
-        .comment-author { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
-        .comment-meta { font-size: 0.7rem; color: #888; margin-left: 8px; text-transform: none; }
-        .comment-text { color: #ddd; font-size: 1rem; word-break: break-word; line-height: 1.4; }
-        #comment-input { width: 100%; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-family: 'Oxanium', sans-serif; resize: vertical; min-height: 70px; outline: none; transition: border-color 0.3s ease; }
-        #comment-input:focus { border-color: #fff; box-shadow: 0 0 15px var(--accent-color); }
-        .comments-list-container { margin-top: 20px; max-height: 350px; overflow-y: auto; padding-right: 10px; }
-        .comments-list-container::-webkit-scrollbar { width: 6px; }
-        .comments-list-container::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
-
         details.credits-details summary { cursor: pointer; list-style: none; outline: none; display: inline-block; margin-bottom: 20px; transition: transform 0.3s ease; }
         .credits-box { background: var(--panel-bg); padding: 20px; border-radius: var(--border-radius); font-family: 'Oxanium', sans-serif; font-size: 0.85rem; line-height: 1.6; }
     </style>
 </head>
 <body>
-
-    <div id="blacklist-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
-        <h1 style="font-family: 'Creepster', cursive; color: #d90429; font-size: 5rem; text-shadow: 0 0 20px #d90429; margin-bottom: 20px;">NAUGHTY NAUGHTY</h1>
-        <p style="font-family: 'Oxanium', sans-serif; color: #aaa; font-size: 1.5rem;">You have been permanently blacklisted from the Hub.</p>
-    </div>
 
     <canvas id="particle-canvas"></canvas>
 
@@ -156,10 +133,6 @@
         <span id="sound-icon">🔇</span>
     </button>
     
-    <div class="visit-counter">
-        Global Visits: <span id="visit-count">...</span>
-    </div>
-
     <div class="container">
         <div class="universe-selector">
             <button class="universe-btn active" onclick="setUniverse('aqw')" id="btn-aqw-sel">⚔️ AQW</button>
@@ -202,6 +175,7 @@
         <div class="link-section">
             <h2>Socials & Media</h2>
             <div class="brand-grid">
+                <!-- Twitter Bird Locked -->
                 <a href="https://x.com/JPauPal" class="sq-btn btn-twitter" target="_blank" title="Twitter">
                     <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
                 </a>
@@ -220,15 +194,19 @@
         <div class="link-section">
             <h2>Gaming</h2>
             <div class="brand-grid">
+                <!-- AQW Dragon -->
                 <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-solid fa-dragon"></i></a>
                 <a href="https://steamcommunity.com/id/JPauPal/" class="sq-btn btn-steam" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
+                <!-- Solid Roblox Vector Path -->
                 <a href="https://www.roblox.com/users/130118683/profile" class="sq-btn btn-roblox" target="_blank" title="Roblox">
                     <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M5.4 2.2L21.8 5.4L18.6 21.8L2.2 18.6L5.4 2.2ZM13.8 14.8L9.2 13.8L10.2 9.2L14.8 10.2L13.8 14.8Z" fill-rule="evenodd"/></svg>
                 </a>
+                <!-- Official FontAwesome Riot Fist -->
                 <div class="sq-btn btn-riot" onclick="toggleID('riot')" title="Riot Tag">
                     <i class="fa-sharp fa-solid fa-hand-fist"></i>
                 </div>
                 <div class="sq-btn btn-battle" onclick="toggleID('battle')" title="Battle.net Tag"><i class="fa-brands fa-battle-net"></i></div>
+                <!-- Clean Epic Games Shield & E -->
                 <div class="sq-btn btn-epic" onclick="toggleID('epic')" title="Epic ID">
                     <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M12 1.5L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3.5zm3.5 14H8.5v-9h7v1.8h-4.8v1.6h4v1.8h-4v1.8h4.8v2z"/></svg>
                 </div>
@@ -243,22 +221,6 @@
             <div class="brand-grid">
                 <a href="https://patreon.com/Jpaupal" class="sq-btn btn-patreon" target="_blank" title="Patreon"><i class="fa-brands fa-patreon"></i></a>
                 <a href="https://ko-fi.com/jpaupal" class="sq-btn btn-kofi" target="_blank" title="Ko-fi"><i class="fa-solid fa-mug-hot"></i></a>
-            </div>
-        </div>
-
-        <div class="link-section">
-            <h2>Visitor Log <span class="live-dot"></span></h2>
-            <div class="bio-box" style="text-align: center;">
-                <div id="comment-error-msg" style="display: none; font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; background: rgba(217, 4, 41, 0.2); padding: 10px; border-radius: 8px; border: 1px solid #d90429; color: #ff4d4d; font-family: 'Oxanium', sans-serif;"></div>
-                
-                <div id="comment-form-area" style="display: none;">
-                    <textarea id="comment-input" placeholder="Leave your mark... (Max 150 chars)" maxlength="150"></textarea>
-                    <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;" disabled>Connecting...</button>
-                </div>
-                <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">You have already left your mark.</div>
-                <div id="comments-list" class="comments-list-container">
-                    <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to cloud servers...</p>
-                </div>
             </div>
         </div>
 
@@ -445,157 +407,11 @@
         
         function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
-        function showBlacklistScreen() { document.querySelector('.container').style.display = 'none'; document.getElementById('blacklist-screen').style.display = 'flex'; currentTheme.pause(); }
 
         window.onload = () => {
-            if (localStorage.getItem('pau_hub_blacklisted') === 'true') { showBlacklistScreen(); return; }
             const birth = new Date('2004-11-07'); const now = new Date(); let age = now.getFullYear() - birth.getFullYear(); if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
             document.getElementById('player-level').innerText = age; setUniverse('aqw'); initParticles(); animate();
         };
-    </script>
-
-    <!-- Firebase & Security Hashing -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot, increment, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        let db, auth, currentUser; const appId = 'paus-hub-visitor-log';
-        
-        async function generateSecureHash(uid) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(uid + "jpaupal-secure-salt-v1");
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        
-        async function initFirebase() {
-            try {
-                const cfg = { apiKey: "AIzaSyCpn_hqmAJmLxTUo2EjQsx24RFcy6FyVQs", authDomain: "page-62e15.firebaseapp.com", projectId: "page-62e15", storageBucket: "page-62e15.firebasestorage.app", messagingSenderId: "869246385753", appId: "1:869246385753:web:d02116dbe812298096fb48" };
-                const app = initializeApp(cfg); auth = getAuth(app); db = getFirestore(app); 
-                
-                await signInAnonymously(auth).catch(e => {
-                    document.getElementById('comments-list').innerHTML = `<p style="color: #d90429;"><b>Auth Error:</b> ${e.message}</p>`;
-                });
-
-                onAuthStateChanged(auth, u => { 
-                    if(u){ 
-                        currentUser=u; 
-                        document.getElementById('submit-comment-btn').disabled=false; 
-                        document.getElementById('submit-comment-btn').innerText="Sign Log"; 
-                        initGlobalCounter(); 
-                        loadComments(); 
-                    } 
-                });
-            } catch (e) { console.error("Firebase Init Error:", e); }
-        }
-
-        function initGlobalCounter() {
-            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
-            
-            // Show live total count
-            onSnapshot(statsRef, docSnap => { 
-                if(docSnap.exists()) {
-                    document.getElementById('visit-count').innerText = docSnap.data().visits; 
-                }
-            });
-            
-            // Unique Visitor Logic
-            const storageKey = 'pau_hub_unique_visitor_v32';
-            if (!localStorage.getItem(storageKey)) {
-                setDoc(statsRef, { visits: increment(1) }, { merge: true })
-                    .then(() => {
-                        localStorage.setItem(storageKey, 'true');
-                    })
-                    .catch(e => console.error("Counter Error:", e));
-            }
-        }
-
-        function loadComments() {
-            const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-            onSnapshot(commentsRef, { includeMetadataChanges: true }, snapshot => {
-                const list = document.getElementById('comments-list'); list.innerHTML = ''; let hasCommented = false; let comments = [];
-                snapshot.forEach(doc => { 
-                    const data = doc.data(); 
-                    if (data.userId === currentUser.uid && data.isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); return; } 
-                    const isPending = doc.metadata.hasPendingWrites;
-                    if (!data.isTroll) comments.push({ id: doc.id, isPending, ...data }); 
-                    if (data.userId === currentUser.uid) hasCommented = true; 
-                });
-                comments.sort((a,b) => b.timestamp - a.timestamp);
-                if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
-                else {
-                    comments.forEach(c => {
-                        const displayTag = c.visitorTag ? c.visitorTag : c.id.substring(0,6).toUpperCase();
-                        const hue = Math.floor(parseInt(displayTag, 16) % 360) || 120; 
-                        const d = new Date(c.timestamp);
-                        const pendingTag = c.isPending ? `<span style="color: #fca311; font-weight: bold;"> (☁️ Sending...)</span>` : '';
-                        const div = document.createElement('div'); div.className = 'comment-entry';
-                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${displayTag}<span class="comment-meta">🕒 ${d.toLocaleDateString()}${pendingTag}</span></span><span class="comment-text">${c.text}</span>`;
-                        list.appendChild(div);
-                    });
-                }
-                if (document.getElementById('comment-error-msg').style.display === 'none') {
-                    document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
-                    document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
-                }
-            }, error => {
-                console.error("Firestore Read Error:", error);
-            });
-        }
-
-        document.getElementById('submit-comment-btn').addEventListener('click', async () => {
-            const input = document.getElementById('comment-input'), text = input.value.trim(); 
-            const errorMsg = document.getElementById('comment-error-msg');
-            if (!text || !currentUser) return;
-            
-            errorMsg.style.display = 'none';
-            const blocked = ['fuck', 'shit', 'bitch', 'nigger', 'faggot', 'retard'];
-            const isTroll = blocked.some(w => text.toLowerCase().includes(w));
-            
-            document.getElementById('submit-comment-btn').disabled = true;
-            document.getElementById('submit-comment-btn').innerText = "Signing...";
-            
-            try {
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-                const fullHash = await generateSecureHash(currentUser.uid);
-                const visitorTag = fullHash.substring(0, 6).toUpperCase();
-                
-                await addDoc(colRef, { 
-                    text, 
-                    timestamp: Date.now(), 
-                    userId: currentUser.uid, 
-                    isTroll, 
-                    visitorTag, 
-                    signature: fullHash 
-                });
-                
-                input.value = '';
-                errorMsg.style.color = '#00ff00';
-                errorMsg.style.borderColor = '#00ff00';
-                errorMsg.style.background = 'rgba(0, 255, 0, 0.1)';
-                errorMsg.innerHTML = "Log signed successfully!";
-                errorMsg.style.display = 'block';
-                
-                setTimeout(() => {
-                    errorMsg.style.display = 'none';
-                    document.getElementById('comment-form-area').style.display = 'none';
-                    document.getElementById('already-commented-msg').style.display = 'block';
-                }, 2500);
-
-                if (isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); }
-            } catch (e) { 
-                console.error("Write Error:", e); 
-                errorMsg.style.color = '#ff4d4d';
-                errorMsg.style.display = 'block';
-                errorMsg.innerHTML = `⚠️ Error saving: ${e.message}`;
-            }
-            document.getElementById('submit-comment-btn').disabled = false;
-            document.getElementById('submit-comment-btn').innerText = "Sign Log";
-        });
-
-        initFirebase();
     </script>
 </body>
 </html>
