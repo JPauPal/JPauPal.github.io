@@ -389,6 +389,11 @@
 </head>
 <body>
 
+    <div id="blacklist-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
+        <h1 style="font-family: 'Creepster', cursive; color: #d90429; font-size: 5rem; text-shadow: 0 0 20px #d90429; margin-bottom: 20px; letter-spacing: 5px;">NAUGHTY NAUGHTY</h1>
+        <p style="font-family: 'Oxanium', sans-serif; color: #aaa; font-size: 1.5rem;">You have been permanently blacklisted from the Hub.</p>
+    </div>
+
     <canvas id="particle-canvas"></canvas>
 
     <button class="sound-toggle" onclick="toggleSound()">
@@ -693,11 +698,28 @@
         }
         function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        
+        function showBlacklistScreen() {
+            const container = document.querySelector('.container');
+            if (container) container.style.display = 'none';
+            document.getElementById('particle-canvas').style.display = 'none';
+            document.querySelector('.visit-counter').style.display = 'none';
+            document.querySelector('.sound-toggle').style.display = 'none';
+            document.getElementById('blacklist-screen').style.display = 'flex';
+            currentTheme.pause();
+        }
+
         window.onload = () => {
-            // Updated key name to completely force a cache reset test
-            let visits = parseInt(localStorage.getItem('pau_hub_visits_v2') || '0');
-            visits += 1;
-            localStorage.setItem('pau_hub_visits_v2', visits);
+            if (localStorage.getItem('pau_hub_blacklisted') === 'true') {
+                showBlacklistScreen();
+                return;
+            }
+
+            let visits = localStorage.getItem('pau_hub_visits');
+            if (!visits) {
+                visits = 1;
+                localStorage.setItem('pau_hub_visits', visits);
+            }
             document.getElementById('visit-count').innerText = visits;
             
             const birth = new Date('2004-11-07'); const now = new Date();
@@ -763,10 +785,27 @@
             onSnapshot(commentsRef, (snapshot) => {
                 const list = document.getElementById('comments-list');
                 list.innerHTML = ''; let hasCommented = false; let comments = [];
+                
                 snapshot.forEach(doc => { 
-                    comments.push({ id: doc.id, ...doc.data() }); 
+                    const data = doc.data();
+                    
+                    // Enforce Cloud Blacklist
+                    if (doc.id === currentUser.uid && data.isTroll) {
+                        localStorage.setItem('pau_hub_blacklisted', 'true');
+                        showBlacklistScreen();
+                        return;
+                    }
+
+                    // Hide troll comments from everyone else
+                    if (!data.isTroll) {
+                        comments.push({ id: doc.id, ...data }); 
+                    }
+                    
                     if (doc.id === currentUser.uid) hasCommented = true;
                 });
+                
+                if (localStorage.getItem('pau_hub_blacklisted') === 'true') return;
+
                 comments.sort((a, b) => b.timestamp - a.timestamp);
                 if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
                 else {
@@ -813,35 +852,35 @@
             if (!text || !db) return;
             
             document.getElementById('submit-comment-btn').disabled = true;
+            document.getElementById('submit-comment-btn').innerText = "Signing...";
             
-            if (await containsTrollContent(text)) {
-                errorMsg.innerText = "Please keep it clean! Troll comments are not allowed.";
-                errorMsg.style.display = 'block';
-                document.getElementById('submit-comment-btn').disabled = false;
-                return;
-            }
+            const isTroll = await containsTrollContent(text);
 
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
                 
-                // 5-second timeout to detect Adblockers blocking the network
-                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 5000));
-                
-                await Promise.race([
-                    setDoc(docRef, { text: text, timestamp: Date.now(), userId: currentUser.uid }),
-                    timeout
-                ]);
+                await setDoc(docRef, { 
+                    text: text, 
+                    timestamp: Date.now(), 
+                    userId: currentUser.uid,
+                    isTroll: isTroll 
+                });
                 
                 input.value = '';
+
+                // Trigger blacklist if flagged
+                if (isTroll) {
+                    localStorage.setItem('pau_hub_blacklisted', 'true');
+                    showBlacklistScreen();
+                    return;
+                }
+
             } catch (e) { 
                 console.error("Write Error:", e); 
-                if (e.message === "NETWORK_TIMEOUT") {
-                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (like Brave Shields or an Adblocker) is preventing data from reaching the cloud. Please turn it off to sign the log.";
-                } else {
-                    errorMsg.innerText = "Failed to save! Make sure your Security Rules are set to public testing.";
-                }
+                errorMsg.innerText = "Failed to save! Make sure your Security Rules are set to public testing.";
                 errorMsg.style.display = 'block';
             }
+            document.getElementById('submit-comment-btn').innerText = "Sign Log";
             document.getElementById('submit-comment-btn').disabled = false;
         });
 
