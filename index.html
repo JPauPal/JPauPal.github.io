@@ -910,13 +910,12 @@
             const lower = text.toLowerCase();
             if (blockedWords.some(word => lower.includes(word))) return true;
             try {
-                // ADDED 2-SECOND TIMEOUT SO IT DOESNT HANG
                 const controller = new AbortController();
                 const id = setTimeout(() => controller.abort(), 2000);
                 const response = await fetch(`https://www.purgomalum.com/service/containsprofanity?text=${encodeURIComponent(text)}`, { signal: controller.signal });
                 clearTimeout(id);
                 return await response.text() === 'true';
-            } catch (e) { return false; } // If the API is slow, just pass it through
+            } catch (e) { return false; } 
         }
 
         document.getElementById('submit-comment-btn').addEventListener('click', async () => {
@@ -925,7 +924,7 @@
             const text = input.value.trim();
             
             errorMsg.style.display = 'none';
-            errorMsg.style.color = '#d90429'; // reset color to red
+            errorMsg.style.color = '#d90429'; 
             
             if (!currentUser) {
                 errorMsg.innerText = "Still connecting to Firebase... Please wait.";
@@ -938,7 +937,6 @@
             document.getElementById('submit-comment-btn').disabled = true;
             document.getElementById('submit-comment-btn').innerText = "Preparing...";
             
-            // Fast location fetch with a strict 2-second timeout so it never hangs
             const getLocation = async () => {
                 try {
                     const controller = new AbortController();
@@ -952,7 +950,6 @@
                 }
             };
 
-            // Run BOTH the profanity check and location ping at the exact SAME TIME!
             const [isTroll, userCountry] = await Promise.all([
                 containsTrollContent(text),
                 getLocation()
@@ -963,29 +960,32 @@
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
                 
-                await setDoc(docRef, { 
-                    text: text, 
-                    timestamp: Date.now(), 
-                    userId: currentUser.uid,
-                    isTroll: isTroll,
-                    country: userCountry
-                });
+                // Add an 8-second timeout so it doesn't hang forever if blocked by adblocker
+                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 8000));
+
+                await Promise.race([
+                    setDoc(docRef, { 
+                        text: text, 
+                        timestamp: Date.now(), 
+                        userId: currentUser.uid,
+                        isTroll: isTroll,
+                        country: userCountry
+                    }),
+                    timeout
+                ]);
                 
                 input.value = '';
                 
-                // Show absolute proof that the save was successful!
                 errorMsg.style.color = '#00ff00';
                 errorMsg.innerText = "Log signed successfully! Synced to cloud.";
                 errorMsg.style.display = 'block';
 
-                // Trigger blacklist if flagged
                 if (isTroll) {
                     localStorage.setItem('pau_hub_blacklisted', 'true');
                     showBlacklistScreen();
                     return;
                 }
                 
-                // Hide the form after 2 seconds on success
                 setTimeout(() => {
                     document.getElementById('comment-form-area').style.display = 'none';
                     document.getElementById('already-commented-msg').style.display = 'block';
@@ -993,7 +993,11 @@
 
             } catch (e) { 
                 console.error("Write Error:", e); 
-                errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
+                if (e.message === "NETWORK_TIMEOUT") {
+                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser's Adblocker or Network Firewall is preventing the comment from saving to the cloud. Please turn it off to sign the log.";
+                } else {
+                    errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
+                }
                 errorMsg.style.display = 'block';
             }
             
