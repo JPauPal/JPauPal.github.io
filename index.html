@@ -140,14 +140,38 @@
             100% { transform: scale(1.1) translate(1px, -2px) rotate(-1deg); }
         }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; animation: scareShake 0.1s infinite; filter: contrast(1.5) brightness(0.8); }
+
+        /* Minigame Styles */
+        .mg-target {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: crosshair;
+            transition: transform 0.1s;
+        }
+        .mg-target:active { transform: scale(0.7); }
     </style>
 </head>
 <body>
 
     <!-- Jumpscare Container -->
     <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
-        <!-- I added ?v=2 to bust your browser cache in case it remembered the old missing image -->
         <img src="MichaelMyers.jpg?v=2" alt="JUMPSCARE" class="jumpscare-img">
+    </div>
+
+    <!-- Minigame Container -->
+    <div id="minigame-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.85); z-index: 90000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);">
+        <div style="text-align: center; max-width: 450px; width: 90%; background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 0 30px var(--accent-color); font-family: 'Oxanium', sans-serif;">
+            <h2 style="border: none; margin-bottom: 5px; font-family: 'Permanent Marker', cursive; font-size: 2rem;">ANOMALY DETECTED</h2>
+            <p style="color: #ccc; margin-bottom: 20px; font-size: 1rem;">Defend the Hub! Catch all 5 anomalies before they escape.</p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; color: #fff;">
+                <span>⏳ Time: <span id="mg-time" style="color: #fca311;">10</span>s</span>
+                <span>🎯 Caught: <span id="mg-score" style="color: #00ff00;">0</span>/5</span>
+            </div>
+            <div id="mg-area" style="position: relative; width: 100%; height: 350px; background: rgba(0,0,0,0.5); border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);"></div>
+            <h2 id="mg-result" style="display: none; margin-top: 20px; border: none; font-size: 2.5rem; text-transform: uppercase;"></h2>
+        </div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -335,16 +359,118 @@
             scareDiv.style.display = 'flex';
             scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
-            // Bypassing the isMuted check so it always plays loudly!
-            // Looking for your downloaded local file named 'michaelmyers.mp3'
             const scareSound = new Audio('michaelmyers.mp3'); 
             scareSound.volume = 1.0;
             scareSound.play().catch(e => console.error("Sound failed to play:", e));
 
-            // Hide the jumpscare after 5 seconds to match the audio length
             setTimeout(() => {
                 scareDiv.style.display = 'none';
             }, 5000); 
+        }
+
+        // Minigame Logic
+        let mgTimer, mgLoop;
+        let mgTimeLeft = 10;
+        let mgScore = 0;
+        let mgTargets = [];
+
+        function triggerMinigame() {
+            if (!isMuted) playClick();
+            
+            const container = document.getElementById('minigame-container');
+            const resultMsg = document.getElementById('mg-result');
+            const area = document.getElementById('mg-area');
+            
+            container.style.display = 'flex';
+            resultMsg.style.display = 'none';
+            area.style.display = 'block';
+            area.innerHTML = '';
+            
+            mgTimeLeft = 10;
+            mgScore = 0;
+            document.getElementById('mg-time').innerText = mgTimeLeft;
+            document.getElementById('mg-score').innerText = mgScore;
+            mgTargets = [];
+
+            // Spawn 5 Anomalies
+            for (let i = 0; i < 5; i++) {
+                let target = document.createElement('div');
+                target.className = 'mg-target';
+                target.style.backgroundColor = currentParticleColor;
+                target.style.boxShadow = `0 0 15px ${currentParticleColor}`;
+                
+                // Keep them inside bounds initially
+                target.style.left = Math.random() * (area.clientWidth - 40) + 'px';
+                target.style.top = Math.random() * (area.clientHeight - 40) + 'px';
+                
+                // Random speeds based on difficulty
+                target.dx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
+                target.dy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
+                
+                target.onmousedown = function() {
+                    if (this.style.display !== 'none') {
+                        this.style.display = 'none';
+                        mgScore++;
+                        document.getElementById('mg-score').innerText = mgScore;
+                        if (!isMuted) playClick();
+                        
+                        if (mgScore >= 5) endMinigame(true);
+                    }
+                };
+                
+                area.appendChild(target);
+                mgTargets.push({ el: target, x: parseFloat(target.style.left), y: parseFloat(target.style.top), dx: target.dx, dy: target.dy });
+            }
+
+            // Countdown Timer
+            mgTimer = setInterval(() => {
+                mgTimeLeft--;
+                document.getElementById('mg-time').innerText = mgTimeLeft;
+                if (mgTimeLeft <= 0) endMinigame(false);
+            }, 1000);
+
+            // Movement Loop
+            function updateTargets() {
+                mgTargets.forEach(t => {
+                    if (t.el.style.display === 'none') return;
+                    
+                    t.x += t.dx;
+                    t.y += t.dy;
+                    
+                    // Bounce off walls
+                    if (t.x <= 0 || t.x >= area.clientWidth - 35) t.dx *= -1;
+                    if (t.y <= 0 || t.y >= area.clientHeight - 35) t.dy *= -1;
+                    
+                    t.el.style.left = t.x + 'px';
+                    t.el.style.top = t.y + 'px';
+                });
+                mgLoop = requestAnimationFrame(updateTargets);
+            }
+            updateTargets();
+        }
+
+        function endMinigame(won) {
+            clearInterval(mgTimer);
+            cancelAnimationFrame(mgLoop);
+            
+            const area = document.getElementById('mg-area');
+            const resultMsg = document.getElementById('mg-result');
+            
+            area.style.display = 'none';
+            resultMsg.style.display = 'block';
+            
+            if (won) {
+                resultMsg.style.color = '#00ff00';
+                resultMsg.innerText = "DEFENDED!";
+            } else {
+                resultMsg.style.color = '#ff4d4d';
+                resultMsg.innerText = "FAILED!";
+            }
+            
+            // Hide everything after displaying result
+            setTimeout(() => {
+                document.getElementById('minigame-container').style.display = 'none';
+            }, 2000);
         }
 
         let spamClickCount = 0;
@@ -353,21 +479,28 @@
         function handleRoll() {
             const currentTime = Date.now();
             
-            // If they click faster than 600ms, consider it a spam click
+            // Spam detection
             if (currentTime - lastRollTime < 600) {
                 spamClickCount++;
             } else {
-                spamClickCount = 0; // Reset counter if they slow down
+                spamClickCount = 0;
             }
             lastRollTime = currentTime;
 
-            // 5% Random base chance, OR guaranteed scare if they spam it 5 times consecutively!
+            // 5% Random Jumpscare Chance OR 5 Spam Clicks
             if (Math.random() < 0.05 || spamClickCount >= 5) {
-                spamClickCount = 0; // Reset spam counter
+                spamClickCount = 0; 
                 triggerJumpscare();
-                return; // Stop the faction roll so the scare hits harder
+                return;
             }
 
+            // 5% Random Minigame Chance
+            if (Math.random() < 0.05) {
+                triggerMinigame();
+                return;
+            }
+
+            // Normal Character Roll
             const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
             changeAvatar(keys.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*(keys.length-1))]); playRoll();
         }
