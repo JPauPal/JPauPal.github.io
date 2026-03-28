@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pau's Hub</title>
     
-    <!-- Fonts: Standard + Overwatch + Primal -->
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         /* Theme Variables */
@@ -18,11 +19,7 @@
             --border-radius: 12px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: var(--main-font);
@@ -39,389 +36,113 @@
             background: linear-gradient(135deg, #050505 0%, #11111f 50%, #050505 100%);
             background-size: 200% 200%;
             animation: bgShift 15s ease infinite;
-            transition: background 0.5s ease;
         }
 
-        @keyframes bgShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes bgShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Particles */
-        #particle-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 0; pointer-events: none;
-        }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        .container { max-width: 700px; width: 100%; z-index: 1; position: relative; }
 
-        .container {
-            max-width: 700px;
-            width: 100%;
-            z-index: 1;
-            position: relative;
-        }
+        .universe-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .universe-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.1rem; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-family: inherit; text-transform: uppercase; }
+        .universe-btn.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.05); text-shadow: 0 0 10px var(--accent-color); }
 
-        /* Universe Selector */
-        .universe-selector {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            background: rgba(0,0,0,0.4);
-            padding: 10px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(5px);
-        }
+        .sound-toggle { position: fixed; top: 20px; right: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 50%; cursor: pointer; z-index: 1001; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .sound-toggle:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-color); }
 
-        .universe-btn {
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 8px 20px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .visit-counter { position: fixed; bottom: 20px; left: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 8px 18px; border-radius: 25px; font-size: 0.9rem; z-index: 1001; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
+        .visit-counter span { color: var(--accent-color); font-weight: bold; }
 
-        .universe-btn.active {
-            color: var(--accent-color);
-            background: rgba(255, 255, 255, 0.05);
-            text-shadow: 0 0 10px var(--accent-color);
-        }
-
-        .universe-btn:hover { color: #fff; }
-
-        .sound-toggle {
-            position: fixed;
-            top: 20px; right: 20px;
-            background: var(--panel-bg);
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1001;
-            width: 45px; height: 45px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .sound-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--accent-color);
-        }
-
-        /* Visit Counter Badge */
-        .visit-counter {
-            position: fixed;
-            bottom: 20px; 
-            left: 20px;
-            background: var(--panel-bg);
-            border: 1px solid var(--accent-color);
-            color: #d0d0d0;
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            z-index: 1001;
-            backdrop-filter: blur(10px);
-            transition: border-color 0.5s ease, background 0.5s ease;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .visit-counter span {
-            color: var(--accent-color);
-            font-weight: bold;
-            transition: color 0.5s ease;
-        }
-
-        /* --- STABILIZED AVATAR SECTION WITH POP ANIMATION --- */
-        .avatar-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .avatar-area.pop-hidden {
-            transform: scale(0.5);
-            opacity: 0;
-        }
-
-        .avatar-container {
-            width: 320px;
-            height: 320px;
-            margin: 0 auto 15px auto;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            filter: drop-shadow(0 0 25px var(--accent-color));
-            transition: all 0.5s ease;
-            position: relative;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .avatar {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: 50% 50%;
-        }
-
+        .avatar-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; }
+        .avatar-area.pop-hidden { transform: scale(0.5); opacity: 0; }
+        .avatar-container { width: 320px; height: 320px; margin: 0 auto 15px auto; border-radius: var(--border-radius); overflow: hidden; filter: drop-shadow(0 0 25px var(--accent-color)); transition: all 0.5s ease; background: rgba(0,0,0,0.2); }
+        .avatar { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
         .avatar-container:hover .avatar { transform: scale(1.1); }
 
-        .lore-box {
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            width: 100%;
-        }
+        .lore-box { height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%; }
+        .lore-text { font-size: 1.1rem; font-style: italic; color: #d0d0d0; letter-spacing: 1px; text-shadow: 0 0 10px var(--accent-color); text-align: center; width: 100%; }
 
-        .lore-text {
-            font-size: 1.1rem;
-            font-style: italic;
-            color: #d0d0d0;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px var(--accent-color);
-            transition: all 0.5s ease;
-            text-align: center;
-            width: 100%;
-        }
-
-        h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px var(--accent-color);
-            transition: text-shadow 0.5s ease;
-        }
-
+        h1 { font-size: 3rem; font-weight: 800; color: #ffffff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px var(--accent-color); }
         p.subtitle { margin-bottom: 20px; font-size: 1.1rem; color: #aaa; }
 
-        .info-badges {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 35px;
-            min-height: 40px;
-        }
+        .info-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; }
+        .badge { background: rgba(0, 0, 0, 0.5); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; min-width: 140px; text-align: center; transition: border-color 0.5s ease; }
+        .badge b { color: var(--accent-color); font-weight: bold; }
 
-        .badge {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--accent-color);
-            color: #d0d0d0;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            transition: all 0.5s ease;
-            min-width: 140px;
-            text-align: center;
-        }
-        
-        .badge b { color: var(--accent-color); font-weight: bold; text-transform: uppercase; }
-        .badge span { color: var(--accent-color); font-weight: bold; }
+        .roll-faction-btn { background-color: #000000; border: 2px solid var(--accent-color); color: var(--accent-color); padding: 10px 30px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); }
+        .roll-faction-btn:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
 
-        .roll-faction-btn {
-            background-color: #000000;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 10px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: var(--main-font);
-            font-weight: bold;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            margin-bottom: 35px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
+        .link-section { margin-bottom: 40px; text-align: left; width: 100%; }
+        h2 { color: var(--accent-color); margin-bottom: 15px; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; display: inline-block; transition: color 0.5s ease; }
 
-        .roll-faction-btn:hover {
-            box-shadow: 0 0 15px var(--accent-color);
-            transform: translateY(-2px);
-        }
+        @keyframes pulseLive { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 255, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); } }
+        .live-dot { display: inline-block; width: 10px; height: 10px; background-color: #00ff00; border-radius: 50%; margin-left: 8px; vertical-align: middle; animation: pulseLive 2s infinite; }
 
-        .roll-faction-btn:disabled {
-            border-color: #555;
-            color: #555;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .bio-box { background: var(--panel-bg); border-left: 4px solid var(--accent-color); padding: 20px; border-radius: 0 var(--border-radius) var(--border-radius) 0; margin-bottom: 12px; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
 
-        .link-section { margin-bottom: 40px; text-align: left; }
-
-        h2 {
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 5px;
-            display: inline-block;
-        }
-
-        /* Live indicator dot for real-time visual cue */
-        @keyframes pulseLive {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 255, 0, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
-        }
-        .live-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background-color: #00ff00;
-            border-radius: 50%;
-            margin-left: 8px;
-            vertical-align: middle;
-            animation: pulseLive 2s infinite;
-        }
-
-        .bio-box {
-            background: var(--panel-bg);
-            border-left: 4px solid var(--accent-color);
-            padding: 20px;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            margin-bottom: 12px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: border-color 0.5s ease, border-radius 0.5s ease;
-        }
-
-        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .skill-tag {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; color: #fff; transition: all 0.3s ease;
-        }
-
-        .message-btn {
-            display: flex; flex-direction: column; text-decoration: none; color: #ffffff;
-            background: var(--panel-bg); border-left: 4px solid var(--accent-color);
-            padding: 15px 20px; border-radius: 0 var(--border-radius) var(--border-radius) 0; margin-bottom: 12px;
-            transition: all 0.3s ease; position: relative; backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .message-btn:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(10px); }
-        .msg-title { font-weight: 800; font-size: 1.15rem; letter-spacing: 1px; }
-        .msg-desc { font-size: 0.9rem; color: #a0a0b0; margin-top: 4px; }
-
-        .credits-box {
-            background: var(--panel-bg);
-            padding: 20px;
+        /* Icon Grid Styling */
+        .brand-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
+        .sq-btn {
+            width: 65px; height: 65px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--brand-color);
             border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            font-family: 'Oxanium', sans-serif;
-            font-size: 0.85rem;
-            line-height: 1.6;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: all 0.3s ease;
+            backdrop-filter: blur(10px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer; font-size: 1.8rem; overflow: hidden;
         }
+        .sq-btn:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); box-shadow: 0 8px 20px var(--brand-color); }
+        .sq-btn i, .sq-btn svg { color: var(--brand-color); fill: var(--brand-color); transition: transform 0.3s ease; }
+        .sq-btn:hover i, .sq-btn:hover svg { transform: scale(1.1); }
 
-        .credits-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 10px;
-            text-align: left;
+        /* Platform Brand Colors */
+        .btn-twitter  { --brand-color: #1DA1F2; }
+        .btn-facebook { --brand-color: #1877F2; }
+        .btn-bluesky  { --brand-color: #0085FF; }
+        .btn-youtube  { --brand-color: #FF0000; }
+        .btn-twitch   { --brand-color: #9146FF; }
+        .btn-tiktok   { --brand-color: #00f2fe; }
+        .btn-spotify  { --brand-color: #1DB954; }
+        .btn-discord  { --brand-color: #5865F2; }
+        .btn-patreon  { --brand-color: #FF424D; }
+        .btn-kofi     { --brand-color: #FF5E5B; }
+        .btn-aqw      { --brand-color: #f1c40f; }
+        .btn-steam    { --brand-color: #66c0f4; }
+        .btn-roblox   { --brand-color: #ffffff; }
+        .btn-riot     { --brand-color: #d13639; }
+        .btn-battle   { --brand-color: #009ae4; }
+        .btn-epic     { --brand-color: #f5f5f5; }
+
+        /* ID Dropdown */
+        .id-dropdown {
+            max-height: 0; overflow: hidden; transition: all 0.4s ease;
+            background: rgba(0,0,0,0.8); border-radius: 8px; width: 100%;
+            font-family: 'Oxanium', sans-serif; font-size: 0.95rem; text-align: center;
+            color: #fff; margin-top: 0; border: 1px solid transparent;
         }
-
-        .credit-item b { color: var(--accent-color); }
+        .id-dropdown.active { max-height: 60px; margin-top: 10px; padding: 12px; border: 1px solid var(--brand-color); box-shadow: 0 0 15px var(--brand-color); }
 
         /* Comments Styling */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .comment-entry {
-            background: rgba(0,0,0,0.3);
-            border-left: 2px solid var(--accent-color);
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 0 8px 8px 0;
-            font-family: 'Oxanium', sans-serif;
-            text-align: left;
-            transition: border-color 0.5s ease;
-            animation: slideIn 0.4s ease-out forwards; /* Real-time pop-in animation */
-        }
-        .comment-author {
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .comment-meta {
-            font-size: 0.7rem;
-            color: #aaa;
-            font-weight: normal;
-            margin-left: 8px;
-            text-transform: none;
-            letter-spacing: 0;
-        }
-        .comment-text {
-            color: #ddd;
-            font-size: 0.95rem;
-            word-break: break-word;
-        }
-        #comment-input {
-            width: 100%;
-            background: rgba(0,0,0,0.5);
-            color: #fff;
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-family: 'Oxanium', sans-serif;
-            resize: vertical;
-            min-height: 60px;
-            transition: border-color 0.5s ease;
-        }
-        #comment-input:focus {
-            outline: none;
-            box-shadow: 0 0 10px var(--accent-color);
-        }
-        .comments-list-container {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .comment-entry { background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent-color); padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0; font-family: 'Oxanium', sans-serif; text-align: left; animation: slideIn 0.4s ease-out forwards; }
+        .comment-author { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
+        .comment-meta { font-size: 0.7rem; color: #888; margin-left: 8px; text-transform: none; }
+        .comment-text { color: #ddd; font-size: 1rem; word-break: break-word; line-height: 1.4; }
+        #comment-input { width: 100%; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-family: 'Oxanium', sans-serif; resize: vertical; min-height: 70px; outline: none; transition: border-color 0.3s ease; }
+        #comment-input:focus { border-color: #fff; box-shadow: 0 0 15px var(--accent-color); }
+        .comments-list-container { margin-top: 20px; max-height: 350px; overflow-y: auto; padding-right: 10px; }
         .comments-list-container::-webkit-scrollbar { width: 6px; }
-        .comments-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
         .comments-list-container::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
+
+        details.credits-details summary { cursor: pointer; list-style: none; outline: none; display: inline-block; margin-bottom: 20px; transition: transform 0.3s ease; }
+        .credits-box { background: var(--panel-bg); padding: 20px; border-radius: var(--border-radius); font-family: 'Oxanium', sans-serif; font-size: 0.85rem; line-height: 1.6; }
     </style>
 </head>
 <body>
 
     <div id="blacklist-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
-        <h1 style="font-family: 'Creepster', cursive; color: #d90429; font-size: 5rem; text-shadow: 0 0 20px #d90429; margin-bottom: 20px; letter-spacing: 5px;">NAUGHTY NAUGHTY</h1>
+        <h1 style="font-family: 'Creepster', cursive; color: #d90429; font-size: 5rem; text-shadow: 0 0 20px #d90429; margin-bottom: 20px;">NAUGHTY NAUGHTY</h1>
         <p style="font-family: 'Oxanium', sans-serif; color: #aaa; font-size: 1.5rem;">You have been permanently blacklisted from the Hub.</p>
     </div>
 
@@ -436,11 +157,10 @@
     </div>
 
     <div class="container">
-        <!-- Universe Selector -->
         <div class="universe-selector">
-            <button class="universe-btn active" onclick="setUniverse('aqw')" id="btn-aqw">⚔️ AQW</button>
-            <button class="universe-btn" onclick="setUniverse('overwatch')" id="btn-overwatch">🛡️ OW</button>
-            <button class="universe-btn" onclick="setUniverse('ark')" id="btn-ark">🦖 ARK</button>
+            <button class="universe-btn active" onclick="setUniverse('aqw')" id="btn-aqw-sel">⚔️ AQW</button>
+            <button class="universe-btn" onclick="setUniverse('overwatch')" id="btn-overwatch-sel">🛡️ OW</button>
+            <button class="universe-btn" onclick="setUniverse('ark')" id="btn-ark-sel">🦖 ARK</button>
         </div>
 
         <div id="main-display" class="avatar-area">
@@ -466,181 +186,136 @@
             <h2>Character Bio</h2>
             <div class="bio-box">
                 <p>Greetings from the <strong>Philippines</strong>! I'm a programmer, cat lover, and <strong>ARK</strong> survivor.</p>
-                <div class="skill-tags">
-                    <span class="skill-tag">Programming</span>
-                    <span class="skill-tag">Aquascaping</span>
-                    <span class="skill-tag">Carpentry</span>
-                    <span class="skill-tag">Farmhand</span>
+                <div class="skill-tags" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Programming</span>
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Aquascaping</span>
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Carpentry</span>
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Farmhand</span>
                 </div>
             </div>
         </div>
 
         <div class="link-section">
             <h2>Socials & Media</h2>
-            <a href="https://www.youtube.com/@JPauPal" class="message-btn" target="_blank">
-                <span class="msg-title">YouTube</span>
-                <span class="msg-desc">Latest video content and highlights.</span>
-            </a>
-            <a href="https://twitch.tv/JPauPal" class="message-btn" target="_blank">
-                <span class="msg-title">Twitch</span>
-                <span class="msg-desc">Live streams and gameplay.</span>
-            </a>
-            <a href="https://tiktok.com/@JPauPal" class="message-btn" target="_blank">
-                <span class="msg-title">TikTok</span>
-                <span class="msg-desc">Short clips and gaming moments.</span>
-            </a>
-            <a href="https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9" class="message-btn" target="_blank">
-                <span class="msg-title">Spotify</span>
-                <span class="msg-desc">Gaming and chill playlists.</span>
-            </a>
-            <a href="https://discord.com/" class="message-btn" target="_blank">
-                <span class="msg-title">Discord</span>
-                <span class="msg-desc">Handle: PauPal #3436</span>
-            </a>
+            <div class="brand-grid">
+                <!-- Twitter Bird Locked -->
+                <a href="https://x.com/JPauPal" class="sq-btn btn-twitter" target="_blank" title="Twitter">
+                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/jpaupal" class="sq-btn btn-facebook" target="_blank" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://bsky.app/profile/jpaupal.bsky.social" class="sq-btn btn-bluesky" target="_blank" title="Bluesky">
+                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.905C2.566 1.091 1 2.56 1 5.02c0 5.167.957 6.838 3.25 7.429 1.583.41 3.956.35 6.41-.114-1.937 1.114-5.32 3.155-5.32 6.666 0 3.35 3.11 4.542 6.66 2.331 0 0 0 0 0 0 0 0 0 0 0 0 .167-.104.333-.213.5-.328.167.115.333.224.5.328 3.55 2.211 6.66 1.019 6.66-2.331 0-3.511-3.383-5.552-5.32-6.666 2.454.464 4.827.524 6.41.114 2.293-.591 3.25-2.262 3.25-7.43 0-2.46-1.566-3.929-4.202-2.125C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@JPauPal" class="sq-btn btn-youtube" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://twitch.tv/JPauPal" class="sq-btn btn-twitch" target="_blank" title="Twitch"><i class="fa-brands fa-twitch"></i></a>
+                <a href="https://tiktok.com/@JPauPal" class="sq-btn btn-tiktok" target="_blank" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9" class="sq-btn btn-spotify" target="_blank" title="Spotify"><i class="fa-brands fa-spotify"></i></a>
+                <a href="https://discord.com/" class="sq-btn btn-discord" target="_blank" title="Discord"><i class="fa-brands fa-discord"></i></a>
+            </div>
         </div>
 
         <div class="link-section">
             <h2>Gaming</h2>
-            <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="message-btn" target="_blank">
-                <span class="msg-title">AQW CharPage</span>
-                <span class="msg-desc">View my character loadouts.</span>
-            </a>
-            <a href="https://steamcommunity.com/id/JPauPal/" class="message-btn" target="_blank">
-                <span class="msg-title">Steam</span>
-                <span class="msg-desc">My game library and reviews.</span>
-            </a>
-            <a href="https://www.roblox.com/users/130118683/profile" class="message-btn" target="_blank">
-                <span class="msg-title">Roblox</span>
-                <span class="msg-desc">Join me on Roblox.</span>
-            </a>
-            <a href="https://www.riotgames.com/" class="message-btn" target="_blank">
-                <span class="msg-title">Riot Games</span>
-                <span class="msg-desc">Tag: JPauPal #AQWLR</span>
-            </a>
-            <a href="https://account.battle.net/" class="message-btn" target="_blank">
-                <span class="msg-title">Battle.net</span>
-                <span class="msg-desc">Tag: PauPal #3436</span>
-            </a>
-            <a href="https://store.epicgames.com/" class="message-btn" target="_blank">
-                <span class="msg-title">Epic Games</span>
-                <span class="msg-desc">ID: JPauPal</span>
-            </a>
-        </div>
-
-        <!-- VISITOR LOG SECTION -->
-        <div class="link-section">
-            <h2>Visitor Log <span class="live-dot" title="Live Auto-Updating Active"></span></h2>
-            <div class="bio-box" style="text-align: center;">
-                <div id="comment-form-area" style="display: none;">
-                    <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
-                    <div id="comment-error-msg" style="display: none; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
-                    <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;" disabled>Connecting...</button>
+            <div class="brand-grid">
+                <!-- AQW Dragon -->
+                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-solid fa-dragon"></i></a>
+                <a href="https://steamcommunity.com/id/JPauPal/" class="sq-btn btn-steam" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
+                <!-- Official Roblox Tilted Square -->
+                <a href="https://www.roblox.com/users/130118683/profile" class="sq-btn btn-roblox" target="_blank" title="Roblox">
+                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M5.4 2.2L21.8 5.4L18.6 21.8L2.2 18.6L5.4 2.2ZM13.8 14.8L9.2 13.8L10.2 9.2L14.8 10.2L13.8 14.8Z" fill-rule="evenodd"/></svg>
+                </a>
+                <!-- Official Riot Games Fist -->
+                <div class="sq-btn btn-riot" onclick="toggleID('riot')" title="Riot Tag">
+                    <i class="fa-sharp fa-solid fa-hand-fist"></i>
                 </div>
-                <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">
-                    You have already left your mark.
-                </div>
-                <div id="comments-list" class="comments-list-container">
-                    <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to real-time servers...</p>
+                <div class="sq-btn btn-battle" onclick="toggleID('battle')" title="Battle.net Tag"><i class="fa-brands fa-battle-net"></i></div>
+                <!-- Clean Epic Games Shield & E -->
+                <div class="sq-btn btn-epic" onclick="toggleID('epic')" title="Epic ID">
+                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M12 1.5L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3.5zm3.5 14H8.5v-9h7v1.8h-4.8v1.6h4v1.8h-4v1.8h4.8v2z"/></svg>
                 </div>
             </div>
+            <div id="id-riot" class="id-dropdown btn-riot">Tag: JPauPal #AQWLR</div>
+            <div id="id-battle" class="id-dropdown btn-battle">Tag: PauPal #3436</div>
+            <div id="id-epic" class="id-dropdown btn-epic">ID: JPauPal</div>
         </div>
 
         <div class="link-section">
             <h2>Support Me</h2>
-            <a href="https://patreon.com/Jpaupal" class="message-btn" target="_blank">
-                <span class="msg-title">Patreon</span>
-                <span class="msg-desc">Exclusive perks and support.</span>
-            </a>
-            <a href="https://ko-fi.com/jpaupal" class="message-btn" target="_blank">
-                <span class="msg-title">Ko-fi</span>
-                <span class="msg-desc">Buy me a coffee.</span>
-            </a>
+            <div class="brand-grid">
+                <a href="https://patreon.com/Jpaupal" class="sq-btn btn-patreon" target="_blank" title="Patreon"><i class="fa-brands fa-patreon"></i></a>
+                <a href="https://ko-fi.com/jpaupal" class="sq-btn btn-kofi" target="_blank" title="Ko-fi"><i class="fa-solid fa-mug-hot"></i></a>
+            </div>
         </div>
 
         <div class="link-section">
-            <h2>Song Credits</h2>
-            <div class="credits-box">
-                <div class="credits-grid">
-                    <div class="credit-item"><b>ARK:</b></div> <div class="credit-item">Primal Nature - Darren Curtis</div>
-                    <div class="credit-item"><b>Sigma:</b></div> <div class="credit-item">Adrift Among Infinite Stars - Scott Buckley</div>
-                    <div class="credit-item"><b>Moira:</b></div> <div class="credit-item">Falling - Infraction x Aim To Head</div>
-                    <div class="credit-item"><b>Reinhardt:</b></div> <div class="credit-item">Leaving for Valhalla - Alexander Nakarada</div>
-                    <div class="credit-item"><b>Junkrat:</b></div> <div class="credit-item">Cyber Attack - Infraction</div>
-                    <div class="credit-item"><b>Roadhog:</b></div> <div class="credit-item">Hackers - Karl Casey (White Bat Audio)</div>
-                    <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
-                    <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
-                    <div class="credit-item"><b>Doom:</b></div> <div class="credit-item">Growing Shadows - myuu</div>
-                    <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Sleep Demon - Infraction</div>
-                    <div class="credit-item"><b>Hollowborn:</b></div> <div class="credit-item">Interstellar - Ross Bugden</div>
+            <h2>Visitor Log <span class="live-dot"></span></h2>
+            <div class="bio-box" style="text-align: center;">
+                <div id="comment-form-area" style="display: none;">
+                    <textarea id="comment-input" placeholder="Leave your mark... (Max 150 chars)" maxlength="150"></textarea>
+                    <div id="comment-error-msg" style="display: none; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
+                    <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;" disabled>Connecting...</button>
+                </div>
+                <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">You have already left your mark.</div>
+                <div id="comments-list" class="comments-list-container">
+                    <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to cloud servers...</p>
                 </div>
             </div>
         </div>
+
+        <div class="link-section">
+            <details class="credits-details">
+                <summary class="roll-faction-btn" style="font-size: 1rem; padding: 10px 20px;">🎶 View Song Credits</summary>
+                <div class="credits-box">
+                    <div class="credits-grid">
+                        <div class="credit-item"><b>ARK:</b></div> <div class="credit-item">Primal Nature - Darren Curtis</div>
+                        <div class="credit-item"><b>Sigma:</b></div> <div class="credit-item">Adrift Among Infinite Stars - Scott Buckley</div>
+                        <div class="credit-item"><b>Moira:</b></div> <div class="credit-item">Falling - Infraction x Aim To Head</div>
+                        <div class="credit-item"><b>Reinhardt:</b></div> <div class="credit-item">Leaving for Valhalla - Alexander Nakarada</div>
+                        <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
+                        <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
+                        <div class="credit-item"><b>Doom:</b></div> <div class="credit-item">Growing Shadows - myuu</div>
+                        <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Sleep Demon - Infraction</div>
+                        <div class="credit-item"><b>Hollowborn:</b></div> <div class="credit-item">Interstellar - Ross Bugden</div>
+                    </div>
+                </div>
+            </details>
+        </div>
     </div>
 
-    <!-- Logic Script -->
+    <!-- Logic -->
     <script>
-        const audioSources = {
-            click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
-            roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3'
-        };
-
+        const audioSources = { click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3', roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3' };
         const avatarData = {
             'chaos':      { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3', class: 'Chaos Avenger', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Chaos' },
             'hollowborn': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3', class: 'Hollowborn Vindicator', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Hollowborn' },
             'legion':     { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3', class: 'Legion Revenant', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Legion' },
             'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3', class: 'Void Highlord', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Nation' },
             'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3', class: 'Verus Doomknight', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Doom' },
-            
-            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog! Hook, line, and sinker.', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank (Lvl 44)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away! It\'s a perfect day for some mayhem!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage (Lvl 38)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory! REINHARDT REINHARDT REINHARDT!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog!', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank (Lvl 44)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage (Lvl 38)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
             'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support (Lvl 24)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
             'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank (Lvl 21)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-
-            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly, tank like a... well, gasbag.', font: "'Metal Mania', cursive", pType: 'wisp', theme: 'ARKTheme.mp3', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly...', font: "'Metal Mania', cursive", pType: 'wisp', theme: 'ARKTheme.mp3', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
             'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains.', font: "'Metal Mania', cursive", pType: 'ember', theme: 'ARKTheme.mp3', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
             'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up.', font: "'Metal Mania', cursive", pType: 'blood', theme: 'ARKTheme.mp3', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
             'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen.', font: "'Metal Mania', cursive", pType: 'spark', theme: 'ARKTheme.mp3', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
             'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage.', font: "'Metal Mania', cursive", pType: 'shadow', theme: 'ARKTheme.mp3', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
         };
 
-        let isMuted = true;
-        let currentTheme = new Audio();
-        currentTheme.loop = true;
-        currentTheme.volume = 0.1;
-        let currentUniverse = 'aqw';
-
-        currentTheme.addEventListener('ended', function() {
-            if (!isMuted) { this.currentTime = 0; this.play(); }
-        });
-
-        function toggleSound() {
-            isMuted = !isMuted;
-            const icon = document.getElementById('sound-icon');
-            if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; }
-            else { icon.innerText = '🔊'; updateTheme(currentFactionKey); }
-        }
-
+        let isMuted = true, currentTheme = new Audio(); currentTheme.loop = true; currentTheme.volume = 0.1; let currentUniverse = 'aqw';
+        function toggleSound() { isMuted = !isMuted; const icon = document.getElementById('sound-icon'); if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; } else { icon.innerText = '🔊'; updateTheme(currentFactionKey); } }
         function playClick() { if(!isMuted) { const a = new Audio(audioSources.click); a.volume = 0.2; a.play(); } }
         function playRoll() { if(!isMuted) { const a = new Audio(audioSources.roll); a.volume = 0.2; a.play(); } }
+        function updateTheme(key) { if (isMuted) return; const path = avatarData[key].theme; if (currentTheme.src.includes(path)) return; currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {}); }
+        let currentFactionKey = 'chaos', currentParticleColor = avatarData['chaos'].color, currentParticleType = avatarData['chaos'].pType;
 
-        function updateTheme(key) {
-            if (isMuted) return;
-            const path = avatarData[key].theme;
-            if (currentTheme.src.includes(path)) return;
-            currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {});
-        }
-
-        let currentFactionKey = 'chaos';
-        let currentParticleColor = avatarData['chaos'].color;
-        let currentParticleType = avatarData['chaos'].pType;
+        function toggleID(id) { playClick(); const panel = document.getElementById('id-' + id); const isActive = panel.classList.contains('active'); document.querySelectorAll('.id-dropdown').forEach(d => d.classList.remove('active')); if (!isActive) panel.classList.add('active'); }
 
         function changeAvatar(type) {
-            const display = document.getElementById('main-display');
-            display.classList.add('pop-hidden');
+            const display = document.getElementById('main-display'); display.classList.add('pop-hidden');
             setTimeout(() => {
-                currentFactionKey = type;
-                const data = avatarData[type];
+                currentFactionKey = type; const data = avatarData[type];
                 document.getElementById('main-avatar').src = data.src;
                 document.documentElement.style.setProperty('--accent-color', data.color);
                 document.documentElement.style.setProperty('--main-font', data.font);
@@ -648,361 +323,103 @@
                 document.getElementById('lore-message').innerText = `"${data.lore}"`;
                 document.getElementById('faction-label').innerText = data.fLabel;
                 document.getElementById('class-label').innerText = data.cLabel;
-                let displayName = (currentUniverse === 'aqw') ? data.fDisplay : type.charAt(0).toUpperCase() + type.slice(1);
-                document.getElementById('current-faction-name').innerText = displayName.toUpperCase();
+                document.getElementById('current-faction-name').innerText = (currentUniverse === 'aqw' ? data.fDisplay : type.toUpperCase());
                 document.getElementById('player-class').innerText = data.class.toUpperCase();
-                currentParticleColor = data.color;
-                currentParticleType = data.pType;
-                document.getElementById('player-level-badge').style.display = (currentUniverse === 'aqw') ? 'block' : 'none';
-                initParticles(); updateTheme(type);
-                display.classList.remove('pop-hidden');
+                currentParticleColor = data.color; currentParticleType = data.pType;
+                document.getElementById('player-level-badge').style.display = (currentUniverse === 'aqw' ? 'block' : 'none');
+                initParticles(); updateTheme(type); display.classList.remove('pop-hidden');
             }, 250); 
         }
 
         function setUniverse(u) {
-            currentUniverse = u;
-            document.querySelectorAll('.universe-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + u).classList.add('active');
-            const rollBtn = document.getElementById('roll-btn-main');
-            if(u === 'overwatch') { rollBtn.innerText = "Switch Hero"; changeAvatar('roadhog'); }
-            else if (u === 'ark') { rollBtn.innerText = "Next Mob"; changeAvatar('gasbags'); }
-            else { rollBtn.innerText = "Roll Faction"; randomAvatarAQW(); }
-            playClick();
+            currentUniverse = u; document.querySelectorAll('.universe-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + u + '-sel').classList.add('active');
+            const rollBtn = document.getElementById('roll-btn-main'); rollBtn.innerText = (u === 'overwatch' ? "Switch Hero" : u === 'ark' ? "Next Mob" : "Roll Faction");
+            changeAvatar(u === 'overwatch' ? 'roadhog' : u === 'ark' ? 'gasbags' : 'chaos'); playClick();
         }
 
         function handleRoll() {
-            if (currentUniverse === 'aqw') randomAvatarAQW();
-            else if (currentUniverse === 'overwatch') randomAvatarOW();
-            else randomAvatarARK();
+            const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
+            changeAvatar(keys.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*(keys.length-1))]); playRoll();
         }
 
-        function randomAvatarAQW() { const k = ['chaos','hollowborn','legion','nation','doom']; changeAvatar(k[Math.floor(Math.random()*k.length)]); playRoll(); }
-        function randomAvatarOW() { const k = ['roadhog','junkrat','reinhardt','moira','sigma']; changeAvatar(k.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*4)]); playRoll(); }
-        function randomAvatarARK() { const k = ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']; changeAvatar(k.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*4)]); playRoll(); }
-
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
-
+        const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.onresize = resize; resize();
         let particlesArray = [];
         class Particle {
             constructor() { this.reset(); this.y = Math.random() * canvas.height; }
             reset() {
-                this.x = Math.random() * canvas.width;
-                this.type = currentParticleType;
-                this.opacity = Math.random() * 0.8 + 0.2;
-                if (['chaos','shadow','scrap','bomb','shield','gravity','orb','spark'].includes(this.type)) this.y = Math.random() * canvas.height;
-                else this.y = (this.type === 'ember' || this.type === 'wisp') ? canvas.height + 10 : -10;
-                if (this.type === 'chaos') { this.size = Math.random() * 4 + 2; this.speedX = (Math.random() * 4) - 2; this.speedY = (Math.random() * 4) - 2; }
-                else if (this.type === 'scrap') { this.size = Math.random() * 5 + 2; this.speedX = (Math.random() * 4) - 2; this.speedY = Math.random() * 2 + 1; }
-                else if (this.type === 'bomb') { this.size = Math.random() * 3 + 1; this.speedX = (Math.random() * 10) - 5; this.speedY = (Math.random() * 10) - 5; }
-                else if (this.type === 'gravity') { this.size = Math.random() * 6 + 2; this.speedX = (Math.random() * 2) - 1; this.speedY = (Math.random() * 2) - 1; this.angle = Math.random() * 360; }
-                else if (this.type === 'spark') { this.size = Math.random() * 2 + 1; this.speedX = (Math.random() * 6) - 3; this.speedY = (Math.random() * 6) - 3; }
-                else if (this.type === 'shield') { this.size = Math.random() * 8 + 4; this.speedX = (Math.random() * 1) - 0.5; this.speedY = -(Math.random() * 0.5 + 0.2); }
-                else if (this.type === 'ember') { this.size = Math.random() * 3 + 1; this.speedX = (Math.random() * 1) - 0.5; this.speedY = -(Math.random() * 2 + 1); }
-                else if (this.type === 'wisp') { this.size = Math.random() * 5 + 3; this.speedY = -(Math.random() * 1 + 0.5); this.speedX = 0; this.angle = Math.random() * 2; }
-                else if (this.type === 'blood') { this.size = Math.random() * 2 + 1; this.speedX = 0; this.speedY = Math.random() * 5 + 3; }
-                else { this.size = Math.random() * 10 + 5; this.speedX = Math.random() - 0.5; this.speedY = Math.random() - 0.5; }
+                this.x = Math.random() * canvas.width; this.type = currentParticleType; this.opacity = Math.random() * 0.8 + 0.2;
+                this.y = (['chaos','shadow','scrap','bomb','shield','gravity','orb','spark'].includes(this.type) ? Math.random() * canvas.height : canvas.height + 10);
+                this.size = Math.random() * 4 + 2; this.speedX = (Math.random() * 4) - 2; this.speedY = (Math.random() * 4) - 2;
             }
-            update() {
-                if (this.type === 'wisp') { this.angle += 0.05; this.x += Math.sin(this.angle) * 1.5; }
-                if (this.type === 'shadow') { this.angle += 0.03; this.opacity = (Math.sin(this.angle) + 1) / 2 * 0.8 + 0.1; }
-                if (this.type === 'gravity') { this.angle += 0.02; this.x += Math.cos(this.angle) * 2; this.y += Math.sin(this.angle) * 2; }
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.y < -30 || this.y > canvas.height + 30 || this.x < -30 || this.x > canvas.width + 30) this.reset();
-            }
-            draw() {
-                ctx.globalAlpha = this.opacity; ctx.fillStyle = currentParticleColor;
-                ctx.shadowBlur = (['wisp','shadow','bomb','shield','gravity','spark'].includes(this.type)) ? 20 : 0;
-                ctx.shadowColor = currentParticleColor; ctx.beginPath();
-                if (this.type === 'blood') ctx.ellipse(this.x, this.y, this.size/2, this.size * 3, 0, 0, Math.PI * 2);
-                else if (['chaos','scrap','gravity','spark'].includes(this.type)) ctx.rect(this.x, this.y, this.size, this.size);
-                else if (this.type === 'shield') {
-                    ctx.moveTo(this.x, this.y - this.size); ctx.lineTo(this.x + this.size, this.y - this.size/2);
-                    ctx.lineTo(this.x + this.size, this.y + this.size/2); ctx.lineTo(this.x, this.y + this.size);
-                    ctx.lineTo(this.x - this.size, this.y + this.size/2); ctx.lineTo(this.x - this.size, this.y - this.size/2);
-                    ctx.closePath();
-                } else ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill(); ctx.shadowBlur = 0;
-            }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.y < -30 || this.y > canvas.height + 30 || this.x < -30 || this.x > canvas.width + 30) this.reset(); }
+            draw() { ctx.globalAlpha = this.opacity; ctx.fillStyle = currentParticleColor; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
         function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
-        
-        function showBlacklistScreen() {
-            const container = document.querySelector('.container');
-            if (container) container.style.display = 'none';
-            document.getElementById('particle-canvas').style.display = 'none';
-            document.querySelector('.visit-counter').style.display = 'none';
-            document.querySelector('.sound-toggle').style.display = 'none';
-            document.getElementById('blacklist-screen').style.display = 'flex';
-            currentTheme.pause();
-        }
+        function showBlacklistScreen() { document.querySelector('.container').style.display = 'none'; document.getElementById('blacklist-screen').style.display = 'flex'; currentTheme.pause(); }
 
         window.onload = () => {
-            if (localStorage.getItem('pau_hub_blacklisted') === 'true') {
-                showBlacklistScreen();
-                return;
-            }
-
-            const birth = new Date('2004-11-07'); const now = new Date();
-            let age = now.getFullYear() - birth.getFullYear();
-            if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
-            document.getElementById('player-level').innerText = age;
-            setUniverse('aqw'); initParticles(); animate();
+            if (localStorage.getItem('pau_hub_blacklisted') === 'true') { showBlacklistScreen(); return; }
+            const birth = new Date('2004-11-07'); const now = new Date(); let age = now.getFullYear() - birth.getFullYear(); if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
+            document.getElementById('player-level').innerText = age; setUniverse('aqw'); initParticles(); animate();
         };
     </script>
 
-    <!-- Firebase Backend -->
+    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        let db = null, auth = null, currentUser = null;
-        const appId = 'paus-hub-visitor-log';
+        let db, auth, currentUser; const appId = 'paus-hub-visitor-log';
         
         async function initFirebase() {
             try {
-                const firebaseConfig = {
-                  apiKey: "AIzaSyCpn_hqmAJmLxTUo2EjQsx24RFcy6FyVQs",
-                  authDomain: "page-62e15.firebaseapp.com",
-                  projectId: "page-62e15",
-                  storageBucket: "page-62e15.firebasestorage.app",
-                  messagingSenderId: "869246385753",
-                  appId: "1:869246385753:web:d02116dbe812298096fb48"
-                };
-                
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app); db = getFirestore(app);
-                await signInAnonymously(auth);
-                
-                onAuthStateChanged(auth, (u) => { 
-                    if(u){ 
-                        currentUser = u; 
-                        document.getElementById('submit-comment-btn').innerText = "Sign Log";
-                        document.getElementById('submit-comment-btn').disabled = false;
-                        initGlobalCounter();
-                        loadComments(); 
-                    } 
-                });
-            } catch (err) {
-                console.error("Detailed Firebase Error:", err);
-                let fixMsg = "(Check the chat for how to fix this!)";
-                if (err.code === 'auth/configuration-not-found') {
-                    fixMsg = "<b>Quick Fix:</b> Go to your Firebase Console -> Authentication -> Sign-in method. Make sure you enabled 'Anonymous' and hit Save!";
-                } else if (err.code === 'auth/unauthorized-domain') {
-                    fixMsg = "<b>Quick Fix:</b> Go to Firebase Console -> Authentication -> Settings -> Authorized domains. Add this website's URL to the list.";
-                }
-
-                document.getElementById('comments-list').innerHTML = `
-                    <p style="color: #d90429; font-size: 0.9rem;"><b>Error:</b> ${err.code || err.message}</p>
-                    <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">${fixMsg}</p>
-                `;
-            }
+                const cfg = { apiKey: "AIzaSyCpn_hqmAJmLxTUo2EjQsx24RFcy6FyVQs", authDomain: "page-62e15.firebaseapp.com", projectId: "page-62e15", storageBucket: "page-62e15.firebasestorage.app", messagingSenderId: "869246385753", appId: "1:869246385753:web:d02116dbe812298096fb48" };
+                const app = initializeApp(cfg); auth = getAuth(app); db = getFirestore(app); await signInAnonymously(auth);
+                onAuthStateChanged(auth, u => { if(u){ currentUser=u; document.getElementById('submit-comment-btn').disabled=false; document.getElementById('submit-comment-btn').innerText="Sign Log"; initGlobalCounter(); loadComments(); } });
+            } catch (e) { console.error(e); }
         }
 
-        // GLOBAL VISITOR COUNTER logic
         function initGlobalCounter() {
-            if (!db) return;
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
-            
-            // Listen to the cloud value in real-time with Metadata tracking to spot blocked uploads!
-            onSnapshot(statsRef, { includeMetadataChanges: true }, (docSnap) => {
-                let v = 0;
-                if (docSnap.exists()) {
-                    v = docSnap.data().visits || 0;
-                }
-                
-                // If it says 'Uploading', the network is blocking the +1 from saving
-                const isPending = docSnap.exists() && docSnap.metadata.hasPendingWrites;
-                document.getElementById('visit-count').innerText = v + (isPending ? ' (☁️ Uploading...)' : '');
-            });
-
-            // Increment the cloud counter if this device has never visited before
-            if (!localStorage.getItem('pau_hub_global_visit_v4')) {
-                localStorage.setItem('pau_hub_global_visit_v4', 'true');
-                setDoc(statsRef, { visits: increment(1) }, { merge: true })
-                    .then(() => console.log("Successfully added +1 to global visits!"))
-                    .catch(e => console.error("Counter Error", e));
+            onSnapshot(statsRef, docSnap => { if(docSnap.exists()) document.getElementById('visit-count').innerText = docSnap.data().visits; });
+            if (!localStorage.getItem('pau_hub_global_visit_v21')) {
+                localStorage.setItem('pau_hub_global_visit_v21', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
             }
         }
 
         function loadComments() {
-            if (!currentUser || !db) return;
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-            
-            // Listen in real-time and explicitly check for network-blocked (pending) uploads
-            onSnapshot(commentsRef, { includeMetadataChanges: true }, (snapshot) => {
-                const list = document.getElementById('comments-list');
-                list.innerHTML = ''; let hasCommented = false; let comments = [];
-                
-                snapshot.forEach(doc => { 
-                    const data = doc.data();
-                    const isPending = doc.metadata.hasPendingWrites; // TRUE if network is blocked
-                    
-                    // Enforce Cloud Blacklist
-                    if (doc.id === currentUser.uid && data.isTroll) {
-                        localStorage.setItem('pau_hub_blacklisted', 'true');
-                        showBlacklistScreen();
-                        return;
-                    }
-
-                    // Hide troll comments from everyone else
-                    if (!data.isTroll) {
-                        comments.push({ id: doc.id, isPending: isPending, ...data }); 
-                    }
-                    
-                    if (doc.id === currentUser.uid) hasCommented = true;
-                });
-                
-                if (localStorage.getItem('pau_hub_blacklisted') === 'true') return;
-
-                comments.sort((a, b) => b.timestamp - a.timestamp);
+            onSnapshot(commentsRef, snapshot => {
+                const list = document.getElementById('comments-list'); list.innerHTML = ''; let hasCommented = false; let comments = [];
+                snapshot.forEach(doc => { const data = doc.data(); if (doc.id === currentUser.uid && data.isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); return; } if (!data.isTroll) comments.push({ id: doc.id, ...data }); if (doc.id === currentUser.uid) hasCommented = true; });
+                comments.sort((a,b) => b.timestamp - a.timestamp);
                 if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
                 else {
                     comments.forEach(c => {
+                        const hue = Math.floor(parseInt(c.id.substring(0,6),16)%360)||120; const d = new Date(c.timestamp);
                         const div = document.createElement('div'); div.className = 'comment-entry';
-                        const hue = Math.floor(parseInt(c.id.substring(0, 6), 16) % 360) || 120;
-                        
-                        // Parse the timestamp into readable format
-                        const dateObj = new Date(c.timestamp);
-                        const timeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        const locStr = c.country ? c.country : 'Unknown Region';
-                        
-                        // The Smoking Gun: Will show if the connection is blocked!
-                        const pendingTag = c.isPending ? `<span style="color: #fca311; font-weight: bold; animation: pulseLive 1s infinite;"> (☁️ Uploading...)</span>` : '';
-
-                        div.innerHTML = `
-                            <span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">
-                                Visitor #${c.id.substring(0,5)}
-                                <span class="comment-meta">📍 ${locStr} • 🕒 ${timeStr} ${pendingTag}</span>
-                            </span>
-                            <span class="comment-text">${escapeHTML(c.text)}</span>
-                        `;
+                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${c.id.substring(0,5)}<span class="comment-meta">🕒 ${d.toLocaleDateString()}</span></span><span class="comment-text">${c.text}</span>`;
                         list.appendChild(div);
                     });
                 }
-                
-                // Toggle comment box visibility based on whether they've already commented
-                if (hasCommented) {
-                    // Only hide if we aren't currently showing the bright green success message
-                    if (document.getElementById('comment-error-msg').style.color !== 'rgb(0, 255, 0)') {
-                        document.getElementById('comment-form-area').style.display = 'none';
-                        document.getElementById('already-commented-msg').style.display = 'block';
-                    }
-                } else {
-                    document.getElementById('comment-form-area').style.display = 'block';
-                    document.getElementById('already-commented-msg').style.display = 'none';
-                }
-            }, (error) => {
-                console.error("Firestore Read Error:", error);
-                document.getElementById('comments-list').innerHTML = `<p style="color: #d90429; font-size: 0.9rem;"><b>Database Blocked:</b> ${error.message}</p><p style="color: #888; font-size: 0.85rem;">Check your Firebase Rules and turn off Brave Shields!</p>`;
+                document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
+                document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
             });
         }
 
-        function escapeHTML(s) { return s.replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t)); }
-
-        const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'nigger', 'faggot', 'slut', 'whore', 'kys', 'retard', 'kill yourself', 'nazi'];
-        
-        async function containsTrollContent(text) {
-            const lower = text.toLowerCase();
-            if (blockedWords.some(word => lower.includes(word))) return true;
-            try {
-                const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), 2000);
-                const response = await fetch(`https://www.purgomalum.com/service/containsprofanity?text=${encodeURIComponent(text)}`, { signal: controller.signal });
-                clearTimeout(id);
-                return await response.text() === 'true';
-            } catch (e) { return false; } 
-        }
-
         document.getElementById('submit-comment-btn').addEventListener('click', async () => {
-            const input = document.getElementById('comment-input');
-            const errorMsg = document.getElementById('comment-error-msg');
-            const text = input.value.trim();
-            
-            errorMsg.style.display = 'none';
-            errorMsg.style.color = '#d90429'; 
-            
-            if (!currentUser) {
-                errorMsg.innerText = "Still connecting to Firebase... Please wait.";
-                errorMsg.style.display = 'block';
-                return;
-            }
-            
-            if (!text || !db) return;
-            
+            const input = document.getElementById('comment-input'), text = input.value.trim(); if (!text || !currentUser) return;
+            const blocked = ['fuck', 'shit', 'bitch', 'nigger', 'faggot', 'retard'];
+            const isTroll = blocked.some(w => text.toLowerCase().includes(w));
             document.getElementById('submit-comment-btn').disabled = true;
-            document.getElementById('submit-comment-btn').innerText = "Preparing...";
-            
-            const getLocation = async () => {
-                try {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), 2000);
-                    const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
-                    clearTimeout(id);
-                    const data = await res.json();
-                    return data.country_name || "Unknown Region";
-                } catch (err) {
-                    return "Unknown Region";
-                }
-            };
-
-            const [isTroll, userCountry] = await Promise.all([
-                containsTrollContent(text),
-                getLocation()
-            ]);
-
-            document.getElementById('submit-comment-btn').innerText = "Signing...";
-
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
-                
-                // Add an 8-second timeout so it doesn't hang forever if blocked by adblocker
-                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 8000));
-
-                await Promise.race([
-                    setDoc(docRef, { 
-                        text: text, 
-                        timestamp: Date.now(), 
-                        userId: currentUser.uid,
-                        isTroll: isTroll,
-                        country: userCountry
-                    }),
-                    timeout
-                ]);
-                
-                input.value = '';
-                
-                errorMsg.style.color = '#00ff00';
-                errorMsg.innerText = "Log signed successfully! Synced to cloud.";
-                errorMsg.style.display = 'block';
-
-                if (isTroll) {
-                    localStorage.setItem('pau_hub_blacklisted', 'true');
-                    showBlacklistScreen();
-                    return;
-                }
-                
-                setTimeout(() => {
-                    document.getElementById('comment-form-area').style.display = 'none';
-                    document.getElementById('already-commented-msg').style.display = 'block';
-                }, 2000);
-
-            } catch (e) { 
-                console.error("Write Error:", e); 
-                if (e.message === "NETWORK_TIMEOUT") {
-                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser's Adblocker or Network Firewall is preventing the comment from saving to the cloud. Please turn it off to sign the log.";
-                } else {
-                    errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
-                }
-                errorMsg.style.display = 'block';
-            }
-            
-            document.getElementById('submit-comment-btn').innerText = "Sign Log";
-            document.getElementById('submit-comment-btn').disabled = false;
+                await setDoc(docRef, { text, timestamp: Date.now(), userId: currentUser.uid, isTroll });
+                if (isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); }
+            } catch (e) { console.error(e); }
         });
 
         initFirebase();
