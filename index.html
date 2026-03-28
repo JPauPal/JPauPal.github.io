@@ -808,18 +808,19 @@
             if (!db) return;
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
             
-            // Listen to the cloud value in real-time
-            onSnapshot(statsRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    document.getElementById('visit-count').innerText = docSnap.data().visits || 1;
-                } else {
-                    document.getElementById('visit-count').innerText = 1;
-                }
+            // Listen to the cloud value in real-time with Metadata tracking to spot blocked uploads!
+            onSnapshot(statsRef, { includeMetadataChanges: true }, (docSnap) => {
+                let v = 1;
+                if (docSnap.exists()) v = docSnap.data().visits || 1;
+                
+                // If it says 'Uploading', the network is blocking the +1 from saving
+                const isPending = docSnap.exists() && docSnap.metadata.hasPendingWrites;
+                document.getElementById('visit-count').innerText = v + (isPending ? ' (☁️ Uploading...)' : '');
             });
 
             // Increment the cloud counter if this device has never visited before
-            if (!localStorage.getItem('pau_hub_global_visit')) {
-                localStorage.setItem('pau_hub_global_visit', 'true');
+            if (!localStorage.getItem('pau_hub_global_visit_v3')) {
+                localStorage.setItem('pau_hub_global_visit_v3', 'true');
                 setDoc(statsRef, { visits: increment(1) }, { merge: true }).catch(e => console.error("Counter Error", e));
             }
         }
@@ -828,13 +829,14 @@
             if (!currentUser || !db) return;
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
             
-            // onSnapshot automatically listens and auto-updates in REAL-TIME!
-            onSnapshot(commentsRef, (snapshot) => {
+            // Listen in real-time and explicitly check for network-blocked (pending) uploads
+            onSnapshot(commentsRef, { includeMetadataChanges: true }, (snapshot) => {
                 const list = document.getElementById('comments-list');
                 list.innerHTML = ''; let hasCommented = false; let comments = [];
                 
                 snapshot.forEach(doc => { 
                     const data = doc.data();
+                    const isPending = doc.metadata.hasPendingWrites; // TRUE if network is blocked
                     
                     // Enforce Cloud Blacklist
                     if (doc.id === currentUser.uid && data.isTroll) {
@@ -845,7 +847,7 @@
 
                     // Hide troll comments from everyone else
                     if (!data.isTroll) {
-                        comments.push({ id: doc.id, ...data }); 
+                        comments.push({ id: doc.id, isPending: isPending, ...data }); 
                     }
                     
                     if (doc.id === currentUser.uid) hasCommented = true;
@@ -864,11 +866,14 @@
                         const dateObj = new Date(c.timestamp);
                         const timeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         const locStr = c.country ? c.country : 'Unknown Region';
+                        
+                        // The Smoking Gun: Will show if the connection is blocked!
+                        const pendingTag = c.isPending ? `<span style="color: #fca311; font-weight: bold; animation: pulseLive 1s infinite;"> (☁️ Uploading...)</span>` : '';
 
                         div.innerHTML = `
                             <span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">
                                 Visitor #${c.id.substring(0,5)}
-                                <span class="comment-meta">📍 ${locStr} • 🕒 ${timeStr}</span>
+                                <span class="comment-meta">📍 ${locStr} • 🕒 ${timeStr} ${pendingTag}</span>
                             </span>
                             <span class="comment-text">${escapeHTML(c.text)}</span>
                         `;
@@ -943,20 +948,14 @@
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
                 
-                // CRITICAL 5-SECOND TIMEOUT TRAP: If a browser adblocker is intercepting the connection, 
-                // the save will hang forever. This catches it and warns the user.
-                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 5000));
-                
-                await Promise.race([
-                    setDoc(docRef, { 
-                        text: text, 
-                        timestamp: Date.now(), 
-                        userId: currentUser.uid,
-                        isTroll: isTroll,
-                        country: userCountry
-                    }),
-                    timeout
-                ]);
+                // We REMOVED the timeout so we can visually see the (Uploading...) tag forever if blocked
+                await setDoc(docRef, { 
+                    text: text, 
+                    timestamp: Date.now(), 
+                    userId: currentUser.uid,
+                    isTroll: isTroll,
+                    country: userCountry
+                });
                 
                 input.value = '';
                 
@@ -980,11 +979,7 @@
 
             } catch (e) { 
                 console.error("Write Error:", e); 
-                if (e.message === "NETWORK_TIMEOUT") {
-                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (like an Adblocker or strict privacy settings) is preventing data from reaching the cloud. Please whitelist this site to sign the log.";
-                } else {
-                    errorMsg.innerText = `Save Failed! (${e.code || e.message})`;
-                }
+                errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
                 errorMsg.style.display = 'block';
             }
             
