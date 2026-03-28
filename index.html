@@ -146,7 +146,7 @@
 
     <!-- Jumpscare Container -->
     <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
-        <img src="MichealMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
+        <img src="MichaelMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -335,8 +335,8 @@
             scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
             // Bypassing the isMuted check so it always plays loudly!
-            // Swapped to a cleaner, realistic scream and lowered volume slightly to prevent ear damage
-            const scareSound = new Audio('https://www.soundjay.com/human/sounds/woman-scream-01.mp3'); 
+            // Looking for a local file named 'scream.mp3' to avoid website blocking issues!
+            const scareSound = new Audio('scream.mp3'); 
             scareSound.volume = 0.8;
             scareSound.play().catch(()=>{});
 
