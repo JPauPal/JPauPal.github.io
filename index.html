@@ -285,6 +285,23 @@
             display: inline-block;
         }
 
+        /* Live indicator dot for real-time visual cue */
+        @keyframes pulseLive {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 255, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #00ff00;
+            border-radius: 50%;
+            margin-left: 8px;
+            vertical-align: middle;
+            animation: pulseLive 2s infinite;
+        }
+
         .bio-box {
             background: var(--panel-bg);
             border-left: 4px solid var(--accent-color);
@@ -336,6 +353,11 @@
         .credit-item b { color: var(--accent-color); }
 
         /* Comments Styling */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .comment-entry {
             background: rgba(0,0,0,0.3);
             border-left: 2px solid var(--accent-color);
@@ -345,6 +367,7 @@
             font-family: 'Oxanium', sans-serif;
             text-align: left;
             transition: border-color 0.5s ease;
+            animation: slideIn 0.4s ease-out forwards; /* Real-time pop-in animation */
         }
         .comment-author {
             font-size: 0.8rem;
@@ -506,7 +529,7 @@
 
         <!-- VISITOR LOG SECTION -->
         <div class="link-section">
-            <h2>Visitor Log</h2>
+            <h2>Visitor Log <span class="live-dot" title="Live Auto-Updating Active"></span></h2>
             <div class="bio-box" style="text-align: center;">
                 <div id="comment-form-area" style="display: none;">
                     <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
@@ -517,7 +540,7 @@
                     You have already left your mark.
                 </div>
                 <div id="comments-list" class="comments-list-container">
-                    <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to servers...</p>
+                    <p style="color: #888; font-style: italic; font-family: 'Oxanium', sans-serif;">Connecting to real-time servers...</p>
                 </div>
             </div>
         </div>
@@ -789,6 +812,8 @@
         function loadComments() {
             if (!currentUser || !db) return;
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+            
+            // onSnapshot automatically listens and auto-updates in REAL-TIME!
             onSnapshot(commentsRef, (snapshot) => {
                 const list = document.getElementById('comments-list');
                 list.innerHTML = ''; let hasCommented = false; let comments = [];
