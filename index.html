@@ -836,10 +836,16 @@
                     });
                 }
                 
-                // If they successfully saved, hide the box (unless an error message is showing)
-                if (hasCommented && document.getElementById('comment-error-msg').style.color !== 'rgb(0, 255, 0)') {
-                    document.getElementById('comment-form-area').style.display = 'none';
-                    document.getElementById('already-commented-msg').style.display = 'block';
+                // Toggle comment box visibility based on whether they've already commented
+                if (hasCommented) {
+                    // Only hide if we aren't currently showing the bright green success message
+                    if (document.getElementById('comment-error-msg').style.color !== 'rgb(0, 255, 0)') {
+                        document.getElementById('comment-form-area').style.display = 'none';
+                        document.getElementById('already-commented-msg').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('comment-form-area').style.display = 'block';
+                    document.getElementById('already-commented-msg').style.display = 'none';
                 }
             }, (error) => {
                 console.error("Firestore Read Error:", error);
