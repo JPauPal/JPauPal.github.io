@@ -254,7 +254,7 @@
         <div class="link-section">
             <h2>Visitor Log <span class="live-dot"></span></h2>
             <div class="bio-box" style="text-align: center;">
-                <!-- Error Diagnostic Container (Moved outside hidden area so it stays visible!) -->
+                <!-- Error Diagnostic Container -->
                 <div id="comment-error-msg" style="display: none; font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; background: rgba(217, 4, 41, 0.2); padding: 10px; border-radius: 8px; border: 1px solid #d90429; color: #ff4d4d; font-family: 'Oxanium', sans-serif;"></div>
                 
                 <div id="comment-form-area" style="display: none;">
@@ -373,13 +373,22 @@
         };
     </script>
 
-    <!-- Firebase -->
+    <!-- Firebase & Security Hashing -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, onSnapshot, increment, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db, auth, currentUser; const appId = 'paus-hub-visitor-log';
+        
+        // Cryptographic Hash Function for Secure Anonymity
+        async function generateSecureHash(uid) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(uid + "jpaupal-secure-salt-v1");
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
         
         async function initFirebase() {
             try {
@@ -407,23 +416,20 @@
         function initGlobalCounter() {
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
             onSnapshot(statsRef, docSnap => { if(docSnap.exists()) document.getElementById('visit-count').innerText = docSnap.data().visits; });
-            if (!localStorage.getItem('pau_hub_global_visit_v28')) {
-                localStorage.setItem('pau_hub_global_visit_v28', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
+            if (!localStorage.getItem('pau_hub_global_visit_v29')) {
+                localStorage.setItem('pau_hub_global_visit_v29', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
             }
         }
 
         function loadComments() {
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-            // Request Metadata changes to detect if the write is stuck on the client
             onSnapshot(commentsRef, { includeMetadataChanges: true }, snapshot => {
                 const list = document.getElementById('comments-list'); list.innerHTML = ''; let hasCommented = false; let comments = [];
                 snapshot.forEach(doc => { 
                     const data = doc.data(); 
                     if (data.userId === currentUser.uid && data.isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); return; } 
                     
-                    // Track if the network is currently blocking the upload from finishing
                     const isPending = doc.metadata.hasPendingWrites;
-
                     if (!data.isTroll) comments.push({ id: doc.id, isPending, ...data }); 
                     if (data.userId === currentUser.uid) hasCommented = true; 
                 });
@@ -431,25 +437,25 @@
                 if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
                 else {
                     comments.forEach(c => {
-                        const hue = Math.floor(parseInt(c.id.substring(0,6),16)%360)||120; const d = new Date(c.timestamp);
-                        
-                        // Show a warning tag if the comment is trapped in the browser cache and unable to reach Firebase
+                        // Use the secure hashed tag if available, otherwise fallback to legacy ID
+                        const displayTag = c.visitorTag ? c.visitorTag : c.id.substring(0,6).toUpperCase();
+                        const hue = Math.floor(parseInt(displayTag, 16) % 360) || 120; 
+                        const d = new Date(c.timestamp);
                         const pendingTag = c.isPending ? `<span style="color: #fca311; font-weight: bold;"> (☁️ Sending...)</span>` : '';
                         
                         const div = document.createElement('div'); div.className = 'comment-entry';
-                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${c.id.substring(0,5)}<span class="comment-meta">🕒 ${d.toLocaleDateString()}${pendingTag}</span></span><span class="comment-text">${c.text}</span>`;
+                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${displayTag}<span class="comment-meta">🕒 ${d.toLocaleDateString()}${pendingTag}</span></span><span class="comment-text">${c.text}</span>`;
                         list.appendChild(div);
                     });
                 }
                 
-                // Only hide the form if there is no visible error message blocking the screen
                 if (document.getElementById('comment-error-msg').style.display === 'none') {
                     document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
                     document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
                 }
             }, error => {
                 console.error("Firestore Read Error:", error);
-                document.getElementById('comments-list').innerHTML = `<p style="color: #d90429;"><b>Database Error:</b> ${error.message}<br>Go to Firebase Console > Firestore Database > Rules, and set to <code>allow read, write: if true;</code></p>`;
+                document.getElementById('comments-list').innerHTML = `<p style="color: #d90429;"><b>Database Error:</b> ${error.message}<br>Check Firestore Rules.</p>`;
             });
         }
 
@@ -463,16 +469,27 @@
             const isTroll = blocked.some(w => text.toLowerCase().includes(w));
             
             document.getElementById('submit-comment-btn').disabled = true;
-            document.getElementById('submit-comment-btn').innerText = "Signing...";
+            document.getElementById('submit-comment-btn').innerText = "Hashing & Signing...";
             
             try {
                 const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
                 
-                // Add a 10-second timeout.
+                // Generate the Cryptographic Hash Signature
+                const fullHash = await generateSecureHash(currentUser.uid);
+                const visitorTag = fullHash.substring(0, 6).toUpperCase(); // First 6 hex chars for the public tag
+                
                 const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 10000));
                 
+                // Save the full cryptographic signature along with the comment data
                 await Promise.race([
-                    addDoc(colRef, { text, timestamp: Date.now(), userId: currentUser.uid, isTroll }),
+                    addDoc(colRef, { 
+                        text, 
+                        timestamp: Date.now(), 
+                        userId: currentUser.uid, 
+                        isTroll, 
+                        visitorTag, 
+                        signature: fullHash 
+                    }),
                     timeout
                 ]);
                 
@@ -480,7 +497,7 @@
                 errorMsg.style.color = '#00ff00';
                 errorMsg.style.borderColor = '#00ff00';
                 errorMsg.style.background = 'rgba(0, 255, 0, 0.1)';
-                errorMsg.innerHTML = "Log signed successfully!";
+                errorMsg.innerHTML = "Log hashed and signed successfully!";
                 errorMsg.style.display = 'block';
                 
                 setTimeout(() => {
