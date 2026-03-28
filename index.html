@@ -222,7 +222,7 @@
             <h2>Gaming</h2>
             <div class="brand-grid">
                 <!-- AQW Dragon -->
-                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-sharp-duotone fa-solid fa-dragon"></i></a>
+                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-solid fa-dragon"></i></a>
                 <a href="https://steamcommunity.com/id/JPauPal/" class="sq-btn btn-steam" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
                 <!-- Solid Roblox Vector Path (No rendering artifact lines) -->
                 <a href="https://www.roblox.com/users/130118683/profile" class="sq-btn btn-roblox" target="_blank" title="Roblox">
@@ -383,7 +383,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, increment, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db, auth, currentUser; const appId = 'paus-hub-visitor-log';
         
@@ -398,8 +398,8 @@
         function initGlobalCounter() {
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
             onSnapshot(statsRef, docSnap => { if(docSnap.exists()) document.getElementById('visit-count').innerText = docSnap.data().visits; });
-            if (!localStorage.getItem('pau_hub_global_visit_v24')) {
-                localStorage.setItem('pau_hub_global_visit_v24', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
+            if (!localStorage.getItem('pau_hub_global_visit_v25')) {
+                localStorage.setItem('pau_hub_global_visit_v25', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
             }
         }
 
@@ -407,7 +407,12 @@
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
             onSnapshot(commentsRef, snapshot => {
                 const list = document.getElementById('comments-list'); list.innerHTML = ''; let hasCommented = false; let comments = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (doc.id === currentUser.uid && data.isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); return; } if (!data.isTroll) comments.push({ id: doc.id, ...data }); if (doc.id === currentUser.uid) hasCommented = true; });
+                snapshot.forEach(doc => { 
+                    const data = doc.data(); 
+                    if (data.userId === currentUser.uid && data.isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); return; } 
+                    if (!data.isTroll) comments.push({ id: doc.id, ...data }); 
+                    if (data.userId === currentUser.uid) hasCommented = true; 
+                });
                 comments.sort((a,b) => b.timestamp - a.timestamp);
                 if (comments.length === 0) list.innerHTML = '<p style="color: #888; font-style: italic;">No logs yet.</p>';
                 else {
@@ -429,8 +434,8 @@
             const isTroll = blocked.some(w => text.toLowerCase().includes(w));
             document.getElementById('submit-comment-btn').disabled = true;
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
-                await setDoc(docRef, { text, timestamp: Date.now(), userId: currentUser.uid, isTroll });
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+                await addDoc(colRef, { text, timestamp: Date.now(), userId: currentUser.uid, isTroll });
                 if (isTroll) { localStorage.setItem('pau_hub_blacklisted', 'true'); showBlacklistScreen(); }
             } catch (e) { console.error(e); }
         });
