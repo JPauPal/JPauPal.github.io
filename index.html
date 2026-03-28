@@ -335,8 +335,9 @@
             scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
             // Bypassing the isMuted check so it always plays loudly!
-            const scareSound = new Audio('https://www.myinstants.com/media/sounds/jumpscare-sound.mp3'); 
-            scareSound.volume = 1.0;
+            // Swapped to a cleaner, realistic scream and lowered volume slightly to prevent ear damage
+            const scareSound = new Audio('https://www.soundjay.com/human/sounds/woman-scream-01.mp3'); 
+            scareSound.volume = 0.8;
             scareSound.play().catch(()=>{});
 
             // Hide the jumpscare after 1.5 seconds without any flashing
