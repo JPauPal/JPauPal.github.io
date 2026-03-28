@@ -146,7 +146,8 @@
 
     <!-- Jumpscare Container -->
     <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
-        <img src="MichaelMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
+        <!-- I added ?v=2 to bust your browser cache in case it remembered the old missing image -->
+        <img src="MichaelMyers.jpg?v=2" alt="JUMPSCARE" class="jumpscare-img">
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -334,11 +335,10 @@
             scareDiv.style.display = 'flex';
             scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
-            // Bypassing the isMuted check so it always plays loudly!
-            // Looking for a local file named 'scream.mp3' to avoid website blocking issues!
-            const scareSound = new Audio('scream.mp3'); 
-            scareSound.volume = 0.8;
-            scareSound.play().catch(()=>{});
+            // Using Google's official public sound library to guarantee it plays anywhere
+            const scareSound = new Audio('https://actions.google.com/sounds/v1/horror/female_scream.ogg'); 
+            scareSound.volume = 1.0;
+            scareSound.play().catch(e => console.error("Sound failed to play:", e));
 
             // Hide the jumpscare after 1.5 seconds without any flashing
             setTimeout(() => {
