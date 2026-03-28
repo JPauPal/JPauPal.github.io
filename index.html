@@ -331,26 +331,16 @@
         function triggerJumpscare() {
             const scareDiv = document.getElementById('jumpscare-container');
             scareDiv.style.display = 'flex';
+            scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
             
-            if(!isMuted) {
-                // Built-in loud generic jumpscare sound
-                const scareSound = new Audio('https://www.myinstants.com/media/sounds/fnaf-2-jumpscare-sound.mp3'); 
-                scareSound.volume = 1.0;
-                scareSound.play().catch(()=>{});
-            }
+            // Bypassing the isMuted check so it always plays loudly!
+            const scareSound = new Audio('https://www.myinstants.com/media/sounds/fnaf-2-jumpscare-sound.mp3'); 
+            scareSound.volume = 1.0;
+            scareSound.play().catch(()=>{});
 
-            // Quick flashing effect
-            let flashCount = 0;
-            const flashInterval = setInterval(() => {
-                scareDiv.style.backgroundColor = flashCount % 2 === 0 ? '#fff' : '#000';
-                flashCount++;
-            }, 50);
-
-            // Hide the jumpscare after 1.5 seconds
+            // Hide the jumpscare after 1.5 seconds without any flashing
             setTimeout(() => {
-                clearInterval(flashInterval);
                 scareDiv.style.display = 'none';
-                scareDiv.style.backgroundColor = '#000';
             }, 1500); 
         }
 
