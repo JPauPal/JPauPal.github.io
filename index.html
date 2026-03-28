@@ -146,7 +146,7 @@
 
     <!-- Jumpscare Container -->
     <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
-        <img src="MichaelMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
+        <img src="MichealMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -346,9 +346,23 @@
             }, 1500); 
         }
 
+        let spamClickCount = 0;
+        let lastRollTime = 0;
+
         function handleRoll() {
-            // 5% Random Chance for Jumpscare!
-            if (Math.random() < 0.05) {
+            const currentTime = Date.now();
+            
+            // If they click faster than 600ms, consider it a spam click
+            if (currentTime - lastRollTime < 600) {
+                spamClickCount++;
+            } else {
+                spamClickCount = 0; // Reset counter if they slow down
+            }
+            lastRollTime = currentTime;
+
+            // 5% Random base chance, OR guaranteed scare if they spam it 5 times consecutively!
+            if (Math.random() < 0.05 || spamClickCount >= 5) {
+                spamClickCount = 0; // Reset spam counter
                 triggerJumpscare();
                 return; // Stop the faction roll so the scare hits harder
             }
