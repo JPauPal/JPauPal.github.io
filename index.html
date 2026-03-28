@@ -407,14 +407,14 @@
         function initGlobalCounter() {
             const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
             onSnapshot(statsRef, docSnap => { if(docSnap.exists()) document.getElementById('visit-count').innerText = docSnap.data().visits; });
-            if (!localStorage.getItem('pau_hub_global_visit_v27')) {
-                localStorage.setItem('pau_hub_global_visit_v27', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
+            if (!localStorage.getItem('pau_hub_global_visit_v28')) {
+                localStorage.setItem('pau_hub_global_visit_v28', 'true'); setDoc(statsRef, { visits: increment(1) }, { merge: true });
             }
         }
 
         function loadComments() {
             const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-            // Request Metadata changes to detect if the write is stuck on the client (Blocked by Adblocker)
+            // Request Metadata changes to detect if the write is stuck on the client
             onSnapshot(commentsRef, { includeMetadataChanges: true }, snapshot => {
                 const list = document.getElementById('comments-list'); list.innerHTML = ''; let hasCommented = false; let comments = [];
                 snapshot.forEach(doc => { 
@@ -468,8 +468,8 @@
             try {
                 const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
                 
-                // Add a 6-second timeout. If Brave Shields kills the WebSocket, this forces an error to display!
-                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 6000));
+                // Add a 10-second timeout.
+                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 10000));
                 
                 await Promise.race([
                     addDoc(colRef, { text, timestamp: Date.now(), userId: currentUser.uid, isTroll }),
@@ -497,7 +497,7 @@
                 errorMsg.style.background = 'rgba(217, 4, 41, 0.2)';
                 
                 if (e.message === "NETWORK_TIMEOUT") {
-                    errorMsg.innerHTML = `⚠️ <b>Upload Blocked!</b><br>Your browser (Brave Shields or Adblocker) is blocking the connection to the database. Please click the Lion icon in your URL bar and turn off shields for this site to save your log.`;
+                    errorMsg.innerHTML = `⚠️ <b>Upload Blocked!</b><br>Your browser or an extension is blocking the connection to the database.`;
                 } else {
                     errorMsg.innerHTML = `⚠️ <b>Error saving:</b> ${e.message}<br>Please check your Firestore Rules.`;
                 }
