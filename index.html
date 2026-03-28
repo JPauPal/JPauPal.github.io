@@ -490,7 +490,7 @@
             <div class="bio-box" style="text-align: center;">
                 <div id="comment-form-area" style="display: none;">
                     <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
-                    <div id="comment-error-msg" style="display: none; color: #d90429; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;">Please keep it clean! Troll comments are not allowed.</div>
+                    <div id="comment-error-msg" style="display: none; color: #d90429; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
                     <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;">Sign Log</button>
                 </div>
                 <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">
@@ -687,7 +687,8 @@
         function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
         window.onload = () => {
-            let visits = localStorage.getItem('pau_hub_visits') || 1;
+            let visits = parseInt(localStorage.getItem('pau_hub_visits') || '0');
+            visits += 1;
             localStorage.setItem('pau_hub_visits', visits);
             document.getElementById('visit-count').innerText = visits;
             const birth = new Date('2004-11-07'); const now = new Date();
@@ -761,20 +762,62 @@
                 }
                 document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
                 document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
+            }, (error) => {
+                console.error("Firestore Read Error:", error);
+                document.getElementById('comments-list').innerHTML = `<p style="color: #d90429; font-size: 0.9rem;"><b>Database Blocked:</b> ${error.message}</p><p style="color: #888; font-size: 0.85rem;">Check your Firebase Rules and turn off Brave Shields!</p>`;
             });
         }
 
         function escapeHTML(s) { return s.replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t)); }
 
+        const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'nigger', 'faggot', 'slut', 'whore', 'kys', 'retard', 'kill yourself', 'nazi'];
+        
+        async function containsTrollContent(text) {
+            const lower = text.toLowerCase();
+            if (blockedWords.some(word => lower.includes(word))) return true;
+            try {
+                const response = await fetch(`https://www.purgomalum.com/service/containsprofanity?text=${encodeURIComponent(text)}`);
+                return await response.text() === 'true';
+            } catch (e) { return false; }
+        }
+
         document.getElementById('submit-comment-btn').addEventListener('click', async () => {
-            const input = document.getElementById('comment-input'); const text = input.value.trim();
+            const input = document.getElementById('comment-input');
+            const errorMsg = document.getElementById('comment-error-msg');
+            const text = input.value.trim();
+            errorMsg.style.display = 'none';
             if (!text || !currentUser || !db) return;
+            
             document.getElementById('submit-comment-btn').disabled = true;
+            
+            if (await containsTrollContent(text)) {
+                errorMsg.innerText = "Please keep it clean! Troll comments are not allowed.";
+                errorMsg.style.display = 'block';
+                document.getElementById('submit-comment-btn').disabled = false;
+                return;
+            }
+
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
-                await setDoc(docRef, { text: text, timestamp: Date.now(), userId: currentUser.uid });
+                
+                // 5-second timeout to detect Brave Shields / Adblockers blocking the network
+                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 5000));
+                
+                await Promise.race([
+                    setDoc(docRef, { text: text, timestamp: Date.now(), userId: currentUser.uid }),
+                    timeout
+                ]);
+                
                 input.value = '';
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Write Error:", e); 
+                if (e.message === "NETWORK_TIMEOUT") {
+                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (Brave Shields or an Adblocker) is preventing data from reaching the cloud. Please turn it off to sign the log.";
+                } else {
+                    errorMsg.innerText = "Failed to save! Make sure your Security Rules are correct and Brave Shields are off.";
+                }
+                errorMsg.style.display = 'block';
+            }
             document.getElementById('submit-comment-btn').disabled = false;
         });
 
