@@ -810,8 +810,10 @@
             
             // Listen to the cloud value in real-time with Metadata tracking to spot blocked uploads!
             onSnapshot(statsRef, { includeMetadataChanges: true }, (docSnap) => {
-                let v = 1;
-                if (docSnap.exists()) v = docSnap.data().visits || 1;
+                let v = 0;
+                if (docSnap.exists()) {
+                    v = docSnap.data().visits || 0;
+                }
                 
                 // If it says 'Uploading', the network is blocking the +1 from saving
                 const isPending = docSnap.exists() && docSnap.metadata.hasPendingWrites;
@@ -819,9 +821,11 @@
             });
 
             // Increment the cloud counter if this device has never visited before
-            if (!localStorage.getItem('pau_hub_global_visit_v3')) {
-                localStorage.setItem('pau_hub_global_visit_v3', 'true');
-                setDoc(statsRef, { visits: increment(1) }, { merge: true }).catch(e => console.error("Counter Error", e));
+            if (!localStorage.getItem('pau_hub_global_visit_v4')) {
+                localStorage.setItem('pau_hub_global_visit_v4', 'true');
+                setDoc(statsRef, { visits: increment(1) }, { merge: true })
+                    .then(() => console.log("Successfully added +1 to global visits!"))
+                    .catch(e => console.error("Counter Error", e));
             }
         }
 
