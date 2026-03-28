@@ -354,6 +354,14 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
+        .comment-meta {
+            font-size: 0.7rem;
+            color: #aaa;
+            font-weight: normal;
+            margin-left: 8px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
         .comment-text {
             color: #ddd;
             font-size: 0.95rem;
@@ -502,7 +510,7 @@
             <div class="bio-box" style="text-align: center;">
                 <div id="comment-form-area" style="display: none;">
                     <textarea id="comment-input" placeholder="Leave your mark on the hub... (Max 150 chars)" maxlength="150"></textarea>
-                    <div id="comment-error-msg" style="display: none; color: #d90429; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
+                    <div id="comment-error-msg" style="display: none; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
                     <button id="submit-comment-btn" class="roll-faction-btn" style="font-size: 1rem; padding: 8px 25px; margin-bottom: 10px;" disabled>Connecting...</button>
                 </div>
                 <div id="already-commented-msg" style="display: none; color: var(--accent-color); font-style: italic; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">
@@ -764,7 +772,6 @@
                 });
             } catch (err) {
                 console.error("Detailed Firebase Error:", err);
-                
                 let fixMsg = "(Check the chat for how to fix this!)";
                 if (err.code === 'auth/configuration-not-found') {
                     fixMsg = "<b>Quick Fix:</b> Go to your Firebase Console -> Authentication -> Sign-in method. Make sure you enabled 'Anonymous' and hit Save!";
@@ -812,12 +819,28 @@
                     comments.forEach(c => {
                         const div = document.createElement('div'); div.className = 'comment-entry';
                         const hue = Math.floor(parseInt(c.id.substring(0, 6), 16) % 360) || 120;
-                        div.innerHTML = `<span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">Visitor #${c.id.substring(0,5)}</span><span class="comment-text">${escapeHTML(c.text)}</span>`;
+                        
+                        // Parse the timestamp into readable format
+                        const dateObj = new Date(c.timestamp);
+                        const timeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const locStr = c.country ? c.country : 'Unknown Region';
+
+                        div.innerHTML = `
+                            <span class="comment-author" style="color: hsl(${hue}, 70%, 65%);">
+                                Visitor #${c.id.substring(0,5)}
+                                <span class="comment-meta">📍 ${locStr} • 🕒 ${timeStr}</span>
+                            </span>
+                            <span class="comment-text">${escapeHTML(c.text)}</span>
+                        `;
                         list.appendChild(div);
                     });
                 }
-                document.getElementById('comment-form-area').style.display = hasCommented ? 'none' : 'block';
-                document.getElementById('already-commented-msg').style.display = hasCommented ? 'block' : 'none';
+                
+                // If they successfully saved, hide the box (unless an error message is showing)
+                if (hasCommented && document.getElementById('comment-error-msg').style.color !== 'rgb(0, 255, 0)') {
+                    document.getElementById('comment-form-area').style.display = 'none';
+                    document.getElementById('already-commented-msg').style.display = 'block';
+                }
             }, (error) => {
                 console.error("Firestore Read Error:", error);
                 document.getElementById('comments-list').innerHTML = `<p style="color: #d90429; font-size: 0.9rem;"><b>Database Blocked:</b> ${error.message}</p><p style="color: #888; font-size: 0.85rem;">Check your Firebase Rules and turn off Brave Shields!</p>`;
@@ -841,7 +864,9 @@
             const input = document.getElementById('comment-input');
             const errorMsg = document.getElementById('comment-error-msg');
             const text = input.value.trim();
+            
             errorMsg.style.display = 'none';
+            errorMsg.style.color = '#d90429'; // reset color to red
             
             if (!currentUser) {
                 errorMsg.innerText = "Still connecting to Firebase... Please wait.";
@@ -852,9 +877,22 @@
             if (!text || !db) return;
             
             document.getElementById('submit-comment-btn').disabled = true;
-            document.getElementById('submit-comment-btn').innerText = "Signing...";
             
             const isTroll = await containsTrollContent(text);
+
+            document.getElementById('submit-comment-btn').innerText = "Locating...";
+            
+            // Try to grab their country securely
+            let userCountry = "Unknown Region";
+            try {
+                const geoRes = await fetch("https://ipapi.co/json/");
+                const geoData = await geoRes.json();
+                if (geoData.country_name) userCountry = geoData.country_name;
+            } catch (err) {
+                console.warn("Failed to retrieve location.");
+            }
+
+            document.getElementById('submit-comment-btn').innerText = "Signing...";
 
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
@@ -863,10 +901,16 @@
                     text: text, 
                     timestamp: Date.now(), 
                     userId: currentUser.uid,
-                    isTroll: isTroll 
+                    isTroll: isTroll,
+                    country: userCountry
                 });
                 
                 input.value = '';
+                
+                // Show absolute proof that the save was successful!
+                errorMsg.style.color = '#00ff00';
+                errorMsg.innerText = "Log signed successfully! Synced to cloud.";
+                errorMsg.style.display = 'block';
 
                 // Trigger blacklist if flagged
                 if (isTroll) {
@@ -874,12 +918,19 @@
                     showBlacklistScreen();
                     return;
                 }
+                
+                // Hide the form after 2 seconds on success
+                setTimeout(() => {
+                    document.getElementById('comment-form-area').style.display = 'none';
+                    document.getElementById('already-commented-msg').style.display = 'block';
+                }, 2000);
 
             } catch (e) { 
                 console.error("Write Error:", e); 
-                errorMsg.innerText = "Failed to save! Make sure your Security Rules are set to public testing.";
+                errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
                 errorMsg.style.display = 'block';
             }
+            
             document.getElementById('submit-comment-btn').innerText = "Sign Log";
             document.getElementById('submit-comment-btn').disabled = false;
         });
