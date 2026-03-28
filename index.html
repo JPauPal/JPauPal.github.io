@@ -141,6 +141,22 @@
         }
         .jumpscare-img { width: 100%; height: 100%; object-fit: cover; animation: scareShake 0.1s infinite; filter: contrast(1.5) brightness(0.8); }
 
+        /* Floating Anomaly Trigger Orb */
+        .floating-anomaly {
+            position: fixed;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: crosshair;
+            z-index: 50; /* Floats above background but below modals */
+            transition: left 8s linear, top 8s linear;
+            animation: pulseAnomaly 1s infinite alternate;
+        }
+        @keyframes pulseAnomaly {
+            0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 10px currentColor; }
+            100% { transform: scale(1.2); filter: brightness(1.5); box-shadow: 0 0 30px currentColor; }
+        }
+
         /* Minigame Styles */
         .mg-target {
             position: absolute;
@@ -473,6 +489,55 @@
             }, 2000);
         }
 
+        // Floating Orb Trigger Logic
+        function spawnFloatingAnomaly() {
+            // Don't spawn if they are already playing the minigame
+            if (document.getElementById('minigame-container').style.display === 'flex') {
+                scheduleNextAnomaly();
+                return;
+            }
+
+            const orb = document.createElement('div');
+            orb.className = 'floating-anomaly';
+            orb.style.backgroundColor = currentParticleColor;
+            orb.style.color = currentParticleColor; // used for currentColor box-shadow
+
+            // Decide start and end positions (left to right, or right to left)
+            const startLeft = Math.random() > 0.5 ? -60 : window.innerWidth + 60;
+            const startTop = Math.random() * (window.innerHeight - 60);
+            const endLeft = startLeft < 0 ? window.innerWidth + 60 : -60;
+            const endTop = Math.random() * (window.innerHeight - 60);
+
+            orb.style.left = startLeft + 'px';
+            orb.style.top = startTop + 'px';
+
+            orb.onclick = function() {
+                orb.remove();
+                triggerMinigame();
+            };
+
+            document.body.appendChild(orb);
+
+            // Trigger the CSS transition to float across the screen
+            setTimeout(() => {
+                orb.style.left = endLeft + 'px';
+                orb.style.top = endTop + 'px';
+            }, 50);
+
+            // Clean up orb and schedule the next one
+            setTimeout(() => {
+                if (document.body.contains(orb)) {
+                    orb.remove();
+                }
+                scheduleNextAnomaly();
+            }, 8050); // Matches the 8s CSS transition time
+        }
+
+        function scheduleNextAnomaly() {
+            // Spawns randomly between 15 to 35 seconds
+            setTimeout(spawnFloatingAnomaly, Math.random() * 20000 + 15000);
+        }
+
         let spamClickCount = 0;
         let lastRollTime = 0;
 
@@ -491,12 +556,6 @@
             if (Math.random() < 0.05 || spamClickCount >= 5) {
                 spamClickCount = 0; 
                 triggerJumpscare();
-                return;
-            }
-
-            // 5% Random Minigame Chance
-            if (Math.random() < 0.05) {
-                triggerMinigame();
                 return;
             }
 
@@ -611,6 +670,9 @@
         window.onload = () => {
             const birth = new Date('2004-11-07'); const now = new Date(); let age = now.getFullYear() - birth.getFullYear(); if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
             document.getElementById('player-level').innerText = age; setUniverse('aqw'); initParticles(); animate();
+            
+            // Start the background anomaly spawner!
+            scheduleNextAnomaly();
         };
     </script>
 </body>
