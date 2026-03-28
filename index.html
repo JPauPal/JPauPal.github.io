@@ -432,7 +432,7 @@
     </button>
     
     <div class="visit-counter">
-        Visits: <span id="visit-count">1</span>
+        Global Visits: <span id="visit-count">...</span>
     </div>
 
     <div class="container">
@@ -746,13 +746,6 @@
                 return;
             }
 
-            let visits = localStorage.getItem('pau_hub_visits');
-            if (!visits) {
-                visits = 1;
-                localStorage.setItem('pau_hub_visits', visits);
-            }
-            document.getElementById('visit-count').innerText = visits;
-            
             const birth = new Date('2004-11-07'); const now = new Date();
             let age = now.getFullYear() - birth.getFullYear();
             if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
@@ -765,7 +758,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db = null, auth = null, currentUser = null;
         const appId = 'paus-hub-visitor-log';
@@ -790,6 +783,7 @@
                         currentUser = u; 
                         document.getElementById('submit-comment-btn').innerText = "Sign Log";
                         document.getElementById('submit-comment-btn').disabled = false;
+                        initGlobalCounter();
                         loadComments(); 
                     } 
                 });
@@ -806,6 +800,27 @@
                     <p style="color: #d90429; font-size: 0.9rem;"><b>Error:</b> ${err.code || err.message}</p>
                     <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">${fixMsg}</p>
                 `;
+            }
+        }
+
+        // GLOBAL VISITOR COUNTER logic
+        function initGlobalCounter() {
+            if (!db) return;
+            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
+            
+            // Listen to the cloud value in real-time
+            onSnapshot(statsRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    document.getElementById('visit-count').innerText = docSnap.data().visits || 1;
+                } else {
+                    document.getElementById('visit-count').innerText = 1;
+                }
+            });
+
+            // Increment the cloud counter if this device has never visited before
+            if (!localStorage.getItem('pau_hub_global_visit')) {
+                localStorage.setItem('pau_hub_global_visit', 'true');
+                setDoc(statsRef, { visits: increment(1) }, { merge: true }).catch(e => console.error("Counter Error", e));
             }
         }
 
@@ -928,13 +943,20 @@
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'comments', currentUser.uid);
                 
-                await setDoc(docRef, { 
-                    text: text, 
-                    timestamp: Date.now(), 
-                    userId: currentUser.uid,
-                    isTroll: isTroll,
-                    country: userCountry
-                });
+                // CRITICAL 5-SECOND TIMEOUT TRAP: If a browser adblocker is intercepting the connection, 
+                // the save will hang forever. This catches it and warns the user.
+                const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("NETWORK_TIMEOUT")), 5000));
+                
+                await Promise.race([
+                    setDoc(docRef, { 
+                        text: text, 
+                        timestamp: Date.now(), 
+                        userId: currentUser.uid,
+                        isTroll: isTroll,
+                        country: userCountry
+                    }),
+                    timeout
+                ]);
                 
                 input.value = '';
                 
@@ -958,7 +980,11 @@
 
             } catch (e) { 
                 console.error("Write Error:", e); 
-                errorMsg.innerText = `Save Failed! (${e.code || e.message}) Make sure rules are open.`;
+                if (e.message === "NETWORK_TIMEOUT") {
+                    errorMsg.innerHTML = "<b>Upload Blocked!</b> Your browser (like an Adblocker or strict privacy settings) is preventing data from reaching the cloud. Please whitelist this site to sign the log.";
+                } else {
+                    errorMsg.innerText = `Save Failed! (${e.code || e.message})`;
+                }
                 errorMsg.style.display = 'block';
             }
             
