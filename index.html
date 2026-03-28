@@ -552,8 +552,8 @@
             }
             lastRollTime = currentTime;
 
-            // 5% Random Jumpscare Chance OR 5 Spam Clicks
-            if (Math.random() < 0.05 || spamClickCount >= 5) {
+            // 1% Random Jumpscare Chance OR 5 Spam Clicks
+            if (Math.random() < 0.01 || spamClickCount >= 5) {
                 spamClickCount = 0; 
                 triggerJumpscare();
                 return;
