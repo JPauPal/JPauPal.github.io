@@ -1,552 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pau's Hub</title>
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        /* Theme Variables */
-        :root {
-            --accent-color: #b5179e;
-            --main-font: 'Permanent Marker', cursive;
-            --bg-color: #0b0c10;
-            --panel-bg: rgba(25, 30, 40, 0.6);
-            --border-radius: 12px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: var(--main-font);
-            background-color: var(--bg-color);
-            color: #e0e0e0;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 50px 20px;
-            position: relative;
-            overflow-x: hidden;
-            background: linear-gradient(135deg, #050505 0%, #11111f 50%, #050505 100%);
-            background-size: 200% 200%;
-            animation: bgShift 15s ease infinite;
-        }
-
-        @keyframes bgShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-        .container { max-width: 700px; width: 100%; z-index: 1; position: relative; }
-
-        .universe-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
-        .universe-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.1rem; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-family: inherit; text-transform: uppercase; }
-        .universe-btn.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.05); text-shadow: 0 0 10px var(--accent-color); }
-
-        .sound-toggle { position: fixed; top: 20px; right: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 50%; cursor: pointer; z-index: 1001; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; }
-        .sound-toggle:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-color); }
-
-        .avatar-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; }
-        .avatar-area.pop-hidden { transform: scale(0.5); opacity: 0; }
-        .avatar-container { width: 320px; height: 320px; margin: 0 auto 15px auto; border-radius: var(--border-radius); overflow: hidden; filter: drop-shadow(0 0 25px var(--accent-color)); transition: all 0.5s ease; background: rgba(0,0,0,0.2); }
-        .avatar { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-        .avatar-container:hover .avatar { transform: scale(1.1); }
-
-        .lore-box { height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%; }
-        .lore-text { font-size: 1.1rem; font-style: italic; color: #d0d0d0; letter-spacing: 1px; text-shadow: 0 0 10px var(--accent-color); text-align: center; width: 100%; }
-
-        h1 { font-size: 3rem; font-weight: 800; color: #ffffff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px var(--accent-color); }
-        p.subtitle { margin-bottom: 20px; font-size: 1.1rem; color: #aaa; }
-
-        .info-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; }
-        .badge { background: rgba(0, 0, 0, 0.5); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; min-width: 140px; text-align: center; transition: border-color 0.5s ease; }
-        .badge b { color: var(--accent-color); font-weight: bold; }
-
-        .roll-faction-btn { background-color: #000000; border: 2px solid var(--accent-color); color: var(--accent-color); padding: 10px 30px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .roll-faction-btn:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
-
-        .link-section { margin-bottom: 40px; text-align: left; width: 100%; }
-        h2 { color: var(--accent-color); margin-bottom: 15px; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; display: inline-block; transition: color 0.5s ease; }
-
-        .bio-box { background: var(--panel-bg); border-left: 4px solid var(--accent-color); padding: 20px; border-radius: 0 var(--border-radius) var(--border-radius) 0; margin-bottom: 12px; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
-
-        /* Icon Grid Styling */
-        .brand-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
-        .sq-btn {
-            width: 65px; height: 65px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid var(--brand-color);
-            border-radius: var(--border-radius);
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; transition: all 0.3s ease;
-            backdrop-filter: blur(10px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            cursor: pointer; font-size: 1.8rem; overflow: hidden;
-        }
-        .sq-btn:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.1); box-shadow: 0 8px 20px var(--brand-color); }
-        .sq-btn i, .sq-btn svg { color: var(--brand-color); fill: var(--brand-color); transition: transform 0.3s ease; }
-        .sq-btn:hover i, .sq-btn:hover svg { transform: scale(1.1); }
-
-        /* Platform Brand Colors */
-        .btn-twitter  { --brand-color: #1DA1F2; }
-        .btn-facebook { --brand-color: #1877F2; }
-        .btn-bluesky  { --brand-color: #0085FF; }
-        .btn-youtube  { --brand-color: #FF0000; }
-        .btn-twitch   { --brand-color: #9146FF; }
-        .btn-tiktok   { --brand-color: #00f2fe; }
-        .btn-spotify  { --brand-color: #1DB954; }
-        .btn-discord  { --brand-color: #5865F2; }
-        .btn-patreon  { --brand-color: #FF424D; }
-        .btn-kofi     { --brand-color: #FF5E5B; }
-        .btn-aqw      { --brand-color: #f1c40f; }
-        .btn-steam    { --brand-color: #66c0f4; }
-        .btn-roblox   { --brand-color: #ffffff; }
-        .btn-riot     { --brand-color: #d13639; }
-        .btn-battle   { --brand-color: #009ae4; }
-        .btn-epic     { --brand-color: #f5f5f5; }
-        .btn-playstation { --brand-color: #0070D1; }
-
-        /* ID Dropdown */
-        .id-dropdown {
-            max-height: 0; overflow: hidden; transition: all 0.4s ease;
-            background: rgba(0,0,0,0.8); border-radius: 8px; width: 100%;
-            font-family: 'Oxanium', sans-serif; font-size: 0.95rem; text-align: center;
-            color: #fff; margin-top: 0; border: 0px solid transparent; opacity: 0; padding: 0 12px;
-        }
-        .id-dropdown.active { 
-            max-height: 80px; margin-top: 10px; padding: 12px; 
-            border: 1px solid var(--brand-color); box-shadow: 0 0 15px var(--brand-color); 
-            opacity: 1; 
-        }
-
-        details.credits-details summary { cursor: pointer; list-style: none; outline: none; display: inline-block; margin-bottom: 20px; transition: transform 0.3s ease; }
-        .credits-box { background: var(--panel-bg); padding: 20px; border-radius: var(--border-radius); font-family: 'Oxanium', sans-serif; font-size: 0.85rem; line-height: 1.6; }
-
-        /* Jumpscare Animation */
-        @keyframes scareShake {
-            0% { transform: scale(1.1) translate(1px, 1px) rotate(0deg); }
-            10% { transform: scale(1.1) translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: scale(1.1) translate(-3px, 0px) rotate(1deg); }
-            30% { transform: scale(1.1) translate(3px, 2px) rotate(0deg); }
-            40% { transform: scale(1.1) translate(1px, -1px) rotate(1deg); }
-            50% { transform: scale(1.1) translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: scale(1.1) translate(-3px, 1px) rotate(0deg); }
-            70% { transform: scale(1.1) translate(3px, 1px) rotate(-1deg); }
-            80% { transform: scale(1.1) translate(-1px, -1px) rotate(1deg); }
-            90% { transform: scale(1.1) translate(1px, 2px) rotate(0deg); }
-            100% { transform: scale(1.1) translate(1px, -2px) rotate(-1deg); }
-        }
-        .jumpscare-img { width: 100%; height: 100%; object-fit: cover; animation: scareShake 0.1s infinite; filter: contrast(1.5) brightness(0.8); }
-
-        /* Floating Anomaly Trigger Orb */
-        .floating-anomaly {
-            position: fixed;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: crosshair;
-            z-index: 50; /* Floats above background but below modals */
-            transition: left 8s linear, top 8s linear;
-            animation: pulseAnomaly 1s infinite alternate;
-        }
-        @keyframes pulseAnomaly {
-            0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 10px currentColor; }
-            100% { transform: scale(1.2); filter: brightness(1.5); box-shadow: 0 0 30px currentColor; }
-        }
-
-        /* Minigame Styles */
-        .mg-target {
-            position: absolute;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: crosshair;
-            transition: transform 0.1s;
-        }
-        .mg-target:active { transform: scale(0.7); }
-    </style>
-</head>
-<body>
-
-    <!-- Jumpscare Container -->
-    <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
-        <img src="MichaelMyers.jpg?v=2" alt="JUMPSCARE" class="jumpscare-img">
-    </div>
-
-    <!-- Minigame Container -->
-    <div id="minigame-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.85); z-index: 90000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);">
-        <div style="text-align: center; max-width: 450px; width: 90%; background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 0 30px var(--accent-color); font-family: 'Oxanium', sans-serif;">
-            <h2 style="border: none; margin-bottom: 5px; font-family: 'Permanent Marker', cursive; font-size: 2rem;">ANOMALY DETECTED</h2>
-            <p style="color: #ccc; margin-bottom: 20px; font-size: 1rem;">Defend the Hub! Catch all 5 anomalies before they escape.</p>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; color: #fff;">
-                <span>⏳ Time: <span id="mg-time" style="color: #fca311;">10</span>s</span>
-                <span>🎯 Caught: <span id="mg-score" style="color: #00ff00;">0</span>/5</span>
-            </div>
-            <div id="mg-area" style="position: relative; width: 100%; height: 350px; background: rgba(0,0,0,0.5); border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);"></div>
-            <h2 id="mg-result" style="display: none; margin-top: 20px; border: none; font-size: 2.5rem; text-transform: uppercase;"></h2>
-        </div>
-    </div>
-
-    <canvas id="particle-canvas"></canvas>
-
-    <button class="sound-toggle" onclick="toggleSound()">
-        <span id="sound-icon">🔇</span>
-    </button>
-    
-    <div class="container">
-        <div class="universe-selector">
-            <button class="universe-btn active" onclick="setUniverse('aqw')" id="btn-aqw-sel">⚔️ AQW</button>
-            <button class="universe-btn" onclick="setUniverse('overwatch')" id="btn-overwatch-sel">🛡️ OW</button>
-            <button class="universe-btn" onclick="setUniverse('ark')" id="btn-ark-sel">🦖 ARK</button>
-        </div>
-
-        <div id="main-display" class="avatar-area">
-            <div class="avatar-container">
-                <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
-            </div>
-            <div class="lore-box">
-                <p id="lore-message" class="lore-text">"Embrace the madness. Chaos consumes all."</p>
-            </div>
-            <button id="roll-btn-main" class="roll-faction-btn" onclick="handleRoll()">Roll Faction</button>
-        </div>
-
-        <h1>JPauPal</h1>
-        <p class="subtitle">Welcome to my central hub.</p>
-
-        <div class="info-badges">
-            <div id="player-level-badge" class="badge">LVL: <span id="player-level">21</span></div>
-            <div class="badge"><b id="class-label">CLASS</b>: <span id="player-class">CHAOS AVENGER</span></div>
-            <div class="badge"><b id="faction-label">FACTION</b>: <span id="current-faction-name">CHAOS</span></div>
-        </div>
-
-        <div class="link-section">
-            <h2>Character Bio</h2>
-            <div class="bio-box">
-                <p>Greetings from the <strong>Philippines</strong>! I'm a programmer, cat lover, and <strong>ARK</strong> survivor.</p>
-                <div class="skill-tags" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Programming</span>
-                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Aquascaping</span>
-                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Carpentry</span>
-                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">Farmhand</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="link-section">
-            <h2>Socials & Media</h2>
-            <div class="brand-grid">
-                <!-- Twitter Bird Locked -->
-                <a href="https://x.com/JPauPal" class="sq-btn btn-twitter" target="_blank" title="Twitter">
-                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
-                </a>
-                <a href="https://www.facebook.com/jpaupal" class="sq-btn btn-facebook" target="_blank" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                <a href="https://bsky.app/profile/jpaupal.bsky.social" class="sq-btn btn-bluesky" target="_blank" title="Bluesky">
-                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.905C2.566 1.091 1 2.56 1 5.02c0 5.167.957 6.838 3.25 7.429 1.583.41 3.956.35 6.41-.114-1.937 1.114-5.32 3.155-5.32 6.666 0 3.35 3.11 4.542 6.66 2.331 0 0 0 0 0 0 0 0 0 0 0 0 .167-.104.333-.213.5-.328.167.115.333.224.5.328 3.55 2.211 6.66 1.019 6.66-2.331 0-3.511-3.383-5.552-5.32-6.666 2.454.464 4.827.524 6.41.114 2.293-.591 3.25-2.262 3.25-7.43 0-2.46-1.566-3.929-4.202-2.125C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
-                </a>
-                <a href="https://www.youtube.com/@JPauPal" class="sq-btn btn-youtube" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://twitch.tv/JPauPal" class="sq-btn btn-twitch" target="_blank" title="Twitch"><i class="fa-brands fa-twitch"></i></a>
-                <a href="https://tiktok.com/@JPauPal" class="sq-btn btn-tiktok" target="_blank" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9" class="sq-btn btn-spotify" target="_blank" title="Spotify"><i class="fa-brands fa-spotify"></i></a>
-                <div class="sq-btn btn-discord" onclick="toggleID('discord')" title="Discord Tag"><i class="fa-brands fa-discord"></i></div>
-            </div>
-            <div id="id-discord" class="id-dropdown btn-discord">
-                Tag: JPauPal &nbsp;|&nbsp; <a href="https://discord.gg/xcbR2DG7" target="_blank" style="color: white; text-decoration: underline; font-weight: bold;">Join Server</a>
-            </div>
-        </div>
-
-        <div class="link-section">
-            <h2>Gaming</h2>
-            <div class="brand-grid">
-                <!-- AQW Dragon -->
-                <a href="https://account.aq.com/CharPage?id=SpaceArmy" class="sq-btn btn-aqw" target="_blank" title="AQW"><i class="fa-solid fa-dragon"></i></a>
-                <a href="https://steamcommunity.com/id/JPauPal/" class="sq-btn btn-steam" target="_blank" title="Steam"><i class="fa-brands fa-steam"></i></a>
-                <!-- Solid Roblox Vector Path -->
-                <a href="https://www.roblox.com/users/130118683/profile" class="sq-btn btn-roblox" target="_blank" title="Roblox">
-                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M5.4 2.2L21.8 5.4L18.6 21.8L2.2 18.6L5.4 2.2ZM13.8 14.8L9.2 13.8L10.2 9.2L14.8 10.2L13.8 14.8Z" fill-rule="evenodd"/></svg>
-                </a>
-                <!-- Official FontAwesome Riot Fist -->
-                <div class="sq-btn btn-riot" onclick="toggleID('riot')" title="Riot Tag">
-                    <i class="fa-sharp fa-solid fa-hand-fist"></i>
-                </div>
-                <div class="sq-btn btn-battle" onclick="toggleID('battle')" title="Battle.net Tag"><i class="fa-brands fa-battle-net"></i></div>
-                <!-- Clean Epic Games Shield & E -->
-                <div class="sq-btn btn-epic" onclick="toggleID('epic')" title="Epic ID">
-                    <svg viewBox="0 0 24 24" style="width:34px; height:34px;"><path d="M12 1.5L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3.5zm3.5 14H8.5v-9h7v1.8h-4.8v1.6h4v1.8h-4v1.8h4.8v2z"/></svg>
-                </div>
-                <!-- PlayStation -->
-                <div class="sq-btn btn-playstation" onclick="toggleID('playstation')" title="PlayStation Network">
-                    <i class="fa-brands fa-playstation"></i>
-                </div>
-            </div>
-            <div id="id-riot" class="id-dropdown btn-riot">Tag: JPauPal #AQWLR</div>
-            <div id="id-battle" class="id-dropdown btn-battle">Tag: PauPal #3436</div>
-            <div id="id-epic" class="id-dropdown btn-epic">ID: JPauPal</div>
-            <div id="id-playstation" class="id-dropdown btn-playstation">PSN: Tr0ll_JPauPal</div>
-        </div>
-
-        <div class="link-section">
-            <h2>Support Me</h2>
-            <div class="brand-grid">
-                <a href="https://patreon.com/Jpaupal" class="sq-btn btn-patreon" target="_blank" title="Patreon"><i class="fa-brands fa-patreon"></i></a>
-                <a href="https://ko-fi.com/jpaupal" class="sq-btn btn-kofi" target="_blank" title="Ko-fi"><i class="fa-solid fa-mug-hot"></i></a>
-            </div>
-        </div>
-
-        <div class="link-section">
-            <details class="credits-details">
-                <summary class="roll-faction-btn" style="font-size: 1rem; padding: 10px 20px;">🎶 View Song Credits</summary>
-                <div class="credits-box">
-                    <div class="credits-grid">
-                        <div class="credit-item"><b>Sigma:</b></div> <div class="credit-item">Adrift Among Infinite Stars - Scott Buckley</div>
-                        <div class="credit-item"><b>Moira:</b></div> <div class="credit-item">Falling - Infraction x Aim To Head</div>
-                        <div class="credit-item"><b>Reinhardt:</b></div> <div class="credit-item">Leaving for Valhalla - Alexander Nakarada</div>
-                        <div class="credit-item"><b>Junkrat:</b></div> <div class="credit-item">Hellcat - Desmeon</div>
-                        <div class="credit-item"><b>Roadhog:</b></div> <div class="credit-item">Hackers - Karl Casey (White Bat Audio)</div>
-                        <div class="credit-item"><b>Nation:</b></div> <div class="credit-item">Sleep Demon - White Bat Audio</div>
-                        <div class="credit-item"><b>Legion:</b></div> <div class="credit-item">Volatile Reaction - Kevin MacLeod</div>
-                        <div class="credit-item"><b>Doom:</b></div> <div class="credit-item">Growing Shadows - myuu</div>
-                        <div class="credit-item"><b>Chaos:</b></div> <div class="credit-item">Broken - White Bat Audio</div>
-                        <div class="credit-item"><b>Hollowborn:</b></div> <div class="credit-item">Interstellar - Ross Bugden</div>
-                    </div>
-                </div>
-            </details>
-        </div>
-    </div>
-
-    <!-- Logic -->
-    <script>
-        const audioSources = { click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3', roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3' };
-        const avatarData = {
-            'chaos':      { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3', class: 'Chaos Avenger', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Chaos' },
-            'hollowborn': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3', class: 'Hollowborn Vindicator', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Hollowborn' },
-            'legion':     { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3', class: 'Legion Revenant', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Legion' },
-            'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3', class: 'Void Highlord', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Nation' },
-            'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3', class: 'Verus Doomknight', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Doom' },
-            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog!', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank (Lvl 44)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage (Lvl 38)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support (Lvl 24)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank (Lvl 21)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
-            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly...', font: "'Metal Mania', cursive", pType: 'wisp', theme: '', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'acrocanthosaurus': { src: 'Mod_ARK_Additions_Dossier_Acrocanthosaurus.webp', color: '#8b4513', lore: 'The towering terror of the plains.', font: "'Metal Mania', cursive", pType: 'ember', theme: '', class: 'Apex Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'thylacoleo': { src: '1200px-Dossier_Thylacoleo.webp', color: '#d2691e', lore: 'Don\'t look up.', font: "'Metal Mania', cursive", pType: 'blood', theme: '', class: 'Ambush Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rhyniognatha': { src: '1200px-Dossier_Rhyniognatha.webp', color: '#9acd32', lore: 'The skies belong to the queen.', font: "'Metal Mania', cursive", pType: 'spark', theme: '', class: 'Aerial Heavy', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
-            'rockdrake':  { src: 'Dossier_Rock_Drake.webp', color: '#9400d3', lore: 'Master of camouflage.', font: "'Metal Mania', cursive", pType: 'shadow', theme: '', class: 'Stealth Predator', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' }
+<!-- ... existing code ... -->
+            'scout': { src: 'Scout.png', color: '#ffb300', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#8650AC; font-weight:bold; font-style: normal;">★ "Big boy\'s Sunlight Bandanna" (Throttlehead)</span><br><span style="color:#cf6a32; font-size: 0.9em; font-style: normal;">Strange Thrilling Tracksuit, Strange Electric Twanger</span>', font: "'Oxanium', sans-serif", pType: 'spark', theme: 'ScoutTheme.mp3', class: 'Offense (400+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'soldier': { src: 'Soldier.png', color: '#3a5063', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold; font-style: normal;">Strange Wanderer\'s Wool</span> <span style="font-size:0.8em; color:#888; font-style: normal;">(274 pts)</span><br><span style="color:#FFD700; font-size: 0.9em; font-style: normal;">Reissued License to Maim</span>', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'SoldierTheme.mp3', class: 'Offense (300+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'sniper': { src: 'Sniper.png', color: '#ff7e00', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold; font-style: normal;">Strange Rugged Rags</span> <span style="font-size:0.8em; color:#888; font-style: normal;">(569 pts)</span><br><span style="color:#FFD700; font-size: 0.9em; font-style: normal;">The Triggerman\'s Tacticals</span><span style="color:#cf6a32; font-size: 0.9em; font-style: normal;">, "Chomper from PvZ" (Elizabeth the Third)</span><br><span style="font-size:0.9em; color:#fff; margin-top:5px; display:inline-block;">"Snipin\'s a good job, mate." (Click me!)</span>', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'SniperTheme.mp3', class: 'Support (200+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            
+            // --- THE SECRET COCONUT ---
+            'coconut': { src: 'coconut.png', color: '#6d4c41', lore: '<span style="color:#ff4d4d; font-weight:bold; font-style:normal;">[CRITICAL ERROR]</span><br><span style="font-size:0.9em;">I don\'t know who this is or what it does. But if you delete it, the hub stops working.</span>', font: "monospace", pType: 'spark', theme: '', class: 'Load-Bearing Texture', radius: '0px', fLabel: 'System', cLabel: 'Asset', fDisplay: 'Team Fortress 2' }
         };
 
         let isMuted = true, currentTheme = new Audio(); currentTheme.loop = true; currentTheme.volume = 0.1; let currentUniverse = 'aqw';
-        function toggleSound() { isMuted = !isMuted; const icon = document.getElementById('sound-icon'); if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; } else { icon.innerText = '🔊'; updateTheme(currentFactionKey); } }
-        function playClick() { if(!isMuted) { const a = new Audio(audioSources.click); a.volume = 0.2; a.play(); } }
-        function playRoll() { if(!isMuted) { const a = new Audio(audioSources.roll); a.volume = 0.2; a.play(); } }
-        function updateTheme(key) { if (isMuted) return; const path = avatarData[key].theme; if (!path) { currentTheme.pause(); currentTheme.src = ''; return; } if (currentTheme.src.includes(path)) return; currentTheme.pause(); currentTheme.src = path; currentTheme.play().catch(() => {}); }
-        let currentFactionKey = 'chaos', currentParticleColor = avatarData['chaos'].color, currentParticleType = avatarData['chaos'].pType;
-
-        function toggleID(id) { playClick(); const panel = document.getElementById('id-' + id); const isActive = panel.classList.contains('active'); document.querySelectorAll('.id-dropdown').forEach(d => d.classList.remove('active')); if (!isActive) panel.classList.add('active'); }
-
+<!-- ... existing code ... -->
         function changeAvatar(type) {
             const display = document.getElementById('main-display'); display.classList.add('pop-hidden');
             setTimeout(() => {
                 currentFactionKey = type; const data = avatarData[type];
                 document.getElementById('main-avatar').src = data.src;
+                
+                // Add an onerror fallback for the coconut image just in case
+                if (type === 'coconut') {
+                    document.getElementById('main-avatar').onerror = function() {
+                        this.src = "https://wiki.teamfortress.com/w/images/thumb/1/10/Backpack_Coconut.png/120px-Backpack_Coconut.png";
+                    };
+                }
+
                 document.documentElement.style.setProperty('--accent-color', data.color);
                 document.documentElement.style.setProperty('--main-font', data.font);
                 document.documentElement.style.setProperty('--border-radius', data.radius);
-                document.getElementById('lore-message').innerText = `"${data.lore}"`;
+                
+                // Keep cursor normal unless Sniper is active
+                document.querySelector('.avatar-container').style.cursor = (type === 'sniper') ? 'pointer' : 'default';
+
+                // Automatically handle HTML loadout tags vs normal quote lore
+                document.getElementById('lore-message').innerHTML = data.lore.includes('<') ? data.lore : `"${data.lore}"`;
+                
                 document.getElementById('faction-label').innerText = data.fLabel;
                 document.getElementById('class-label').innerText = data.cLabel;
-                document.getElementById('current-faction-name').innerText = (currentUniverse === 'aqw' ? data.fDisplay : type.toUpperCase());
-                document.getElementById('player-class').innerText = data.class.toUpperCase();
-                currentParticleColor = data.color; currentParticleType = data.pType;
-                document.getElementById('player-level-badge').style.display = (currentUniverse === 'aqw' ? 'block' : 'none');
-                initParticles(); updateTheme(type); display.classList.remove('pop-hidden');
-            }, 250); 
-        }
-
-        function setUniverse(u) {
-            currentUniverse = u; document.querySelectorAll('.universe-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + u + '-sel').classList.add('active');
-            const rollBtn = document.getElementById('roll-btn-main'); rollBtn.innerText = (u === 'overwatch' ? "Switch Hero" : u === 'ark' ? "Next Mob" : "Roll Faction");
-            changeAvatar(u === 'overwatch' ? 'roadhog' : u === 'ark' ? 'gasbags' : 'chaos'); playClick();
-        }
-
-        // Jumpscare Function
-        function triggerJumpscare() {
-            const scareDiv = document.getElementById('jumpscare-container');
-            scareDiv.style.display = 'flex';
-            scareDiv.style.backgroundColor = '#000'; // Ensure background is solid black
-            
-            const scareSound = new Audio('michaelmyers.mp3'); 
-            scareSound.volume = 1.0;
-            scareSound.play().catch(e => console.error("Sound failed to play:", e));
-
-            setTimeout(() => {
-                scareDiv.style.display = 'none';
-            }, 5000); 
-        }
-
-        // Minigame Logic
-        let mgTimer, mgLoop;
-        let mgTimeLeft = 10;
-        let mgScore = 0;
-        let mgTargets = [];
-
-        function triggerMinigame() {
-            if (!isMuted) playClick();
-            
-            const container = document.getElementById('minigame-container');
-            const resultMsg = document.getElementById('mg-result');
-            const area = document.getElementById('mg-area');
-            
-            container.style.display = 'flex';
-            resultMsg.style.display = 'none';
-            area.style.display = 'block';
-            area.innerHTML = '';
-            
-            mgTimeLeft = 10;
-            mgScore = 0;
-            document.getElementById('mg-time').innerText = mgTimeLeft;
-            document.getElementById('mg-score').innerText = mgScore;
-            mgTargets = [];
-
-            // Spawn 5 Anomalies
-            for (let i = 0; i < 5; i++) {
-                let target = document.createElement('div');
-                target.className = 'mg-target';
-                target.style.backgroundColor = currentParticleColor;
-                target.style.boxShadow = `0 0 15px ${currentParticleColor}`;
                 
-                // Keep them inside bounds initially
-                target.style.left = Math.random() * (area.clientWidth - 40) + 'px';
-                target.style.top = Math.random() * (area.clientHeight - 40) + 'px';
+                // Uses fDisplay for both AQW and TF2 so custom labels show properly
+                const factionNode = document.getElementById('current-faction-name');
+                factionNode.innerText = (['aqw', 'tf2'].includes(currentUniverse) ? data.fDisplay.toUpperCase() : type.toUpperCase());
                 
-                // Random speeds based on difficulty
-                target.dx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
-                target.dy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
-                
-                target.onmousedown = function() {
-                    if (this.style.display !== 'none') {
-                        this.style.display = 'none';
-                        mgScore++;
-                        document.getElementById('mg-score').innerText = mgScore;
-                        if (!isMuted) playClick();
-                        
-                        if (mgScore >= 5) endMinigame(true);
-                    }
-                };
-                
-                area.appendChild(target);
-                mgTargets.push({ el: target, x: parseFloat(target.style.left), y: parseFloat(target.style.top), dx: target.dx, dy: target.dy });
-            }
-
-            // Countdown Timer
-            mgTimer = setInterval(() => {
-                mgTimeLeft--;
-                document.getElementById('mg-time').innerText = mgTimeLeft;
-                if (mgTimeLeft <= 0) endMinigame(false);
-            }, 1000);
-
-            // Movement Loop
-            function updateTargets() {
-                mgTargets.forEach(t => {
-                    if (t.el.style.display === 'none') return;
-                    
-                    t.x += t.dx;
-                    t.y += t.dy;
-                    
-                    // Bounce off walls
-                    if (t.x <= 0 || t.x >= area.clientWidth - 35) t.dx *= -1;
-                    if (t.y <= 0 || t.y >= area.clientHeight - 35) t.dy *= -1;
-                    
-                    t.el.style.left = t.x + 'px';
-                    t.el.style.top = t.y + 'px';
-                });
-                mgLoop = requestAnimationFrame(updateTargets);
-            }
-            updateTargets();
-        }
-
-        function endMinigame(won) {
-            clearInterval(mgTimer);
-            cancelAnimationFrame(mgLoop);
-            
-            const area = document.getElementById('mg-area');
-            const resultMsg = document.getElementById('mg-result');
-            
-            area.style.display = 'none';
-            resultMsg.style.display = 'block';
-            
-            if (won) {
-                resultMsg.style.color = '#00ff00';
-                resultMsg.innerText = "DEFENDED!";
-            } else {
-                resultMsg.style.color = '#ff4d4d';
-                resultMsg.innerText = "FAILED!";
-            }
-            
-            // Hide everything after displaying result
-            setTimeout(() => {
-                document.getElementById('minigame-container').style.display = 'none';
-            }, 2000);
-        }
-
-        // Floating Orb Trigger Logic
-        function spawnFloatingAnomaly() {
-            // Don't spawn if they are already playing the minigame
-            if (document.getElementById('minigame-container').style.display === 'flex') {
-                scheduleNextAnomaly();
-                return;
-            }
-
-            const orb = document.createElement('div');
-            orb.className = 'floating-anomaly';
-            orb.style.backgroundColor = currentParticleColor;
-            orb.style.color = currentParticleColor; // used for currentColor box-shadow
-
-            // Decide start and end positions (left to right, or right to left)
-            const startLeft = Math.random() > 0.5 ? -60 : window.innerWidth + 60;
-            const startTop = Math.random() * (window.innerHeight - 60);
-            const endLeft = startLeft < 0 ? window.innerWidth + 60 : -60;
-            const endTop = Math.random() * (window.innerHeight - 60);
-
-            orb.style.left = startLeft + 'px';
-            orb.style.top = startTop + 'px';
-
-            orb.onclick = function() {
-                orb.remove();
-                triggerMinigame();
-            };
-
-            document.body.appendChild(orb);
-
-            // Trigger the CSS transition to float across the screen
-            setTimeout(() => {
-                orb.style.left = endLeft + 'px';
-                orb.style.top = endTop + 'px';
-            }, 50);
-
-            // Clean up orb and schedule the next one
-            setTimeout(() => {
-                if (document.body.contains(orb)) {
-                    orb.remove();
+                // Setup the hidden coconut trigger on the badge
+                if (currentUniverse === 'tf2') {
+                    factionNode.style.cursor = 'help';
+                    factionNode.title = "Verify Integrity...";
+                    factionNode.onclick = () => { btnEffect({currentTarget: factionNode}, 'glitch'); changeAvatar('coconut'); };
+                } else {
+                    factionNode.style.cursor = 'default';
+                    factionNode.onclick = null;
+                    factionNode.title = "";
                 }
-                scheduleNextAnomaly();
-            }, 8050); // Matches the 8s CSS transition time
-        }
 
-        function scheduleNextAnomaly() {
-            // Spawns randomly between 15 to 35 seconds
-            setTimeout(spawnFloatingAnomaly, Math.random() * 20000 + 15000);
-        }
-
-        let spamClickCount = 0;
-        let lastRollTime = 0;
-
+                document.getElementById('player-class').innerText = data.class.toUpperCase();
+<!-- ... existing code ... -->
         function handleRoll() {
             const currentTime = Date.now();
             
-            // Spam detection
             if (currentTime - lastRollTime < 600) {
                 spamClickCount++;
             } else {
@@ -554,128 +62,22 @@
             }
             lastRollTime = currentTime;
 
-            // 1% Random Jumpscare Chance OR 5 Spam Clicks
             if (Math.random() < 0.01 || spamClickCount >= 5) {
                 spamClickCount = 0; 
                 triggerJumpscare();
                 return;
             }
 
-            // Normal Character Roll
-            const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
+            // TF2 1% Rare Coconut Chance
+            if (currentUniverse === 'tf2' && Math.random() < 0.01) {
+                changeAvatar('coconut');
+                playUniqueSound('glitch');
+                return;
+            }
+
+            const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : currentUniverse === 'tf2' ? ['heavy','pyro','scout','soldier','sniper'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
             changeAvatar(keys.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*(keys.length-1))]); playRoll();
         }
 
         const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.onresize = resize; resize();
-        let particlesArray = [];
-        
-        class Particle {
-            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
-            reset() {
-                this.type = currentParticleType;
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 4 + 2;
-                this.opacity = Math.random() * 0.8 + 0.2;
-                this.speedX = (Math.random() * 2) - 1;
-                this.speedY = (Math.random() * 2) - 1;
-                this.angle = Math.random() * Math.PI * 2;
-                this.spin = (Math.random() * 0.2) - 0.1;
-
-                if (['ember', 'wisp'].includes(this.type)) {
-                    this.y = canvas.height + 10;
-                    this.speedY = -(Math.random() * 2 + 1);
-                } else if (['blood', 'scrap', 'spark'].includes(this.type)) {
-                    this.y = -10;
-                    this.speedY = Math.random() * 3 + 2;
-                }
-            }
-            update() {
-                if (this.type === 'wisp') {
-                    this.x += Math.sin(this.y * 0.05) * 2;
-                    this.y += this.speedY;
-                } else if (this.type === 'ember') {
-                    this.y += this.speedY;
-                    this.x += this.speedX;
-                    this.size *= 0.98; 
-                    if (this.size < 0.5) this.reset();
-                } else if (this.type === 'blood') {
-                    this.speedY += 0.15; 
-                    this.y += this.speedY;
-                } else if (this.type === 'chaos') {
-                    this.x += (Math.random() - 0.5) * 10;
-                    this.y += (Math.random() - 0.5) * 10;
-                } else if (this.type === 'shadow') {
-                    this.x += this.speedX * 3;
-                    this.y += this.speedY * 0.5;
-                    this.opacity -= 0.01;
-                    if (this.opacity <= 0) this.reset();
-                } else if (this.type === 'scrap') {
-                    this.y += this.speedY;
-                    this.angle += this.spin;
-                } else if (this.type === 'spark') {
-                    this.y += this.speedY;
-                    this.x += this.speedX * 2;
-                    this.speedY += 0.05;
-                } else if (this.type === 'shield') {
-                    this.y += this.speedY * 0.2; 
-                } else if (this.type === 'orb') {
-                    this.size += Math.sin(Date.now() * 0.005 + this.x) * 0.1; 
-                    this.y += this.speedY * 0.5;
-                } else if (this.type === 'gravity') {
-                    this.y -= 0.5;
-                    this.x += Math.sin(this.y * 0.01);
-                } else {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                }
-
-                if (this.y < -50 || this.y > canvas.height + 50 || this.x < -50 || this.x > canvas.width + 50) {
-                    this.reset();
-                }
-            }
-            draw() {
-                ctx.globalAlpha = Math.max(0, this.opacity);
-                ctx.fillStyle = currentParticleColor;
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-
-                if (this.type === 'scrap') {
-                    ctx.fillRect(-this.size, -this.size, this.size * 2, this.size * 2);
-                } else if (this.type === 'blood') {
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, this.size * 0.5, this.size * 2, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                } else if (this.type === 'shield') {
-                    ctx.fillRect(-this.size * 3, -1, this.size * 6, 2);
-                } else if (this.type === 'spark') {
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.lineTo(-this.speedX * 4, -this.speedY * 4);
-                    ctx.strokeStyle = currentParticleColor;
-                    ctx.lineWidth = Math.max(1, this.size * 0.5);
-                    ctx.stroke();
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, Math.max(0.1, this.size), 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-        }
-        
-        function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
-        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
-
-        window.onload = () => {
-            const birth = new Date('2004-11-07'); const now = new Date(); let age = now.getFullYear() - birth.getFullYear(); if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() < 7)) age--;
-            document.getElementById('player-level').innerText = age; setUniverse('aqw'); initParticles(); animate();
-            
-            // Start the background anomaly spawner!
-            scheduleNextAnomaly();
-        };
-    </script>
-</body>
-</html>
+<!-- ... existing code ... -->
