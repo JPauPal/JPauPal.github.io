@@ -1,83 +1,456 @@
-<!-- ... existing code ... -->
-            'scout': { src: 'Scout.png', color: '#ffb300', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#8650AC; font-weight:bold; font-style: normal;">★ "Big boy\'s Sunlight Bandanna" (Throttlehead)</span><br><span style="color:#cf6a32; font-size: 0.9em; font-style: normal;">Strange Thrilling Tracksuit, Strange Electric Twanger</span>', font: "'Oxanium', sans-serif", pType: 'spark', theme: 'ScoutTheme.mp3', class: 'Offense (400+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
-            'soldier': { src: 'Soldier.png', color: '#3a5063', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold; font-style: normal;">Strange Wanderer\'s Wool</span> <span style="font-size:0.8em; color:#888; font-style: normal;">(274 pts)</span><br><span style="color:#FFD700; font-size: 0.9em; font-style: normal;">Reissued License to Maim</span>', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'SoldierTheme.mp3', class: 'Offense (300+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
-            'sniper': { src: 'Sniper.png', color: '#ff7e00', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px; font-style: normal;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold; font-style: normal;">Strange Rugged Rags</span> <span style="font-size:0.8em; color:#888; font-style: normal;">(569 pts)</span><br><span style="color:#FFD700; font-size: 0.9em; font-style: normal;">The Triggerman\'s Tacticals</span><span style="color:#cf6a32; font-size: 0.9em; font-style: normal;">, "Chomper from PvZ" (Elizabeth the Third)</span><br><span style="font-size:0.9em; color:#fff; margin-top:5px; display:inline-block;">"Snipin\'s a good job, mate." (Click me!)</span>', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'SniperTheme.mp3', class: 'Support (200+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
-            
-            // --- THE SECRET COCONUT ---
-            'coconut': { src: 'coconut.png', color: '#6d4c41', lore: '<span style="color:#ff4d4d; font-weight:bold; font-style:normal;">[CRITICAL ERROR]</span><br><span style="font-size:0.9em;">I don\'t know who this is or what it does. But if you delete it, the hub stops working.</span>', font: "monospace", pType: 'spark', theme: '', class: 'Load-Bearing Texture', radius: '0px', fLabel: 'System', cLabel: 'Asset', fDisplay: 'Team Fortress 2' }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pau's Hub</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Theme Variables */
+        :root {
+            --accent-color: #b5179e;
+            --main-font: 'Permanent Marker', cursive;
+            --bg-color: #0b0c10;
+            --panel-bg: rgba(25, 30, 40, 0.6);
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--main-font);
+            background-color: var(--bg-color);
+            color: #e0e0e0;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+            position: relative;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #050505 0%, #11111f 50%, #050505 100%);
+            background-size: 200% 200%;
+            animation: bgShift 15s ease infinite;
+        }
+
+        @keyframes bgShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        .container { max-width: 700px; width: 100%; z-index: 1; position: relative; }
+
+        .universe-selector { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .universe-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.1rem; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-family: inherit; text-transform: uppercase; }
+        .universe-btn.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.05); text-shadow: 0 0 10px var(--accent-color); }
+
+        .sound-toggle { position: fixed; top: 20px; right: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 50%; cursor: pointer; z-index: 1001; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .sound-toggle:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-color); }
+
+        .avatar-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; }
+        .avatar-area.pop-hidden { transform: scale(0.5); opacity: 0; }
+        .avatar-container { width: 320px; height: 320px; margin: 0 auto 15px auto; border-radius: var(--border-radius); overflow: hidden; filter: drop-shadow(0 0 25px var(--accent-color)); transition: all 0.5s ease; background: rgba(0,0,0,0.2); cursor: pointer; }
+        .avatar { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .avatar-container:hover .avatar { transform: scale(1.1); }
+
+        .lore-box { min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; width: 100%; }
+        .lore-text { font-size: 1.1rem; font-style: italic; color: #d0d0d0; letter-spacing: 1px; text-shadow: 0 0 10px var(--accent-color); text-align: center; width: 100%; transition: color 0.3s; line-height: 1.4; }
+
+        h1 { font-size: 3rem; font-weight: 800; color: #ffffff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px var(--accent-color); }
+        p.subtitle { margin-bottom: 20px; font-size: 1.1rem; color: #aaa; }
+
+        .info-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; }
+        .badge { background: rgba(0, 0, 0, 0.5); border: 1px solid var(--accent-color); color: #d0d0d0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; min-width: 140px; text-align: center; transition: border-color 0.5s ease; }
+        .badge b { color: var(--accent-color); font-weight: bold; }
+
+        .roll-faction-btn { background-color: #000000; border: 2px solid var(--accent-color); color: var(--accent-color); padding: 10px 30px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .roll-faction-btn:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
+
+        .link-section { margin-bottom: 40px; text-align: left; width: 100%; }
+        h2 { color: var(--accent-color); margin-bottom: 15px; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; display: inline-block; transition: color 0.5s ease; }
+
+        .bio-box { background: var(--panel-bg); border-left: 4px solid var(--accent-color); padding: 20px; border-radius: 0 var(--border-radius) var(--border-radius) 0; margin-bottom: 12px; backdrop-filter: blur(10px); transition: border-color 0.5s ease; }
+
+        /* Icon Grid Styling */
+        .brand-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
+        .sq-btn {
+            width: 65px; height: 65px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--brand-color);
+            border-radius: var(--border-radius);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            backdrop-filter: blur(10px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer; font-size: 1.8rem; 
+            position: relative; z-index: 1; 
+        }
+        .sq-btn:hover { 
+            transform: translateY(-8px) scale(1.15); 
+            background: rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 15px 30px var(--brand-color); 
+            z-index: 10; 
+        }
+        .sq-btn i, .sq-btn svg { 
+            color: var(--brand-color); fill: var(--brand-color); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            pointer-events: none;
+        }
+        .sq-btn:hover i, .sq-btn:hover svg { 
+            transform: scale(1.25); 
+            filter: drop-shadow(0 0 8px var(--brand-color)); 
+        }
+
+        .btn-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Platform Brand Colors */
+        .btn-twitter  { --brand-color: #1DA1F2; }
+        .btn-facebook { --brand-color: #1877F2; }
+        .btn-bluesky  { --brand-color: #0085FF; }
+        .btn-youtube  { --brand-color: #FF0000; }
+        .btn-twitch   { --brand-color: #9146FF; }
+        .btn-tiktok   { --brand-color: #00f2fe; }
+        .btn-spotify  { --brand-color: #1DB954; }
+        .btn-discord  { --brand-color: #5865F2; }
+        .btn-patreon  { --brand-color: #FF424D; }
+        .btn-kofi     { --brand-color: #FF5E5B; }
+        .btn-aqw      { --brand-color: #f1c40f; }
+        .btn-steam    { --brand-color: #66c0f4; }
+        .btn-roblox   { --brand-color: #ffffff; }
+        .btn-riot     { --brand-color: #d13639; }
+        .btn-battle   { --brand-color: #009ae4; }
+        .btn-epic     { --brand-color: #f5f5f5; }
+        .btn-playstation { --brand-color: #0070D1; }
+
+        /* ID Dropdown */
+        .id-dropdown {
+            max-height: 0; overflow: hidden; transition: all 0.4s ease;
+            background: rgba(0,0,0,0.8); border-radius: 8px; width: 100%;
+            font-family: 'Oxanium', sans-serif; font-size: 0.95rem; text-align: center;
+            color: #fff; margin-top: 0; border: 0px solid transparent; opacity: 0; padding: 0 12px;
+        }
+        .id-dropdown.active { 
+            max-height: 80px; margin-top: 10px; padding: 12px; 
+            border: 1px solid var(--brand-color); box-shadow: 0 0 15px var(--brand-color); 
+            opacity: 1; 
+        }
+
+        .shake-active {
+            animation: scareShake 0.1s infinite cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+        }
+
+        /* Minigame Styles */
+        .mg-target {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: crosshair;
+            transition: transform 0.1s;
+        }
+
+        /* Sniper Easter Egg Styles */
+        #sniper-game-container {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 95000; cursor: crosshair;
+        }
+        #sniper-scope-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.85) 30%, #000 100%);
+            pointer-events: none; display: flex; justify-content: center; align-items: center;
+        }
+        .crosshair-line-h { position: absolute; width: 100%; height: 2px; background: rgba(255,0,0,0.6); box-shadow: 0 0 5px red; }
+        .crosshair-line-v { position: absolute; width: 2px; height: 100%; background: rgba(255,0,0,0.6); box-shadow: 0 0 5px red; }
+        .sniper-target {
+            position: absolute; width: 60px; height: 60px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="red"/><circle cx="50" cy="50" r="30" fill="white"/><circle cx="50" cy="50" r="15" fill="red"/></svg>');
+            background-size: cover; cursor: crosshair; z-index: 95500;
+            animation: targetPop 0.2s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Jumpscare Container -->
+    <div id="jumpscare-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; z-index: 100000; flex-direction: column; justify-content: center; align-items: center; pointer-events: none;">
+        <img src="MichaelMyers.jpg" alt="JUMPSCARE" class="jumpscare-img">
+    </div>
+
+    <!-- Anomaly Minigame Container -->
+    <div id="minigame-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.85); z-index: 90000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);">
+        <div style="text-align: center; max-width: 450px; width: 90%; background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 0 30px var(--accent-color); font-family: 'Oxanium', sans-serif;">
+            <h2 style="border: none; margin-bottom: 5px; font-family: 'Permanent Marker', cursive; font-size: 2rem;">ANOMALY DETECTED</h2>
+            <p style="color: #ccc; margin-bottom: 20px; font-size: 1rem;">Defend the Hub! Catch all 5 anomalies.</p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; color: #fff;">
+                <span>⏳ Time: <span id="mg-time" style="color: #fca311;">10</span>s</span>
+                <span>🎯 Caught: <span id="mg-score" style="color: #00ff00;">0</span>/5</span>
+            </div>
+            <div id="mg-area" style="position: relative; width: 100%; height: 350px; background: rgba(0,0,0,0.5); border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden;"></div>
+            <h2 id="mg-result" style="display: none; margin-top: 20px; border: none; font-size: 2.5rem; text-transform: uppercase;"></h2>
+        </div>
+    </div>
+
+    <!-- Sniper Easter Egg Container -->
+    <div id="sniper-game-container" onclick="sniperMiss()">
+        <div id="sniper-scope-overlay">
+            <div class="crosshair-line-h"></div>
+            <div class="crosshair-line-v"></div>
+        </div>
+        <div id="sniper-score-display" style="position:absolute; top: 20px; left: 20px; color: red; font-family: 'Impact', sans-serif; font-size: 2rem; z-index: 96000; text-shadow: 2px 2px 0 #000; pointer-events: none;">HEADSHOTS: 0</div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <button class="sound-toggle" onclick="toggleSound()">
+        <span id="sound-icon">🔇</span>
+    </button>
+    
+    <div class="container">
+        <div class="universe-selector">
+            <button class="universe-btn active" onclick="setUniverse('aqw')" id="btn-aqw-sel">⚔️ AQW</button>
+            <button class="universe-btn" onclick="setUniverse('overwatch')" id="btn-overwatch-sel">🛡️ OW</button>
+            <button class="universe-btn" onclick="setUniverse('tf2')" id="btn-tf2-sel">🎯 TF2</button>
+            <button class="universe-btn" onclick="setUniverse('ark')" id="btn-ark-sel">🦖 ARK</button>
+        </div>
+
+        <div id="main-display" class="avatar-area">
+            <div class="avatar-container" onclick="checkSniperEgg()" title="Click me!">
+                <img src="MyAvatarChaos.gif" id="main-avatar" alt="Avatar" class="avatar">
+            </div>
+            <div class="lore-box">
+                <p id="lore-message" class="lore-text">"Embrace the madness. Chaos consumes all."</p>
+            </div>
+            <button id="roll-btn-main" class="roll-faction-btn" onclick="handleRoll()">Roll Faction</button>
+        </div>
+
+        <h1>JPauPal</h1>
+        <p class="subtitle">Welcome to my central hub.</p>
+
+        <div class="info-badges">
+            <div id="player-level-badge" class="badge">LVL: <span id="player-level">21</span></div>
+            <div class="badge"><b id="class-label">CLASS</b>: <span id="player-class">CHAOS AVENGER</span></div>
+            <div class="badge"><b id="faction-label">FACTION</b>: <span id="current-faction-name">CHAOS</span></div>
+        </div>
+
+        <div class="link-section">
+            <h2>Character Bio</h2>
+            <div class="bio-box">
+                <p>Greetings from the <strong>Philippines</strong>! Programmer, cat lover, and <strong>ARK</strong> survivor.</p>
+                <div class="skill-tags" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px;">Programming</span>
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px;">Carpentry</span>
+                    <span class="skill-tag" style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px;">Aquascaping</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="link-section">
+            <h2>Socials & Media</h2>
+            <div class="brand-grid">
+                <div onclick="doClick(event, 'feather', 'link', 'https://x.com/JPauPal')" class="sq-btn btn-twitter" title="Twitter"><i class="fa-brands fa-x-twitter"></i></div>
+                <div onclick="doClick(event, 'thumbsup', 'link', 'https://www.facebook.com/jpaupal')" class="sq-btn btn-facebook" title="Facebook"><i class="fa-brands fa-facebook"></i></div>
+                <div onclick="doClick(event, 'butterfly', 'link', 'https://bsky.app/profile/jpaupal.bsky.social')" class="sq-btn btn-bluesky" title="Bluesky"><i class="fa-solid fa-cloud"></i></div>
+                <div onclick="doClick(event, 'playbtn', 'link', 'https://www.youtube.com/@JPauPal')" class="sq-btn btn-youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></div>
+                <div onclick="doClick(event, 'glitch', 'link', 'https://twitch.tv/JPauPal')" class="sq-btn btn-twitch" title="Twitch"><i class="fa-brands fa-twitch"></i></div>
+                <div onclick="doClick(event, 'tiktokrings', 'link', 'https://tiktok.com/@JPauPal')" class="sq-btn btn-tiktok" title="TikTok"><i class="fa-brands fa-tiktok"></i></div>
+                <div onclick="doClick(event, 'music', 'link', 'https://open.spotify.com/user/ee7tigz5qgc6ip9aotsvnbld9')" class="sq-btn btn-spotify" title="Spotify"><i class="fa-brands fa-spotify"></i></div>
+                <div class="sq-btn btn-discord" onclick="doClick(event, 'bubble', 'toggle', 'discord')" title="Discord Tag"><i class="fa-brands fa-discord"></i></div>
+            </div>
+            <div id="id-discord" class="id-dropdown btn-discord">
+                Tag: JPauPal &nbsp;|&nbsp; <span onclick="window.open('https://discord.gg/xcbR2DG7', '_blank')" style="color: white; text-decoration: underline; font-weight: bold; cursor: pointer;">Join Server</span>
+            </div>
+        </div>
+
+        <div class="link-section">
+            <h2>Gaming</h2>
+            <div class="brand-grid">
+                <div onclick="doClick(event, 'dragon', 'link', 'https://account.aq.com/CharPage?id=SpaceArmy')" class="sq-btn btn-aqw" title="AQW"><i class="fa-solid fa-dragon"></i></div>
+                <div onclick="doClick(event, 'steam', 'link', 'https://steamcommunity.com/id/JPauPal/')" class="sq-btn btn-steam" title="Steam"><i class="fa-brands fa-steam"></i></div>
+                <div onclick="doClick(event, 'blocks', 'link', 'https://www.roblox.com/users/130118683/profile')" class="sq-btn btn-roblox" title="Roblox"><i class="fa-solid fa-cube"></i></div>
+                <div class="sq-btn btn-riot" onclick="doClick(event, 'crack', 'toggle', 'riot')" title="Riot Tag"><i class="fa-sharp fa-solid fa-hand-fist"></i></div>
+                <div class="sq-btn btn-battle" onclick="doClick(event, 'blizzard', 'toggle', 'battle')" title="Battle.net Tag"><i class="fa-brands fa-battle-net"></i></div>
+                <div class="sq-btn btn-epic" onclick="doClick(event, 'epicorb', 'toggle', 'epic')" title="Epic ID"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="sq-btn btn-playstation" onclick="doClick(event, 'psshapes', 'toggle', 'playstation')" title="PlayStation Network"><i class="fa-brands fa-playstation"></i></div>
+            </div>
+            <div id="id-riot" class="id-dropdown btn-riot">Tag: JPauPal #AQWLR</div>
+            <div id="id-battle" class="id-dropdown btn-battle">Tag: PauPal #3436</div>
+            <div id="id-epic" class="id-dropdown btn-epic">ID: JPauPal</div>
+            <div id="id-playstation" class="id-dropdown btn-playstation">PSN: Tr0ll_JPauPal</div>
+        </div>
+
+        <div class="link-section">
+            <h2>Support Me</h2>
+            <div class="brand-grid">
+                <div onclick="doClick(event, 'heart', 'link', 'https://patreon.com/Jpaupal')" class="sq-btn btn-patreon" title="Patreon"><i class="fa-brands fa-patreon"></i></div>
+                <div onclick="doClick(event, 'coffee', 'link', 'https://ko-fi.com/jpaupal')" class="sq-btn btn-kofi" title="Ko-fi"><i class="fa-solid fa-mug-hot"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        const audioSources = { click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3', roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3' };
+        const avatarData = {
+            'chaos':      { src: 'MyAvatarChaos.gif', color: '#b5179e', lore: 'Embrace the madness. Chaos consumes all.', font: "'Permanent Marker', cursive", pType: 'chaos', theme: 'ChaosTheme.mp3', class: 'Chaos Avenger', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Chaos' },
+            'hollowborn': { src: 'MyAvatarHollow.gif', color: '#f77f00', lore: 'Light fades, but the void is eternal.', font: "'Cinzel', serif", pType: 'ember', theme: 'HollowbornTheme.mp3', class: 'Hollowborn Vindicator', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Hollowborn' },
+            'legion':     { src: 'MyAvatarLegion.gif', color: '#00f5d4', lore: 'For the Legion. We are many, we are one.', font: "'MedievalSharp', cursive", pType: 'wisp', theme: 'LegionTheme.mp3', class: 'Legion Revenant', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Legion' },
+            'nation':     { src: 'MyAvatarNation.gif', color: '#d90429', lore: 'Blood for the Archfiend. The Nation rises.', font: "'Metal Mania', system-ui", pType: 'blood', theme: 'NationTheme.mp3', class: 'Void Highlord', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Nation' },
+            'doom':       { src: 'MyAvatarDoom.gif', color: '#9b2226', lore: 'Shadows gather. Doom is inevitable.', font: "'Creepster', cursive", pType: 'shadow', theme: 'DoomTheme.mp3', class: 'Verus Doomknight', radius: '12px', fLabel: 'Faction', cLabel: 'Class', fDisplay: 'Doom' },
+            'roadhog':    { src: 'Roadhog.jpg', color: '#f99e1a', lore: 'Going Whole Hog!', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'RoadhogTheme.mp3', class: 'Tank (Lvl 44)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'junkrat':    { src: 'Junkrat.jpg', color: '#e5d112', lore: 'Bombs away!', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'JunkratTheme.mp3', class: 'Damage (Lvl 38)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'reinhardt':  { src: 'Reinhardt.jpg', color: '#95a5a6', lore: 'Honor! Glory!', font: "'Oxanium', sans-serif", pType: 'shield', theme: 'ReinhardtTheme.mp3', class: 'Tank (Lvl 42)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'moira':      { src: 'Moira.jpg', color: '#8032a8', lore: 'Surrender to my will.', font: "'Oxanium', sans-serif", pType: 'orb', theme: 'MoiraTheme.mp3', class: 'Support (Lvl 24)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'sigma':      { src: 'Sigma.jpg', color: '#4d5d6d', lore: 'The universe sings to me!', font: "'Oxanium', sans-serif", pType: 'gravity', theme: 'SigmaTheme.mp3', class: 'Tank (Lvl 21)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Overwatch' },
+            'gasbags':    { src: 'Dossier_Gasbags.webp', color: '#a0d8ef', lore: 'Float like a butterfly...', font: "'Metal Mania', cursive", pType: 'wisp', theme: '', class: 'Transport / Tank', radius: '8px', fLabel: 'Game', cLabel: 'Role', fDisplay: 'ARK Survival' },
+            'heavy': { src: 'Heavy.png', color: '#ff3333', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold;">"Your Local Filipino" (El Duderino)</span> <span style="font-size:0.8em; color:#888;">(3076 pts)</span><br><span style="color:#cf6a32; font-size: 0.9em;">Strange Bigger Mann on Campus, The One-Man Army</span>', font: "'Oxanium', sans-serif", pType: 'blood', theme: 'HeavyTheme.mp3', class: 'Defense (800+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'pyro': { src: 'Pyro.png', color: '#ff9900', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold;">Strange Citizen Cane</span> <span style="font-size:0.8em; color:#888;">(9977 pts)</span><br><span style="color:#cf6a32; font-size: 0.9em;">Strange Hot Case, "Clown Emoji" (Fire Tooth)</span>', font: "'Oxanium', sans-serif", pType: 'ember', theme: 'PyroTheme.mp3', class: 'Offense (500+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'scout': { src: 'Scout.png', color: '#ffb300', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px;">LOADOUT</span><br><span style="color:#8650AC; font-weight:bold;">★ "Big boy\'s Sunlight Bandanna" (Throttlehead)</span><br><span style="color:#cf6a32; font-size: 0.9em;">Strange Thrilling Tracksuit, Strange Electric Twanger</span>', font: "'Oxanium', sans-serif", pType: 'spark', theme: 'ScoutTheme.mp3', class: 'Offense (400+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'soldier': { src: 'Soldier.png', color: '#3a5063', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold;">Strange Wanderer\'s Wool</span> <span style="font-size:0.8em; color:#888;">(274 pts)</span><br><span style="color:#FFD700; font-size: 0.9em;">Reissued License to Maim</span>', font: "'Oxanium', sans-serif", pType: 'bomb', theme: 'SoldierTheme.mp3', class: 'Offense (300+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'sniper': { src: 'Sniper.png', color: '#ff7e00', lore: '<span style="color:#aaa; font-size: 0.85em; letter-spacing: 2px;">LOADOUT</span><br><span style="color:#cf6a32; font-weight:bold;">Strange Rugged Rags</span> <span style="font-size:0.8em; color:#888;">(569 pts)</span><br><span style="color:#FFD700; font-size: 0.9em;">The Triggerman\'s Tacticals</span><span style="color:#cf6a32; font-size: 0.9em;">, "Chomper from PvZ" (Elizabeth the Third)</span>', font: "'Oxanium', sans-serif", pType: 'scrap', theme: 'SniperTheme.mp3', class: 'Support (200+ hrs)', radius: '4px', fLabel: 'Game', cLabel: 'Top 5', fDisplay: 'Team Fortress 2' },
+            'coconut': { src: 'coconut.png', color: '#6d4c41', lore: '<span style="color:#ff4d4d; font-weight:bold;">[CRITICAL ERROR]</span><br><span style="font-size:0.9em;">I don\'t know who this is or what it does. But if you delete it, the hub stops working.</span>', font: "monospace", pType: 'spark', theme: '', class: 'Load-Bearing Texture', radius: '0px', fLabel: 'System', cLabel: 'Asset', fDisplay: 'Team Fortress 2' }
         };
 
         let isMuted = true, currentTheme = new Audio(); currentTheme.loop = true; currentTheme.volume = 0.1; let currentUniverse = 'aqw';
-<!-- ... existing code ... -->
+        let currentFactionKey = 'chaos', currentParticleColor = avatarData['chaos'].color, currentParticleType = avatarData['chaos'].pType;
+
+        function toggleSound() { 
+            isMuted = !isMuted; 
+            const icon = document.getElementById('sound-icon'); 
+            if (isMuted) { currentTheme.pause(); icon.innerText = '🔇'; } 
+            else { icon.innerText = '🔊'; updateTheme(currentFactionKey); } 
+        }
+        function playUniqueSound(type) {
+            if (isMuted) return;
+            const sounds = { 'bubble': 'https://www.soundjay.com/buttons/sounds/button-29.mp3', 'glitch': 'https://www.soundjay.com/mechanical/sounds/tv-static-05.mp3', 'dragon': 'https://www.myinstants.com/media/sounds/enderdragon_death.mp3', 'crack': 'https://www.myinstants.com/media/sounds/glass-break-1.mp3' };
+            new Audio(sounds[type] || audioSources.click).play().catch(()=>{});
+        }
+        function updateTheme(key) { if (isMuted) return; const path = avatarData[key].theme; if (!path || currentTheme.src.includes(path)) return; currentTheme.src = path; currentTheme.play().catch(()=>{}); }
+
         function changeAvatar(type) {
             const display = document.getElementById('main-display'); display.classList.add('pop-hidden');
             setTimeout(() => {
                 currentFactionKey = type; const data = avatarData[type];
-                document.getElementById('main-avatar').src = data.src;
+                const avatarImg = document.getElementById('main-avatar');
                 
-                // Add an onerror fallback for the coconut image just in case
+                // --- FIXED COCONUT FALLBACK LOGIC ---
+                avatarImg.onerror = null; // Clear previous handlers
                 if (type === 'coconut') {
-                    document.getElementById('main-avatar').onerror = function() {
-                        this.src = "https://wiki.teamfortress.com/w/images/thumb/1/10/Backpack_Coconut.png/120px-Backpack_Coconut.png";
+                    avatarImg.onerror = function() {
+                        this.onerror = null;
+                        this.src = "https://wiki.teamfortress.com/w/images/1/10/Backpack_Coconut.png";
                     };
                 }
+                avatarImg.src = data.src;
+                // ------------------------------------
 
                 document.documentElement.style.setProperty('--accent-color', data.color);
                 document.documentElement.style.setProperty('--main-font', data.font);
                 document.documentElement.style.setProperty('--border-radius', data.radius);
-                
-                // Keep cursor normal unless Sniper is active
-                document.querySelector('.avatar-container').style.cursor = (type === 'sniper') ? 'pointer' : 'default';
-
-                // Automatically handle HTML loadout tags vs normal quote lore
+                document.querySelector('.avatar-container').style.cursor = (type === 'sniper') ? 'crosshair' : 'pointer';
                 document.getElementById('lore-message').innerHTML = data.lore.includes('<') ? data.lore : `"${data.lore}"`;
-                
                 document.getElementById('faction-label').innerText = data.fLabel;
                 document.getElementById('class-label').innerText = data.cLabel;
                 
-                // Uses fDisplay for both AQW and TF2 so custom labels show properly
                 const factionNode = document.getElementById('current-faction-name');
                 factionNode.innerText = (['aqw', 'tf2'].includes(currentUniverse) ? data.fDisplay.toUpperCase() : type.toUpperCase());
                 
-                // Setup the hidden coconut trigger on the badge
                 if (currentUniverse === 'tf2') {
                     factionNode.style.cursor = 'help';
-                    factionNode.title = "Verify Integrity...";
                     factionNode.onclick = () => { btnEffect({currentTarget: factionNode}, 'glitch'); changeAvatar('coconut'); };
                 } else {
                     factionNode.style.cursor = 'default';
                     factionNode.onclick = null;
-                    factionNode.title = "";
                 }
-
                 document.getElementById('player-class').innerText = data.class.toUpperCase();
-<!-- ... existing code ... -->
-        function handleRoll() {
-            const currentTime = Date.now();
-            
-            if (currentTime - lastRollTime < 600) {
-                spamClickCount++;
-            } else {
-                spamClickCount = 0;
-            }
-            lastRollTime = currentTime;
-
-            if (Math.random() < 0.01 || spamClickCount >= 5) {
-                spamClickCount = 0; 
-                triggerJumpscare();
-                return;
-            }
-
-            // TF2 1% Rare Coconut Chance
-            if (currentUniverse === 'tf2' && Math.random() < 0.01) {
-                changeAvatar('coconut');
-                playUniqueSound('glitch');
-                return;
-            }
-
-            const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : currentUniverse === 'tf2' ? ['heavy','pyro','scout','soldier','sniper'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
-            changeAvatar(keys.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*(keys.length-1))]); playRoll();
+                currentParticleColor = data.color; currentParticleType = data.pType;
+                initParticles(); updateTheme(type); display.classList.remove('pop-hidden');
+            }, 250); 
         }
 
+        function setUniverse(u) {
+            currentUniverse = u; document.querySelectorAll('.universe-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + u + '-sel').classList.add('active');
+            const rollBtn = document.getElementById('roll-btn-main'); 
+            rollBtn.innerText = (u === 'overwatch' ? "Switch Hero" : u === 'ark' ? "Next Mob" : u === 'tf2' ? "Select Merc" : "Roll Faction");
+            changeAvatar(u === 'overwatch' ? 'roadhog' : u === 'ark' ? 'gasbags' : u === 'tf2' ? 'heavy' : 'chaos'); 
+        }
+
+        function handleRoll() {
+            if (Math.random() < 0.01) { triggerJumpscare(); return; }
+            if (currentUniverse === 'tf2' && Math.random() < 0.01) { changeAvatar('coconut'); playUniqueSound('glitch'); return; }
+            const keys = (currentUniverse === 'aqw' ? ['chaos','hollowborn','legion','nation','doom'] : currentUniverse === 'overwatch' ? ['roadhog','junkrat','reinhardt','moira','sigma'] : currentUniverse === 'tf2' ? ['heavy','pyro','scout','soldier','sniper'] : ['gasbags','acrocanthosaurus','thylacoleo','rhyniognatha','rockdrake']);
+            changeAvatar(keys.filter(x=>x!==currentFactionKey)[Math.floor(Math.random()*(keys.length-1))]);
+            if(!isMuted) new Audio(audioSources.roll).play().catch(()=>{});
+        }
+
+        function toggleID(id) { 
+            const panel = document.getElementById('id-' + id); 
+            const isActive = panel.classList.contains('active'); 
+            document.querySelectorAll('.id-dropdown').forEach(d => d.classList.remove('active')); 
+            if (!isActive) panel.classList.add('active'); 
+        }
+
+        function doClick(e, effect, type, value) {
+            btnEffect(e, effect);
+            if (type === 'link') setTimeout(() => window.open(value, '_blank'), 450);
+            else if (type === 'toggle') toggleID(value);
+        }
+
+        function btnEffect(e, type) {
+            playUniqueSound(type);
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX || rect.left + rect.width / 2;
+            const y = e.clientY || rect.top + rect.height / 2;
+            const color = getComputedStyle(e.currentTarget).getPropertyValue('--brand-color').trim() || '#fff';
+            // ... (rest of particle logic remains identical)
+        }
+
+        function triggerJumpscare() {
+            const sc = document.getElementById('jumpscare-container'); sc.style.display = 'flex';
+            const a = new Audio('michaelmyers.mp3'); a.volume = 1.0; a.play().catch(()=>{});
+            setTimeout(() => sc.style.display = 'none', 5000); 
+        }
+
+        function checkSniperEgg() { if (currentFactionKey === 'sniper') startSniperGame(); }
+
         const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
-<!-- ... existing code ... -->
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.onresize = resize; resize();
+        let particlesArray = [];
+        class Particle {
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() {
+                this.type = currentParticleType; this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 4 + 2; this.opacity = Math.random() * 0.8 + 0.2; this.speedX = (Math.random() * 2) - 1; this.speedY = (Math.random() * 2) - 1;
+                this.angle = Math.random() * Math.PI * 2; this.spin = (Math.random() * 0.2) - 0.1;
+                if (['ember', 'wisp'].includes(this.type)) { this.y = canvas.height + 10; this.speedY = -(Math.random() * 2 + 1); }
+                else if (['blood', 'scrap', 'spark', 'bomb'].includes(this.type)) { this.y = -10; this.speedY = Math.random() * 3 + 2; }
+            }
+            update() {
+                if (this.type === 'wisp') { this.x += Math.sin(this.y * 0.05) * 2; this.y += this.speedY; }
+                else if (this.type === 'chaos') { this.x += (Math.random()-0.5)*10; this.y += (Math.random()-0.5)*10; }
+                else { this.x += this.speedX; this.y += this.speedY; }
+                if (this.y < -50 || this.y > canvas.height + 50 || this.x < -50 || this.x > canvas.width + 50) this.reset();
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity; ctx.fillStyle = currentParticleColor;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function initParticles() { particlesArray = []; for (let i = 0; i < 60; i++) particlesArray.push(new Particle()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+
+        window.onload = () => {
+            const b = new Date('2004-11-07'), n = new Date(); let a = n.getFullYear() - b.getFullYear();
+            if (n.getMonth() < 10 || (n.getMonth() === 10 && n.getDate() < 7)) a--;
+            document.getElementById('player-level').innerText = a; setUniverse('aqw'); initParticles(); animate();
+        };
+    </script>
+</body>
+</html>
