@@ -84,12 +84,15 @@
 
         @keyframes scorePopAbs { 0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; } 70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         .score-popout-abs { animation: scorePopAbs 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
+        
+        @keyframes scorePopRel { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .score-popout-rel { animation: scorePopRel 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
 
         /* Sniper Overlays */
         #sniper-scope-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 12%, rgba(0,0,0,0.9) 25%, #000 100%); pointer-events: none; display: flex; justify-content: center; align-items: center; }
         .crosshair-line-h { position: absolute; width: 100%; height: 2px; background: rgba(255,0,0,0.7); box-shadow: 0 0 5px red; }
         .crosshair-line-v { position: absolute; width: 2px; height: 100%; background: rgba(255,0,0,0.7); box-shadow: 0 0 5px red; }
-        .sniper-target { position: absolute; width: 65px; height: 65px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="red"/><circle cx="50" cy="50" r="30" fill="white"/><circle cx="50" cy="50" r="15" fill="red"/></svg>'); background-size: cover; cursor: crosshair; z-index: 95500; border-radius: 50%; }
+        .sniper-target { position: absolute; width: 65px; height: 65px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="red"/><circle cx="50" cy="50" r="30" fill="white"/><circle cx="50" cy="50" r="15" fill="red"/></svg>'); background-size: cover; cursor: crosshair; z-index: 95500; transition: transform 0.05s, box-shadow 0.05s; border-radius: 50%; }
         #sniper-range-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 94000; background: linear-gradient(to bottom, #2b2b2b 0%, #111 60%, #050505 100%); pointer-events: none; }
         .range-ceiling { position: absolute; top: 0; left: 0; width: 100%; height: 30%; background: repeating-linear-gradient(90deg, #111 0, #111 10%, #333 10%, #333 11%); box-shadow: inset 0 -40px 50px rgba(0,0,0,0.9); }
         .range-floor { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: repeating-linear-gradient(90deg, #0a0a0a 0, #0a0a0a 10%, #222 10%, #222 10.5%); transform: perspective(400px) rotateX(70deg); transform-origin: bottom; }
@@ -114,12 +117,17 @@
         .mg-target:active { transform: scale(0.8); }
         @keyframes doomPulse { 0% { transform: scale(1); box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffffff; } 100% { transform: scale(1.2); box-shadow: 0 0 35px #ffffff, inset 0 0 25px #ffd700; } }
 
+        /* Easter Egg UI */
+        #secret-toast { display:none; position:fixed; top:40px; left:50%; transform:translateX(-50%); background:rgba(0, 0, 0, 0.9); color:#fff; padding:15px 30px; border-radius:30px; font-family:'Oxanium', sans-serif; font-weight:bold; font-size:1.5rem; z-index:999999; box-shadow:0 0 20px #fff; pointer-events:none; border: 2px solid #fff; }
     </style>
 </head>
 <body>
 
     <!-- BACKGROUND CANVAS (For Roaming Pets) -->
     <canvas id="particle-canvas"></canvas>
+
+    <!-- SECRET TOAST -->
+    <div id="secret-toast"></div>
 
     <!-- THE ARCADE MENU -->
     <div id="arcade-view">
@@ -235,21 +243,131 @@
          ============================================== -->
     <script>
         const sfx = {
-            click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
-            shatter: 'https://www.soundjay.com/misc/sounds/glass-break-1.mp3',
-            shot: 'https://www.myinstants.com/media/sounds/awp-shot.mp3',
-            oof: 'https://www.myinstants.com/media/sounds/roblox-death-sound_1.mp3',
-            sip: 'https://www.myinstants.com/media/sounds/slurp.mp3'
+            click: 'https://www.soundjay.com/buttons/sounds/button-10.mp3',
+            shatter: 'https://www.soundjay.com/misc/sounds/glass-break-2.mp3',
+            shot: 'https://www.soundjay.com/buttons/sounds/button-4.mp3',
+            oof: 'https://www.soundjay.com/misc/sounds/fail-buzzer-01.mp3',
+            sip: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3',
+            roll: 'https://www.soundjay.com/buttons/sounds/button-3.mp3'
         };
 
         function playSfx(src) { new Audio(src).play().catch(()=>{}); }
 
-        // Core UI Navigation
+        // --- GLOBAL HELPERS ---
         function returnToMenu(game) {
             if (game === 'rein') document.getElementById('rein-menu').style.display = 'none';
             if (game === 'slime') document.getElementById('slime-menu').style.display = 'none';
             document.getElementById('arcade-view').style.display = 'flex';
         }
+
+        // --- BACKGROUND PARTICLE ENGINE (REINSTATED) ---
+        const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        let currentParticleType = 'pixels';
+        let currentParticleColor = '#00f2fe';
+        let pArray = [];
+
+        class Particle {
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() {
+                this.type = currentParticleType;
+                this.size = Math.random() * 6 + 2;
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = Math.random() * 1.5 + 0.5;
+                this.bgC = Math.random() > 0.5 ? currentParticleColor : (Math.random() > 0.5 ? '#7a0000' : '#222222');
+                this.opacity = Math.random() * 0.6 + 0.4;
+                this.life = 0;
+                this.maxLife = 100 + Math.random() * 100;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy; this.vy += 0.05;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = this.bgC;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        function initParticles() {
+            pArray = [];
+            for(let i=0; i<60; i++) pArray.push(new Particle());
+        }
+
+        // --- DRAW PETS HELPER ---
+        function drawPet(id, px, py, pt) {
+            ctx.save(); ctx.translate(px, py);
+            if(id==='chaos') { let flap=Math.sin(pt*8)*0.4; ctx.fillStyle='#c71585'; ctx.strokeStyle='#2b0b3d'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.save(); ctx.translate(-12,0); ctx.rotate(flap); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-20,-20); ctx.lineTo(-35,-5); ctx.lineTo(-25,15); ctx.lineTo(-10,5); ctx.lineTo(0,15); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-35,-5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-25,15); ctx.stroke(); ctx.restore(); ctx.save(); ctx.translate(12,0); ctx.rotate(-flap); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(20,-20); ctx.lineTo(35,-5); ctx.lineTo(25,15); ctx.lineTo(10,5); ctx.lineTo(0,15); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(35,-5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(25,15); ctx.stroke(); ctx.restore(); ctx.fillStyle='#4a235a'; ctx.beginPath(); ctx.arc(0,0,16,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.fillStyle='#f0f0f0'; ctx.beginPath(); ctx.arc(3,0,11,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.fillStyle='#ff00ff'; ctx.beginPath(); ctx.ellipse(5,0,3,7,0,0,Math.PI*2); ctx.fill(); }
+            else if(id==='legion') { ctx.fillStyle='#112233'; ctx.shadowBlur=15; ctx.shadowColor='#00f5d4'; ctx.beginPath(); ctx.arc(0,-5,15,0,Math.PI*2); ctx.fill(); ctx.fillRect(-10,5,20,10); ctx.fillStyle='#00f5d4'; ctx.beginPath(); ctx.arc(-6,-5,4,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(6,-5,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.fillRect(-6,8,2,5); ctx.fillRect(-2,8,2,5); ctx.fillRect(2,8,2,5); ctx.fillRect(6,8,2,5); }
+            else if(id==='nation') { ctx.rotate(Math.PI/4+Math.sin(pt)*0.1); ctx.fillStyle='#d90429'; ctx.shadowBlur=20; ctx.shadowColor='#d90429'; ctx.beginPath(); ctx.moveTo(0,-25); ctx.lineTo(5,-5); ctx.lineTo(15,0); ctx.lineTo(5,5); ctx.lineTo(0,25); ctx.lineTo(-5,5); ctx.lineTo(-15,0); ctx.lineTo(-5,-5); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(0,-15); ctx.lineTo(2,-3); ctx.lineTo(10,0); ctx.lineTo(2,3); ctx.lineTo(0,15); ctx.lineTo(-2,3); ctx.lineTo(-10,0); ctx.lineTo(-2,-3); ctx.fill(); }
+            else if(id==='minecraft') { 
+                let bounce=Math.abs(Math.sin(pt*3))*30; ctx.translate(0,-bounce); let squishX=15+(30-bounce)/3; let squishY=15-(30-bounce)/4; 
+                ctx.fillStyle='rgba(230,0,0,0.8)'; ctx.fillRect(-squishX,-squishY,squishX*2,squishY*2); 
+                ctx.fillStyle='rgba(255,50,50,0.5)'; ctx.fillRect(-squishX+2,-squishY+2,squishX*2-4,squishY*2-4); 
+                ctx.fillStyle='#330000'; ctx.fillRect(-squishX+6,-squishY+8,4,4); ctx.fillRect(squishX-10,-squishY+8,4,4); 
+                ctx.fillStyle='#550000'; ctx.fillRect(-1,-squishY+13,2,2); 
+            }
+            else if(id==='roblox') { ctx.rotate(Math.sin(pt)*0.2); ctx.fillStyle='#f39c12'; ctx.fillRect(-15,-10,30,8); ctx.fillStyle='#27ae60'; ctx.fillRect(-16,-2,32,4); ctx.fillStyle='#f1c40f'; ctx.beginPath(); ctx.moveTo(-15,2); ctx.lineTo(-10,8); ctx.lineTo(-5,2); ctx.lineTo(0,8); ctx.lineTo(5,2); ctx.lineTo(10,8); ctx.lineTo(15,2); ctx.fill(); ctx.fillStyle='#5c3a21'; ctx.fillRect(-15,4,30,6); ctx.fillStyle='#f39c12'; ctx.fillRect(-15,10,30,8); }
+            else if(id==='terraria') { ctx.shadowBlur=20; ctx.shadowColor='#00aaff'; ctx.fillStyle='#00aaff'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,255,255,0.5)'; let flap=Math.abs(Math.sin(pt*10))*10; ctx.beginPath(); ctx.ellipse(-10,-5-flap,8,4,-Math.PI/6,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10,-5-flap,8,4,Math.PI/6,0,Math.PI*2); ctx.fill(); }
+            else if(id==='sigma') { for(let i=0; i<2; i++) { let angle=pt*2+(i*Math.PI); let radius=30; let ox=Math.cos(angle)*radius; let oy=Math.sin(angle)*30; ctx.shadowBlur=15; ctx.shadowColor='#00f2fe'; ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(ox,oy,12,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#00f2fe'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(ox-10,oy); ctx.lineTo(ox+10,oy); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ox,oy-10); ctx.lineTo(ox,oy+10); ctx.stroke(); ctx.shadowBlur=0; } }
+            else if(id==='pyro') { ctx.strokeStyle='#ffffff'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(-18,0); ctx.quadraticCurveTo(-25,15,-20,30); ctx.stroke(); ctx.fillStyle='#e040a0'; ctx.beginPath(); ctx.ellipse(-8,12,4,8,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(8,10,4,8,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(12,-20); ctx.lineTo(18,-35); ctx.lineTo(24,-15); ctx.fill(); ctx.fillStyle='#ff66cc'; ctx.beginPath(); ctx.ellipse(0,0,18,14,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(15,-10,11,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#ffffff'; ctx.beginPath(); ctx.ellipse(24,-5,6,8,Math.PI/4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#ff66cc'; ctx.beginPath(); ctx.ellipse(-2,14,4,8,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(14,12,4,8,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(15,-12,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(16,-12,2,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#555'; ctx.beginPath(); ctx.arc(26,-5,1,0,Math.PI*2); ctx.fill(); }
+            else if(id==='heavy') { ctx.rotate(pt); ctx.fillStyle='#e6d8ad'; ctx.beginPath(); ctx.moveTo(-15,10); ctx.lineTo(15,10); ctx.lineTo(0,-15); ctx.fill(); ctx.fillStyle='#5c3a21'; ctx.beginPath(); ctx.moveTo(-13,8); ctx.lineTo(13,8); ctx.lineTo(0,-13); ctx.fill(); ctx.fillStyle='#27ae60'; ctx.beginPath(); ctx.moveTo(-14,6); ctx.lineTo(14,6); ctx.lineTo(0,-14); ctx.fill(); ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.moveTo(-12,4); ctx.lineTo(12,4); ctx.lineTo(0,-12); ctx.fill(); ctx.fillStyle='#e6d8ad'; ctx.beginPath(); ctx.moveTo(-11,2); ctx.lineTo(11,2); ctx.lineTo(0,-11); ctx.fill(); ctx.fillStyle='#795548'; ctx.fillRect(-1,-22,2,10); ctx.fillStyle='#556b2f'; ctx.beginPath(); ctx.arc(0,-22,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.arc(0,-22,1.5,0,Math.PI*2); ctx.fill(); }
+            else if(id==='sniper') { ctx.rotate(Math.sin(pt)*0.2); ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillRect(-12,-15,24,30); ctx.fillStyle='rgba(255,215,0,0.8)'; ctx.fillRect(-10,-5,20,18); ctx.fillStyle='#fff'; ctx.fillRect(-8,-20,16,5); ctx.fillStyle='#888'; ctx.fillRect(-6,-23,12,3); ctx.strokeStyle='#fff'; ctx.beginPath(); ctx.moveTo(-6,-5); ctx.lineTo(-6,10); ctx.stroke(); }
+            else if(id==='gasbags') { ctx.fillStyle='#8b5a2b'; ctx.beginPath(); ctx.ellipse(0,0,15,12,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#d2b48c'; ctx.beginPath(); ctx.ellipse(0,6,12,5,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(5,-2,3,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(6,-2,1.5,0,Math.PI*2); ctx.fill(); }
+            else if (id==='kuhli') {
+                // The Secret Kuhli Loach 
+                let segments = 12; let segLen = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                ctx.lineWidth = 8; ctx.beginPath();
+                for(let i=0; i<segments; i++) {
+                    let wave = Math.sin(pt * 5 - i * 0.6) * 6;
+                    if(i===0) ctx.moveTo(-i * segLen, wave); else ctx.lineTo(-i * segLen, wave);
+                }
+                ctx.strokeStyle = '#e69138'; ctx.stroke(); // Orange base
+                
+                ctx.lineWidth = 9; ctx.beginPath();
+                for(let i=0; i<segments; i++) {
+                    if (i % 2 === 1) { 
+                        let w1 = Math.sin(pt * 5 - i * 0.6) * 6; let w2 = Math.sin(pt * 5 - (i+1) * 0.6) * 6;
+                        ctx.moveTo(-i * segLen, w1); ctx.lineTo(-(i+1) * segLen, w2);
+                    }
+                }
+                ctx.strokeStyle = '#2b1a10'; ctx.stroke(); // Dark bands
+                
+                let headY = Math.sin(pt * 5) * 6;
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(2, headY - 2, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.lineWidth = 1; ctx.strokeStyle = '#e69138'; ctx.beginPath();
+                ctx.moveTo(4, headY); ctx.lineTo(8, headY - 2); ctx.moveTo(4, headY + 1); ctx.lineTo(7, headY + 4); ctx.moveTo(3, headY - 1); ctx.lineTo(6, headY - 4); ctx.stroke();
+                
+                let tailY = Math.sin(pt * 5 - (segments-1) * 0.6) * 6;
+                ctx.fillStyle = 'rgba(200,200,200,0.5)'; ctx.beginPath(); ctx.ellipse(-(segments-1)*segLen - 3, tailY, 5, 2.5, 0, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // --- EASTER EGG LISTENER ---
+        let cheatBuffer = '';
+        window.addEventListener('keydown', (e) => {
+            if(e.key.length===1){ 
+                if(e.key===' ')return; cheatBuffer+=e.key.toLowerCase(); if(cheatBuffer.length>10) cheatBuffer=cheatBuffer.slice(-10);
+                if(cheatBuffer==='kuhliloach'){ 
+                    localStorage.setItem('jpaupal_slime_level', 5); 
+                    
+                    // Unlock the Kuhli Loach for the Arcade Room!
+                    localStorage.setItem('jpaupal_kuhli_unlocked', 'true');
+                    if(!roamingPets.some(p => p.id === 'kuhli')) roamingPets.push(new RoamingPet('kuhli'));
+                    
+                    playSfx(sfx.roll); 
+                    let toast=document.getElementById('secret-toast'); toast.innerText="KUHLI LOACH FOUND! Dropper Levels Unlocked!"; 
+                    toast.style.display='block'; toast.classList.add('score-popout-rel'); 
+                    setTimeout(()=>{toast.style.display='none'; toast.classList.remove('score-popout-rel');}, 4000); 
+                    cheatBuffer=''; 
+                } 
+            }
+        });
 
         /* --- 1. SNIPER RANGE --- */
         let sniperActive = false, sScore = 0, sTotalShots = 0, sHealth = 100, sTimer = null, sHealthPackTimeout = null;
@@ -807,8 +925,7 @@
             slimeCtx.fillStyle='rgba(255,50,50,0.5)'; slimeCtx.fillRect(-sqX+3,-sqY+3,(sqX*2)-6,(sqY*2)-6); 
             
             let eS = Math.max(4, sqX*0.3); 
-            slimeCtx.fillStyle='#fff'; slimeCtx.fillRect(-sqX*0.6, sqY*0.1, eS, eS); slimeCtx.fillRect(sqX*0.6-eS, sqY*0.1, eS, eS); 
-            slimeCtx.fillStyle='#000'; slimeCtx.fillRect(-sqX*0.6+eS/2, sqY*0.1+eS/2, eS/2, eS/2); slimeCtx.fillRect(sqX*0.6-eS, sqY*0.1+eS/2, eS/2, eS/2); 
+            slimeCtx.fillStyle='#330000'; slimeCtx.fillRect(-sqX*0.6, sqY*0.1, eS, eS); slimeCtx.fillRect(sqX*0.6-eS, sqY*0.1, eS, eS); 
             slimeCtx.fillStyle='#550000'; slimeCtx.fillRect(-eS/4, sqY*0.5, eS/2, eS/2); 
             
             slimeCtx.strokeStyle='rgba(255,0,0,0.3)'; slimeCtx.lineWidth=2; 
@@ -899,19 +1016,30 @@
         class RoamingPet {
             constructor(id) {
                 this.id = id;
-                this.x = Math.random() * (window.innerWidth - 100) + 50;
-                this.y = Math.random() * (window.innerHeight - 100) + 50;
-                this.vx = (Math.random() - 0.5) * 4;
-                this.vy = (Math.random() - 0.5) * 4;
+                this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                this.x = this.targetX;
+                this.y = this.targetY;
+                this.seed = Math.random() * 1000;
+                this.moveTimer = 0;
             }
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 30 || this.x > window.innerWidth - 30) this.vx *= -1;
-                if (this.y < 30 || this.y > window.innerHeight - 30) this.vy *= -1;
+                this.moveTimer++;
+                // Pick a new place to hang out occasionally
+                if (this.moveTimer > 300 && Math.random() < 0.05) { 
+                    this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                    this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                    this.moveTimer = 0;
+                }
+                
+                // Slowly glide toward target
+                this.x += (this.targetX - this.x) * 0.01;
+                this.y += (this.targetY - this.y) * 0.01;
             }
             draw(pt) {
-                drawPet(this.id, this.x, this.y, pt);
+                // Add idle bobbing effect
+                let idleY = this.y + Math.sin(pt * 3 + this.seed) * 10;
+                drawPet(this.id, this.x, idleY, pt);
             }
         }
         
@@ -919,14 +1047,20 @@
         const petFactions = ['chaos', 'legion', 'nation', 'minecraft', 'roblox', 'terraria', 'sigma', 'pyro', 'heavy', 'sniper', 'gasbags'];
         let collectedPets = new Set(JSON.parse(localStorage.getItem('jpaupal_collected_pets') || '[]'));
         let arcadeUnlocked = localStorage.getItem('jpaupal_arcade_unlocked') === 'true';
+        let kuhliUnlocked = localStorage.getItem('jpaupal_kuhli_unlocked') === 'true';
         
         if (arcadeUnlocked) {
             collectedPets.forEach(id => {
                 roamingPets.push(new RoamingPet(id));
             });
         }
+        
+        if (kuhliUnlocked) {
+            if(!roamingPets.some(p => p.id === 'kuhli')) roamingPets.push(new RoamingPet('kuhli'));
+        }
 
         window.onload = () => { 
+            // Normal arcade background particles
             currentParticleType = 'pixels'; currentParticleColor = '#00f2fe';
             initParticles();
             
@@ -934,11 +1068,12 @@
             function arcadeAnimate() {
                 ctx.clearRect(0,0,canvas.width,canvas.height);
                 
-                // Normal background particles
+                // Draw Arcade Particles
+                let dead = pArray.filter(p=>p.life>p.maxLife||p.opacity<=0); dead.forEach(p=>p.reset());
                 pArray.forEach(p => { p.update(); p.draw(); }); 
                 pArray=pArray.filter(p=>!p.markedForDeletion); 
                 
-                // Roaming collected pets
+                // Draw Roaming Collected Pets!
                 let pt = Date.now() * 0.002;
                 roamingPets.forEach(pet => {
                     pet.update();
