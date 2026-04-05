@@ -36,6 +36,9 @@
         
         .universe-btn.arcade-btn { color: #00f2fe; text-shadow: 0 0 10px #00f2fe; border: 1px solid #00f2fe; }
         .universe-btn.arcade-btn:hover { background: rgba(0, 242, 254, 0.2); }
+        
+        .universe-btn.profile-btn { color: #ff3333; text-shadow: 0 0 10px #ff3333; border: 1px solid #ff3333; }
+        .universe-btn.profile-btn:hover { background: rgba(255, 51, 51, 0.2); }
 
         .sound-toggle { position: fixed; top: 20px; right: 20px; background: var(--panel-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 50%; cursor: pointer; z-index: 1001; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; }
         .sound-toggle:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-color); }
@@ -137,6 +140,7 @@
             <button class="universe-btn" onclick="setUniverse('ark')" id="btn-ark-sel">🦖 ARK</button>
             <button class="universe-btn" onclick="setUniverse('sandbox')" id="btn-sandbox-sel">🧱 SANDBOX</button>
             
+            <a href="profile.html" class="universe-btn profile-btn">👤 PROFILE</a>
             <!-- SECURE LINK TO ARCADE SITE -->
             <a href="arcade.html" class="universe-btn arcade-btn" id="btn-arcade-sel" style="display: none;">🕹️ ARCADE</a>
         </div>
@@ -158,19 +162,6 @@
                 <div class="badge"><b id="lvl-label">LVL</b>: <span id="player-level">21</span></div>
                 <div class="badge"><b id="class-label">CLASS</b>: <span id="player-class">CHAOS AVENGER</span></div>
                 <div class="badge"><b id="faction-label">FACTION</b>: <span id="current-faction-name">CHAOS</span></div>
-            </div>
-
-            <div class="link-section">
-                <h2>Character Bio</h2>
-                <div class="bio-box">
-                    <p>Greetings from the <strong>Philippines</strong>! I'm a programmer, cat lover, and <strong>ARK</strong> survivor.</p>
-                    <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
-                        <span class="skill-tag" onclick="btnEffect(event, 'programming')">Programming</span>
-                        <span class="skill-tag" onclick="btnEffect(event, 'aquascaping')">Aquascaping</span>
-                        <span class="skill-tag" onclick="btnEffect(event, 'carpentry')">Carpentry</span>
-                        <span class="skill-tag" onclick="btnEffect(event, 'farmhand')">Farmhand</span>
-                    </div>
-                </div>
             </div>
 
             <div class="link-section">
@@ -321,7 +312,7 @@
         let cheatBuffer = '';
         window.addEventListener('keydown', (e) => {
             if(e.key.length===1){ 
-                if(e.key===' ')return; cheatBuffer+=e.key.toLowerCase(); if(cheatBuffer.length>10) cheatBuffer=counterBuffer.slice(-10);
+                if(e.key===' ')return; cheatBuffer+=e.key.toLowerCase(); if(cheatBuffer.length>10) cheatBuffer=cheatBuffer.slice(-10);
                 if(cheatBuffer==='kuhliloach'){ 
                     localStorage.setItem('jpaupal_slime_level', 5); playSfx(sfx.roll); 
                     let toast=document.getElementById('secret-toast'); toast.innerText="SECRET UNLOCKED: All Dropper Levels!"; 
