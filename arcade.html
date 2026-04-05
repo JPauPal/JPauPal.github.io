@@ -22,10 +22,11 @@
 
         body {
             font-family: var(--main-font);
-            background-color: var(--bg-color);
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             color: #fff;
             overflow: hidden; 
             text-align: center;
+            min-height: 100vh;
         }
 
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
@@ -38,7 +39,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: transparent;
             position: relative;
             z-index: 10;
         }
@@ -88,22 +89,22 @@
         @keyframes scorePopRel { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .score-popout-rel { animation: scorePopRel 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
 
-        /* Sniper Overlays */
+        /* Sniper Overlays - URL ENCODED TO PREVENT SYNTAX ERRORS */
         #sniper-scope-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 12%, rgba(0,0,0,0.9) 25%, #000 100%); pointer-events: none; display: flex; justify-content: center; align-items: center; }
         .crosshair-line-h { position: absolute; width: 100%; height: 2px; background: rgba(255,0,0,0.7); box-shadow: 0 0 5px red; }
         .crosshair-line-v { position: absolute; width: 2px; height: 100%; background: rgba(255,0,0,0.7); box-shadow: 0 0 5px red; }
-        .sniper-target { position: absolute; width: 65px; height: 65px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="red"/><circle cx="50" cy="50" r="30" fill="white"/><circle cx="50" cy="50" r="15" fill="red"/></svg>'); background-size: cover; cursor: crosshair; z-index: 95500; transition: transform 0.05s, box-shadow 0.05s; border-radius: 50%; }
+        .sniper-target { position: absolute; width: 65px; height: 65px; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='red'/%3E%3Ccircle cx='50' cy='50' r='30' fill='white'/%3E%3Ccircle cx='50' cy='50' r='15' fill='red'/%3E%3C/svg%3E"); background-size: cover; cursor: crosshair; z-index: 95500; transition: transform 0.05s, box-shadow 0.05s; border-radius: 50%; }
         #sniper-range-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 94000; background: linear-gradient(to bottom, #2b2b2b 0%, #111 60%, #050505 100%); pointer-events: none; }
         .range-ceiling { position: absolute; top: 0; left: 0; width: 100%; height: 30%; background: repeating-linear-gradient(90deg, #111 0, #111 10%, #333 10%, #333 11%); box-shadow: inset 0 -40px 50px rgba(0,0,0,0.9); }
         .range-floor { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: repeating-linear-gradient(90deg, #0a0a0a 0, #0a0a0a 10%, #222 10%, #222 10.5%); transform: perspective(400px) rotateX(70deg); transform-origin: bottom; }
         .bullet-hole { position: absolute; width: 12px; height: 12px; background: #000; border-radius: 50%; box-shadow: 0 0 0 1px rgba(50,50,50,0.5), inset 0 0 5px #000; z-index: 95600; pointer-events: none; }
-        .bullet-hole::before { content: ''; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 50 L10 20 M50 50 L80 10 M50 50 L90 60 M50 50 L70 90 M50 50 L20 80 M50 50 L5 50" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><path d="M30 35 L40 25 L60 30 L70 45 L65 65 L45 75 L25 60 Z" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none"/></svg>'); background-size: cover; transform: translate(-50%, -50%); }
+        .bullet-hole::before { content: ''; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 50 L10 20 M50 50 L80 10 M50 50 L90 60 M50 50 L70 90 M50 50 L20 80 M50 50 L5 50' stroke='rgba(255,255,255,0.8)' stroke-width='1.5' fill='none'/%3E%3Cpath d='M30 35 L40 25 L60 30 L70 45 L65 65 L45 75 L25 60 Z' stroke='rgba(255,255,255,0.4)' stroke-width='1' fill='none'/%3E%3C/svg%3E"); background-size: cover; transform: translate(-50%, -50%); }
         @keyframes sniperDamageFlash { 0% { background-color: rgba(255, 0, 0, 0.6); } 100% { background-color: transparent; } }
         .sniper-hurt { animation: sniperDamageFlash 0.3s ease-out; }
         @keyframes sniperHealFlash { 0% { background-color: rgba(0, 255, 0, 0.4); } 100% { background-color: transparent; } }
         .sniper-heal { animation: sniperHealFlash 0.3s ease-out; }
         @keyframes dropHealth { 0% { transform: translateY(-100px) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
-        .sniper-health-pack { position: absolute; width: 50px; height: 50px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="25" width="70" height="50" rx="8" fill="%23fff" stroke="%23aaa" stroke-width="2"/><rect x="42" y="32" width="16" height="36" fill="%23ff3333"/><rect x="32" y="42" width="36" height="16" fill="%23ff3333"/></svg>'); background-size: cover; cursor: pointer; z-index: 95501; animation: dropHealth 4s linear forwards; }
+        .sniper-health-pack { position: absolute; width: 50px; height: 50px; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='15' y='25' width='70' height='50' rx='8' fill='%23fff' stroke='%23aaa' stroke-width='2'/%3E%3Crect x='42' y='32' width='16' height='36' fill='%23ff3333'/%3E%3Crect x='32' y='42' width='36' height='16' fill='%23ff3333'/%3E%3C/svg%3E"); background-size: cover; cursor: pointer; z-index: 95501; animation: dropHealth 4s linear forwards; }
 
         /* Other Specifics */
         #gasbags-game-container { cursor: pointer; }
@@ -253,6 +254,13 @@
 
         function playSfx(src) { new Audio(src).play().catch(()=>{}); }
 
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
         // --- GLOBAL HELPERS ---
         function returnToMenu(game) {
             if (game === 'rein') document.getElementById('rein-menu').style.display = 'none';
@@ -306,10 +314,10 @@
             else if(id==='nation') { ctx.rotate(Math.PI/4+Math.sin(pt)*0.1); ctx.fillStyle='#d90429'; ctx.shadowBlur=20; ctx.shadowColor='#d90429'; ctx.beginPath(); ctx.moveTo(0,-25); ctx.lineTo(5,-5); ctx.lineTo(15,0); ctx.lineTo(5,5); ctx.lineTo(0,25); ctx.lineTo(-5,5); ctx.lineTo(-15,0); ctx.lineTo(-5,-5); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(0,-15); ctx.lineTo(2,-3); ctx.lineTo(10,0); ctx.lineTo(2,3); ctx.lineTo(0,15); ctx.lineTo(-2,3); ctx.lineTo(-10,0); ctx.lineTo(-2,-3); ctx.fill(); }
             else if(id==='minecraft') { 
                 let bounce=Math.abs(Math.sin(pt*3))*30; ctx.translate(0,-bounce); let squishX=15+(30-bounce)/3; let squishY=15-(30-bounce)/4; 
-                ctx.fillStyle='rgba(230,0,0,0.8)'; ctx.fillRect(-squishX,-squishY,squishX*2,squishY*2); 
-                ctx.fillStyle='rgba(255,50,50,0.5)'; ctx.fillRect(-squishX+2,-squishY+2,squishX*2-4,squishY*2-4); 
-                ctx.fillStyle='#330000'; ctx.fillRect(-squishX+6,-squishY+8,4,4); ctx.fillRect(squishX-10,-squishY+8,4,4); 
-                ctx.fillStyle='#550000'; ctx.fillRect(-1,-squishY+13,2,2); 
+                ctx.fillStyle='rgba(150,20,20,0.9)'; ctx.fillRect(-squishX,-squishY,squishX*2,squishY*2); 
+                ctx.fillStyle='rgba(180,30,30,0.7)'; ctx.fillRect(-squishX+2,-squishY+2,squishX*2-4,squishY*2-4); 
+                let eS = Math.max(3, squishX*0.25);
+                ctx.fillStyle='#330000'; ctx.fillRect(-squishX*0.5, -squishY*0.1, eS, eS); ctx.fillRect(squishX*0.5 - eS, -squishY*0.1, eS, eS); 
             }
             else if(id==='roblox') { ctx.rotate(Math.sin(pt)*0.2); ctx.fillStyle='#f39c12'; ctx.fillRect(-15,-10,30,8); ctx.fillStyle='#27ae60'; ctx.fillRect(-16,-2,32,4); ctx.fillStyle='#f1c40f'; ctx.beginPath(); ctx.moveTo(-15,2); ctx.lineTo(-10,8); ctx.lineTo(-5,2); ctx.lineTo(0,8); ctx.lineTo(5,2); ctx.lineTo(10,8); ctx.lineTo(15,2); ctx.fill(); ctx.fillStyle='#5c3a21'; ctx.fillRect(-15,4,30,6); ctx.fillStyle='#f39c12'; ctx.fillRect(-15,10,30,8); }
             else if(id==='terraria') { ctx.shadowBlur=20; ctx.shadowColor='#00aaff'; ctx.fillStyle='#00aaff'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,255,255,0.5)'; let flap=Math.abs(Math.sin(pt*10))*10; ctx.beginPath(); ctx.ellipse(-10,-5-flap,8,4,-Math.PI/6,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10,-5-flap,8,4,Math.PI/6,0,Math.PI*2); ctx.fill(); }
@@ -317,33 +325,40 @@
             else if(id==='pyro') { ctx.strokeStyle='#ffffff'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(-18,0); ctx.quadraticCurveTo(-25,15,-20,30); ctx.stroke(); ctx.fillStyle='#e040a0'; ctx.beginPath(); ctx.ellipse(-8,12,4,8,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(8,10,4,8,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(12,-20); ctx.lineTo(18,-35); ctx.lineTo(24,-15); ctx.fill(); ctx.fillStyle='#ff66cc'; ctx.beginPath(); ctx.ellipse(0,0,18,14,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(15,-10,11,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#ffffff'; ctx.beginPath(); ctx.ellipse(24,-5,6,8,Math.PI/4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#ff66cc'; ctx.beginPath(); ctx.ellipse(-2,14,4,8,0,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(14,12,4,8,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(15,-12,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(16,-12,2,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#555'; ctx.beginPath(); ctx.arc(26,-5,1,0,Math.PI*2); ctx.fill(); }
             else if(id==='heavy') { ctx.rotate(pt); ctx.fillStyle='#e6d8ad'; ctx.beginPath(); ctx.moveTo(-15,10); ctx.lineTo(15,10); ctx.lineTo(0,-15); ctx.fill(); ctx.fillStyle='#5c3a21'; ctx.beginPath(); ctx.moveTo(-13,8); ctx.lineTo(13,8); ctx.lineTo(0,-13); ctx.fill(); ctx.fillStyle='#27ae60'; ctx.beginPath(); ctx.moveTo(-14,6); ctx.lineTo(14,6); ctx.lineTo(0,-14); ctx.fill(); ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.moveTo(-12,4); ctx.lineTo(12,4); ctx.lineTo(0,-12); ctx.fill(); ctx.fillStyle='#e6d8ad'; ctx.beginPath(); ctx.moveTo(-11,2); ctx.lineTo(11,2); ctx.lineTo(0,-11); ctx.fill(); ctx.fillStyle='#795548'; ctx.fillRect(-1,-22,2,10); ctx.fillStyle='#556b2f'; ctx.beginPath(); ctx.arc(0,-22,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.arc(0,-22,1.5,0,Math.PI*2); ctx.fill(); }
             else if(id==='sniper') { ctx.rotate(Math.sin(pt)*0.2); ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillRect(-12,-15,24,30); ctx.fillStyle='rgba(255,215,0,0.8)'; ctx.fillRect(-10,-5,20,18); ctx.fillStyle='#fff'; ctx.fillRect(-8,-20,16,5); ctx.fillStyle='#888'; ctx.fillRect(-6,-23,12,3); ctx.strokeStyle='#fff'; ctx.beginPath(); ctx.moveTo(-6,-5); ctx.lineTo(-6,10); ctx.stroke(); }
-            else if(id==='gasbags') { ctx.fillStyle='#8b5a2b'; ctx.beginPath(); ctx.ellipse(0,0,15,12,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#d2b48c'; ctx.beginPath(); ctx.ellipse(0,6,12,5,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(5,-2,3,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(6,-2,1.5,0,Math.PI*2); ctx.fill(); }
+            else if(id==='gasbags') { ctx.fillStyle='#8b5a2b'; ctx.beginPath(); ctx.ellipse(0,0,15,12,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#d2b48c'; ctx.beginPath(); ctx.ellipse(0,6,12,5,0,0,Math.PI*2); ctx.fill(); let lx=(mouseX-px)*0.01; let ly=(mouseY-py)*0.01; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(5+Math.min(Math.max(lx,-2),2),-2+Math.min(Math.max(ly,-2),2),3,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(6+Math.min(Math.max(lx,-2),2),-2+Math.min(Math.max(ly,-2),2),1.5,0,Math.PI*2); ctx.fill(); }
             else if (id==='kuhli') {
-                // The Secret Kuhli Loach 
-                let segments = 12; let segLen = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-                ctx.lineWidth = 8; ctx.beginPath();
-                for(let i=0; i<segments; i++) {
-                    let wave = Math.sin(pt * 5 - i * 0.6) * 6;
-                    if(i===0) ctx.moveTo(-i * segLen, wave); else ctx.lineTo(-i * segLen, wave);
-                }
-                ctx.strokeStyle = '#e69138'; ctx.stroke(); // Orange base
+                let segments = 25; let segLen = 3.5; 
+                ctx.lineCap = 'round'; ctx.lineJoin = 'round';
                 
-                ctx.lineWidth = 9; ctx.beginPath();
-                for(let i=0; i<segments; i++) {
-                    if (i % 2 === 1) { 
-                        let w1 = Math.sin(pt * 5 - i * 0.6) * 6; let w2 = Math.sin(pt * 5 - (i+1) * 0.6) * 6;
-                        ctx.moveTo(-i * segLen, w1); ctx.lineTo(-(i+1) * segLen, w2);
-                    }
-                }
-                ctx.strokeStyle = '#2b1a10'; ctx.stroke(); // Dark bands
+                let spine = [];
+                for(let i=0; i<segments; i++) { spine.push({x: -i * segLen, y: Math.sin(pt * 5 - i * 0.4) * 8}); }
                 
-                let headY = Math.sin(pt * 5) * 6;
-                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(2, headY - 2, 1.2, 0, Math.PI*2); ctx.fill();
-                ctx.lineWidth = 1; ctx.strokeStyle = '#e69138'; ctx.beginPath();
-                ctx.moveTo(4, headY); ctx.lineTo(8, headY - 2); ctx.moveTo(4, headY + 1); ctx.lineTo(7, headY + 4); ctx.moveTo(3, headY - 1); ctx.lineTo(6, headY - 4); ctx.stroke();
+                ctx.lineWidth = 12; ctx.strokeStyle = '#2a1710'; 
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
                 
-                let tailY = Math.sin(pt * 5 - (segments-1) * 0.6) * 6;
-                ctx.fillStyle = 'rgba(200,200,200,0.5)'; ctx.beginPath(); ctx.ellipse(-(segments-1)*segLen - 3, tailY, 5, 2.5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.lineWidth = 12; ctx.strokeStyle = '#ff8c00'; ctx.setLineDash([6, 6]);
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
+                ctx.setLineDash([]);
+                
+                ctx.lineWidth = 4; ctx.strokeStyle = '#e6cba3';
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y + 4); else ctx.lineTo(p.x, p.y + 4); }); ctx.stroke();
+
+                let hX = spine[0].x, hY = spine[0].y;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y + 6, 5, 2.5, Math.PI/6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y - 6, 5, 2.5, -Math.PI/6, 0, Math.PI*2); ctx.fill();
+                
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(hX - 3, hY - 3, 1.5, 0, Math.PI*2); ctx.fill(); 
+                
+                ctx.lineWidth = 1.5; ctx.strokeStyle = '#e6cba3'; ctx.beginPath();
+                ctx.moveTo(hX, hY); ctx.lineTo(hX + 6, hY - 4);
+                ctx.moveTo(hX, hY); ctx.lineTo(hX + 8, hY);
+                ctx.moveTo(hX, hY+1); ctx.lineTo(hX + 6, hY + 4);
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.beginPath(); ctx.ellipse(spine[segments-1].x - 3, spine[segments-1].y, 6, 4, 0, 0, Math.PI*2); ctx.fill();
             }
             ctx.restore();
         }
@@ -352,18 +367,25 @@
         let cheatBuffer = '';
         window.addEventListener('keydown', (e) => {
             if(e.key.length===1){ 
-                if(e.key===' ')return; cheatBuffer+=e.key.toLowerCase(); if(cheatBuffer.length>10) cheatBuffer=cheatBuffer.slice(-10);
+                if(e.key===' ') return; 
+                cheatBuffer += e.key.toLowerCase(); 
+                if(cheatBuffer.length>10) cheatBuffer = cheatBuffer.slice(-10);
                 if(cheatBuffer==='kuhliloach'){ 
+                    unlockedSlimeLevel = 5;
                     localStorage.setItem('jpaupal_slime_level', 5); 
-                    
-                    // Unlock the Kuhli Loach for the Arcade Room!
                     localStorage.setItem('jpaupal_kuhli_unlocked', 'true');
-                    if(!roamingPets.some(p => p.id === 'kuhli')) roamingPets.push(new RoamingPet('kuhli'));
+                    
+                    let found = false;
+                    roamingPets.forEach(p => { if(p.id === 'kuhli') found = true; });
+                    if(!found) roamingPets.push(new RoamingPet('kuhli'));
                     
                     playSfx(sfx.roll); 
-                    let toast=document.getElementById('secret-toast'); toast.innerText="KUHLI LOACH FOUND! Dropper Levels Unlocked!"; 
+                    let toast=document.getElementById('secret-toast'); toast.innerText="KUHLI LOACH FOUND! All Levels Unlocked!"; 
                     toast.style.display='block'; toast.classList.add('score-popout-rel'); 
                     setTimeout(()=>{toast.style.display='none'; toast.classList.remove('score-popout-rel');}, 4000); 
+                    
+                    if(document.getElementById('slime-menu').style.display === 'flex') renderSlimeMenu();
+                    
                     cheatBuffer=''; 
                 } 
             }
@@ -459,7 +481,7 @@
             
             sTimer = setTimeout(() => { 
                 if(t.parentNode) { 
-                    t.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23222\"/><path d=\"M50 50 L10 -10 L90 -10 Z M50 50 L-10 10 L-10 90 Z M50 50 L110 10 L110 90 Z M50 50 L10 110 L90 110 Z\" fill=\"yellow\" opacity=\"0.9\"/><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"white\"/><circle cx=\"50\" cy=\"50\" r=\"15\" fill=\"orange\"/></svg>')"; 
+                    t.style.backgroundImage = "url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23222'/%3E%3Cpath d='M50 50 L10 -10 L90 -10 Z M50 50 L-10 10 L-10 90 Z M50 50 L110 10 L110 90 Z M50 50 L10 110 L90 110 Z' fill='yellow' opacity='0.9'/%3E%3Ccircle cx='50' cy='50' r='25' fill='white'/%3E%3Ccircle cx='50' cy='50' r='15' fill='orange'/%3E%3C/svg%3E\")"; 
                     t.style.transform = 'scale(1.4)'; 
                     t.style.boxShadow = '0 0 40px 15px orange'; 
                     playSfx(sfx.shot); 
@@ -921,12 +943,12 @@
             
             let sqX = Math.max(15, 25-(fallSpeed*0.3)), sqY = Math.min(35, 20+(fallSpeed*0.4)); 
             slimeCtx.save(); slimeCtx.translate(slimeX,slimeY); slimeCtx.shadowBlur=20; slimeCtx.shadowColor='#ff0000'; 
-            slimeCtx.fillStyle='rgba(230,0,0,0.8)'; slimeCtx.fillRect(-sqX,-sqY,sqX*2,sqY*2); slimeCtx.shadowBlur=0; 
-            slimeCtx.fillStyle='rgba(255,50,50,0.5)'; slimeCtx.fillRect(-sqX+3,-sqY+3,(sqX*2)-6,(sqY*2)-6); 
             
-            let eS = Math.max(4, sqX*0.3); 
-            slimeCtx.fillStyle='#330000'; slimeCtx.fillRect(-sqX*0.6, sqY*0.1, eS, eS); slimeCtx.fillRect(sqX*0.6-eS, sqY*0.1, eS, eS); 
-            slimeCtx.fillStyle='#550000'; slimeCtx.fillRect(-eS/4, sqY*0.5, eS/2, eS/2); 
+            slimeCtx.fillStyle='rgba(150,20,20,0.9)'; slimeCtx.fillRect(-sqX,-sqY,sqX*2,sqY*2); slimeCtx.shadowBlur=0; 
+            slimeCtx.fillStyle='rgba(180,30,30,0.7)'; slimeCtx.fillRect(-sqX+2,-sqY+2,(sqX*2)-4,(sqY*2)-4); 
+            
+            let eS = Math.max(3, sqX*0.25); 
+            slimeCtx.fillStyle='#330000'; slimeCtx.fillRect(-sqX*0.5, -sqY*0.1, eS, eS); slimeCtx.fillRect(sqX*0.5-eS, -sqY*0.1, eS, eS); 
             
             slimeCtx.strokeStyle='rgba(255,0,0,0.3)'; slimeCtx.lineWidth=2; 
             for(let i=0; i<3; i++) { 
@@ -1016,45 +1038,173 @@
         class RoamingPet {
             constructor(id) {
                 this.id = id;
-                this.targetX = Math.random() * (window.innerWidth - 200) + 100;
-                this.targetY = Math.random() * (window.innerHeight - 200) + 100;
-                this.x = this.targetX;
-                this.y = this.targetY;
+                this.x = Math.random() * (window.innerWidth - 200) + 100;
+                this.y = Math.random() * (window.innerHeight - 200) + 100;
+                this.targetX = this.x;
+                this.targetY = this.y;
                 this.seed = Math.random() * 1000;
-                this.moveTimer = 0;
+                this.stateTimer = 0;
+                this.vx = 0;
+                this.vy = 0;
+                
+                // Initialization for specific personalities
+                if (this.id === 'kuhli') {
+                    this.y = window.innerHeight - 80; // Bottom dweller
+                    this.vx = (Math.random() > 0.5 ? 1 : -1) * 3;
+                } else if (this.id === 'gasbags') {
+                    this.y = window.innerHeight + 50;
+                } else if (this.id === 'roblox') {
+                    this.vx = 2; this.vy = 0;
+                }
             }
+            
             update() {
-                this.moveTimer++;
-                // Pick a new place to hang out occasionally
-                if (this.moveTimer > 300 && Math.random() < 0.05) { 
-                    this.targetX = Math.random() * (window.innerWidth - 200) + 100;
-                    this.targetY = Math.random() * (window.innerHeight - 200) + 100;
-                    this.moveTimer = 0;
+                this.stateTimer++;
+
+                switch(this.id) {
+                    case 'chaos':
+                        // Erratic, twitchy movements
+                        if (this.stateTimer > 60) {
+                            this.targetX = this.x + (Math.random() - 0.5) * 300;
+                            this.targetY = this.y + (Math.random() - 0.5) * 300;
+                            this.stateTimer = 0;
+                        }
+                        this.x += (this.targetX - this.x) * 0.05 + (Math.random()-0.5)*4;
+                        this.y += (this.targetY - this.y) * 0.05 + (Math.random()-0.5)*4;
+                        break;
+
+                    case 'heavy':
+                        // Very slow and sluggish
+                        if (this.stateTimer > 400 && Math.random() < 0.05) { 
+                            this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                            this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                            this.stateTimer = 0;
+                        }
+                        this.x += (this.targetX - this.x) * 0.003;
+                        this.y += (this.targetY - this.y) * 0.003;
+                        break;
+
+                    case 'sniper':
+                        // Camper: stays still for a long time, then moves extremely fast
+                        if (this.stateTimer > 500) {
+                            this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                            this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                            this.stateTimer = 0;
+                        }
+                        if (this.stateTimer < 50) { 
+                            this.x += (this.targetX - this.x) * 0.15;
+                            this.y += (this.targetY - this.y) * 0.15;
+                        }
+                        break;
+
+                    case 'nation':
+                        // Aggressive dasher
+                        if (this.stateTimer > 150) {
+                            this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                            this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                            this.stateTimer = 0;
+                        }
+                        if (this.stateTimer < 20) { 
+                            this.x += (this.targetX - this.x) * 0.2;
+                            this.y += (this.targetY - this.y) * 0.2;
+                        }
+                        break;
+
+                    case 'roblox':
+                        // Blocky 90-degree movements
+                        if (this.stateTimer > 100) {
+                            if (Math.random() > 0.5) { this.vx = (Math.random()>0.5?3:-3); this.vy = 0; }
+                            else { this.vy = (Math.random()>0.5?3:-3); this.vx = 0; }
+                            this.stateTimer = 0;
+                        }
+                        this.x += this.vx; this.y += this.vy;
+                        if (this.x < 50 || this.x > window.innerWidth-50) this.vx *= -1;
+                        if (this.y < 50 || this.y > window.innerHeight-50) this.vy *= -1;
+                        break;
+
+                    case 'gasbags':
+                        // Floats steadily upwards like a balloon
+                        this.y -= 1.5;
+                        this.x += Math.sin(this.stateTimer * 0.02) * 1.5;
+                        if (this.y < -50) {
+                            this.y = window.innerHeight + 50;
+                            this.x = Math.random() * window.innerWidth;
+                        }
+                        break;
+
+                    case 'kuhli':
+                        // Bottom feeder slithering
+                        this.x += this.vx;
+                        this.y = (window.innerHeight - 80) + Math.sin(this.stateTimer * 0.05) * 20;
+                        if (this.x < -100) this.x = window.innerWidth + 100;
+                        if (this.x > window.innerWidth + 100) this.x = -100;
+                        break;
+
+                    case 'terraria':
+                        // Swooping in figure-8s
+                        this.x = (window.innerWidth/2) + Math.sin(this.stateTimer * 0.02) * (window.innerWidth/3);
+                        this.y = (window.innerHeight/2) + Math.sin(this.stateTimer * 0.04) * (window.innerHeight/4);
+                        break;
+                        
+                    case 'minecraft':
+                        // Quick lateral movement matched with its bounce
+                        if (this.stateTimer > 150) { 
+                            this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                            this.stateTimer = 0;
+                        }
+                        this.x += (this.targetX - this.x) * 0.02;
+                        break;
+
+                    default:
+                        // Standard hover (legion, sigma, pyro)
+                        if (this.stateTimer > 300 && Math.random() < 0.05) { 
+                            this.targetX = Math.random() * (window.innerWidth - 200) + 100;
+                            this.targetY = Math.random() * (window.innerHeight - 200) + 100;
+                            this.stateTimer = 0;
+                        }
+                        this.x += (this.targetX - this.x) * 0.01;
+                        this.y += (this.targetY - this.y) * 0.01;
+                        break;
                 }
                 
-                // Slowly glide toward target
-                this.x += (this.targetX - this.x) * 0.01;
-                this.y += (this.targetY - this.y) * 0.01;
+                // Screen boundaries for free roamers
+                if (this.id !== 'kuhli' && this.id !== 'gasbags' && this.id !== 'roblox' && this.id !== 'terraria') {
+                    if (this.x < 30) this.x = 30;
+                    if (this.x > window.innerWidth - 30) this.x = window.innerWidth - 30;
+                    if (this.y < 30) this.y = 30;
+                    if (this.y > window.innerHeight - 30) this.y = window.innerHeight - 30;
+                }
             }
+            
             draw(pt) {
-                // Add idle bobbing effect
-                let idleY = this.y + Math.sin(pt * 3 + this.seed) * 10;
-                drawPet(this.id, this.x, idleY, pt);
+                // Add idle bobbing effect only to floaters
+                let drawY = this.y;
+                if (!['minecraft', 'terraria', 'roblox', 'kuhli'].includes(this.id)) {
+                    drawY += Math.sin(pt * 3 + this.seed) * 10;
+                }
+                
+                // Handle Kuhli flipping (needs to face movement direction)
+                if (this.id === 'kuhli' && this.vx < 0) {
+                    ctx.save();
+                    ctx.translate(this.x, drawY);
+                    ctx.scale(-1, 1);
+                    drawPet(this.id, 0, 0, pt);
+                    ctx.restore();
+                } else {
+                    drawPet(this.id, this.x, drawY, pt);
+                }
             }
         }
         
         let roamingPets = [];
         const petFactions = ['chaos', 'legion', 'nation', 'minecraft', 'roblox', 'terraria', 'sigma', 'pyro', 'heavy', 'sniper', 'gasbags'];
-        let collectedPets = new Set(JSON.parse(localStorage.getItem('jpaupal_collected_pets') || '[]'));
-        let arcadeUnlocked = localStorage.getItem('jpaupal_arcade_unlocked') === 'true';
+        
+        // Always show all basic pets in the Arcade!
+        petFactions.forEach(id => {
+            roamingPets.push(new RoamingPet(id));
+        });
+        
         let kuhliUnlocked = localStorage.getItem('jpaupal_kuhli_unlocked') === 'true';
-        
-        if (arcadeUnlocked) {
-            collectedPets.forEach(id => {
-                roamingPets.push(new RoamingPet(id));
-            });
-        }
-        
         if (kuhliUnlocked) {
             if(!roamingPets.some(p => p.id === 'kuhli')) roamingPets.push(new RoamingPet('kuhli'));
         }
