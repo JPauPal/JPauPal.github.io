@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Profile | Pau's Hub</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent-color: #ff3333; 
+            --main-font: 'Permanent Marker', cursive;
+            --bg-color: #0b0c10; 
+            --panel-bg: rgba(25, 30, 40, 0.7); 
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Oxanium', sans-serif; 
+            background-color: var(--bg-color); color: #e0e0e0;
+            text-align: center; min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 50px 20px; overflow-x: hidden;
+            background: linear-gradient(135deg, #110000 0%, #220505 50%, #050000 100%);
+            background-size: 200% 200%; animation: bgShift 15s ease infinite;
+        }
+
+        @keyframes bgShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        
+        .container { max-width: 1100px; width: 100%; z-index: 1; position: relative; }
+
+        h1 { font-family: var(--main-font); font-size: 4rem; font-weight: 800; color: var(--accent-color); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 25px rgba(255, 51, 51, 0.8); }
+        p.subtitle { margin-bottom: 50px; font-size: 1.2rem; color: #aaa; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* --- SIDE BY SIDE GRID --- */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 900px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bio-box { 
+            background: var(--panel-bg); 
+            border-left: 5px solid var(--accent-color); 
+            border-right: 1px solid rgba(255,51,51,0.1);
+            border-top: 1px solid rgba(255,51,51,0.1);
+            border-bottom: 1px solid rgba(255,51,51,0.1);
+            padding: 40px; 
+            border-radius: 0 var(--border-radius) var(--border-radius) 0; 
+            backdrop-filter: blur(15px); 
+            line-height: 1.8; 
+            text-align: left;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,51,51,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bio-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,51,51,0.1);
+        }
+
+        h2 { color: #fff; font-family: var(--main-font); font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: inline-block; letter-spacing: 2px;}
+        p.bio-text { font-size: 1.15rem; color: #e0e0e0; margin-bottom: 25px; line-height: 1.6;}
+
+        /* --- THE COOL CLICKABLE TAGS --- */
+        .tags-container { display: flex; gap: 15px; flex-wrap: wrap; margin-top: auto; }
+        
+        .skill-tag { 
+            background: linear-gradient(135deg, rgba(20, 25, 35, 0.9) 0%, rgba(45, 10, 25, 0.9) 100%); 
+            padding: 10px 20px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 51, 51, 0.4); 
+            font-size: 1rem; 
+            color: #ffb3b3;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            user-select: none; 
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,51,51,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Glass shine effect */
+        .skill-tag::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .skill-tag:hover::before { left: 150%; }
+
+        .skill-tag:hover { 
+            background: linear-gradient(135deg, rgba(40, 10, 20, 0.95) 0%, rgba(80, 15, 30, 0.95) 100%); 
+            color: #fff; 
+            border-color: var(--accent-color); 
+            transform: translateY(-4px) scale(1.05); 
+            box-shadow: 0 10px 25px rgba(255,51,51,0.4), inset 0 0 20px rgba(255,51,51,0.3); 
+        }
+
+        .skill-tag i { font-size: 1.2rem; color: var(--accent-color); transition: 0.3s; filter: drop-shadow(0 0 5px rgba(255,51,51,0.5));}
+        .skill-tag:hover i { text-shadow: 0 0 10px #fff; color: #fff; }
+
+        /* Personal Profile Status */
+        .status-header { display: flex; align-items: center; gap: 25px; margin-bottom: 20px; }
+        .status-icon { font-size: 4.5rem; color: var(--accent-color); filter: drop-shadow(0 0 15px rgba(255,51,51,0.6)); animation: floatHeart 4s ease-in-out infinite; }
+
+        @keyframes floatHeart { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .status-label { font-size: 1rem; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-weight: bold;}
+        .status-value { font-family: var(--main-font); color: var(--accent-color); font-size: 2.2rem; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,51,51,0.5); }
+        .status-desc { color: #d0d0d0; font-size: 1.15rem; font-style: italic; margin-bottom: 25px; line-height: 1.6;}
+
+        /* --- UNIQUE RETURN BUTTON --- */
+        .cyber-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(25, 5, 5, 0.8);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 15px 45px;
+            font-family: 'Oxanium', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.2), inset 0 0 15px rgba(255, 51, 51, 0.1);
+            /* Sci-Fi Angled Corners */
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+            overflow: hidden;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 51, 51, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cyber-btn:hover::before { left: 100%; }
+
+        .cyber-btn:hover {
+            background: var(--accent-color);
+            color: #0b0c10;
+            box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05) translateY(-3px);
+            text-shadow: none;
+        }
+
+        .cyber-btn:hover i {
+            color: #0b0c10;
+        }
+
+        /* --- CINEMATIC OVERLAY --- */
+        #cinematic-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 100000; display: none; opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none; /* Let them watch without interrupting */
+            overflow: hidden;
+        }
+
+        /* Cinematic Animations */
+        @keyframes rain { to { transform: translateY(120vh); } }
+        @keyframes bubbleUp { to { transform: translateY(-120vh) scale(1.5); opacity: 0; } }
+        @keyframes slamDown { to { top: 15vh; } }
+        @keyframes explode { to { transform: translate(var(--tx), var(--ty)) rotate(720deg); opacity: 0; } }
+        @keyframes growUp { to { bottom: -2vh; } }
+        @keyframes sway { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+        @keyframes driveRight { 0% { transform: translateX(0) scaleX(-1) rotate(-2deg); } 50% { transform: translateX(70vw) scaleX(-1) rotate(2deg); } 100% { transform: translateX(140vw) scaleX(-1) rotate(-2deg); } }
+        @keyframes pulseSun { from { transform: scale(1); opacity:0.8;} to { transform: scale(1.1); opacity:1; } }
+        @keyframes fallLeaf { to { transform: translate(-20vw, 120vh) rotate(360deg); } }
+        
+        /* Aquascaping Animations */
+        @keyframes rockDrop { 0% { transform: translateY(-120vh) rotate(0deg); } 100% { transform: translateY(0) rotate(var(--rot)); } }
+        @keyframes plantGrow { 0% { transform: scaleY(0); } 100% { transform: scaleY(1); } }
+        @keyframes plantSway { 0% { transform: rotate(-6deg); } 100% { transform: rotate(6deg); } }
+
+        /* Carpentry Tool Animations */
+        @keyframes hammerStrike1 {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            30% { transform: rotate(-45deg) translate(-20px, -20px); }
+            45% { transform: rotate(45deg) translate(20px, 25px); }
+        }
+        @keyframes nailDrive1 {
+            0%, 40% { transform: translateY(0); height: 50px; }
+            45%, 100% { transform: translateY(25px); height: 25px; }
+        }
+        @keyframes hammerStrike2 {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            30% { transform: rotate(-45deg) translate(-20px, -20px); }
+            45% { transform: rotate(45deg) translate(20px, 48px); }
+        }
+        @keyframes nailDrive2 {
+            0%, 40% { transform: translateY(25px); height: 25px; }
+            45%, 100% { transform: translateY(48px); height: 2px; }
+        }
+
+        /* Relationship Status Animations */
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes radarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pingAppear { 
+            0% { opacity: 0; transform: translate(-50%,-50%) scale(0.5); } 
+            50% { opacity: 1; transform: translate(-50%,-50%) scale(1.3); filter: drop-shadow(0 0 20px #fff); } 
+            100% { opacity: 0.9; transform: translate(-50%,-50%) scale(1); filter: drop-shadow(0 0 10px #0f0); } 
+        }
+        @keyframes flashOverlay { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes scaleUpFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        @keyframes projectileFly { from { left: var(--startX); top: var(--startY); } to { left: 50vw; top: 50vh; } }
+
+        /* Button Effects CSS */
+        .btn-particle { position: fixed; z-index: 100000; pointer-events: none; user-select: none; display: flex; justify-content: center; align-items: center; }
+        @keyframes extremeShake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-4px, -4px); } 100% { transform: translate(2px, 2px); } }
+        .shake-active-target { animation: extremeShake 0.1s infinite !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Cinematic Screen Darkening Overlay -->
+    <div id="cinematic-overlay"></div>
+
+    <canvas id="particle-canvas"></canvas>
+    
+    <div class="container">
+        <h1>PLAYER PROFILE</h1>
+        <p class="subtitle">System Status Log</p>
+
+        <div class="profile-layout">
+            <!-- CHARACTER BIO -->
+            <div class="bio-box">
+                <h2>Character Bio</h2>
+                <p class="bio-text">Greetings from the <strong>Philippines</strong>! I'm a programmer, cat lover, and veteran <strong>ARK</strong> survivor.</p>
+                
+                <div class="tags-container">
+                    <span class="skill-tag" onclick="btnEffect(event, 'programming')"><i class="fa-solid fa-code"></i> Programming</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'aquascaping')"><i class="fa-solid fa-fish-fins"></i> Aquascaping</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'carpentry')"><i class="fa-solid fa-hammer"></i> Carpentry</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'farmhand')"><i class="fa-solid fa-wheat-awn"></i> Farmhand</span>
+                </div>
+            </div>
+
+            <!-- PERSONAL PROFILE -->
+            <div class="bio-box">
+                <div class="status-header">
+                    <i class="fa-solid fa-heart-crack status-icon"></i>
+                    <div>
+                        <div class="status-label">Relationship Status</div>
+                        <div class="status-value">Single</div>
+                    </div>
+                </div>
+                
+                <p class="status-desc">Just a solo adventurer exploring different universes. Always open to finding a reliable co-op partner to share the journey and tackle the next boss fight together!</p>
+                
+                <div class="tags-container">
+                    <span class="skill-tag" onclick="btnEffect(event, 'player2')"><i class="fa-solid fa-gamepad"></i> Player 2 Wanted</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'lfg')"><i class="fa-solid fa-magnifying-glass"></i> LFG</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'coop')"><i class="fa-solid fa-handshake-angle"></i> Co-op Ready</span>
+                    <span class="skill-tag" onclick="btnEffect(event, 'loyal')"><i class="fa-solid fa-shield-heart"></i> Loyal Teammate</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="cyber-btn"><i class="fa-solid fa-angles-left"></i> RETURN TO HUB</a>
+    </div>
+
+    <!-- LOGIC & EFFECTS ENGINE -->
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Background Particles
+        class Ember {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height;
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 50 + Math.random() * 100;
+                this.size = Math.random() * 4 + 1;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.isHeart = Math.random() > 0.95; 
+                
+                const colors = ['#ff3333', '#ff6666', '#ff0055', '#ff4400'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = Math.random() * 0.02 + 0.01;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.5 + this.speedX;
+                
+                if (this.y < canvas.height * 0.3) {
+                    this.opacity -= 0.01;
+                }
+
+                if (this.y < -50 || this.opacity <= 0) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                
+                if (this.isHeart) {
+                    ctx.translate(this.x, this.y);
+                    let s = this.size * 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(0, s/2);
+                    ctx.bezierCurveTo(-s, -s/2, -s, -s*1.5, 0, -s);
+                    ctx.bezierCurveTo(s, -s*1.5, s, -s/2, 0, s/2);
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Shared Kuhli Loach Drawer (Used by background & cinematic)
+        class ZoomyLoach {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = 6;
+                this.vy = 0;
+                this.seed = Math.random() * 1000;
+            }
+
+            update() {
+                this.seed += 0.03;
+                let direction = this.vx > 0 ? 1 : -1;
+                this.vx = Math.cos(this.seed * 0.6) * 3 + (direction * 6); 
+                this.vy = Math.sin(this.seed * 0.8) * 5;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x > canvas.width + 150) { 
+                    this.x = -100; 
+                    this.y = Math.random() * canvas.height; 
+                    this.vx = 6; 
+                }
+                if (this.x < -150) { 
+                    this.x = canvas.width + 100; 
+                    this.y = Math.random() * canvas.height; 
+                    this.vx = -6; 
+                }
+                
+                if (this.y > canvas.height - 30) this.y = canvas.height - 30;
+                if (this.y < 30) this.y = 30;
+            }
+
+            draw(ctx, pt, scale = 1) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(scale, scale);
+                
+                // Flip horizontally if swimming left
+                if (this.vx < 0) {
+                    ctx.scale(-1, 1);
+                }
+                
+                // Slight tilt based on its vertical velocity
+                ctx.rotate(this.vy * 0.05 * (this.vx < 0 ? -1 : 1));
+
+                let segments = 25; let segLen = 3.5; 
+                ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                
+                // Wiggling spine logic
+                let spine = [];
+                for(let i=0; i<segments; i++) { 
+                    spine.push({x: -i * segLen, y: Math.sin(pt * 8 - i * 0.4) * 8}); 
+                }
+                
+                // Base dark brown body
+                ctx.lineWidth = 14; ctx.strokeStyle = '#2a1710'; 
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
+                
+                // Orange bands
+                ctx.lineWidth = 14; ctx.strokeStyle = '#ff8c00'; ctx.setLineDash([6, 6]);
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Pale Underbelly
+                ctx.lineWidth = 4; ctx.strokeStyle = '#e6cba3';
+                ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y + 4); else ctx.lineTo(p.x, p.y + 4); }); ctx.stroke();
+
+                let hX = spine[0].x, hY = spine[0].y;
+                
+                // Side Fins
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y + 6, 5, 2.5, Math.PI/6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y - 6, 5, 2.5, -Math.PI/6, 0, Math.PI*2); ctx.fill();
+                
+                // Eyes
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(hX - 3, hY - 3, 1.5, 0, Math.PI*2); ctx.fill(); 
+                
+                // Barbels (Whiskers)
+                ctx.lineWidth = 1.5; ctx.strokeStyle = '#e6cba3'; ctx.beginPath();
+                ctx.moveTo(hX, hY); ctx.lineTo(hX + 6, hY - 4);
+                ctx.moveTo(hX, hY); ctx.lineTo(hX + 8, hY);
+                ctx.moveTo(hX, hY+1); ctx.lineTo(hX + 6, hY + 4);
+                ctx.stroke();
+                
+                // Tail fin
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.beginPath(); ctx.ellipse(spine[segments-1].x - 3, spine[segments-1].y, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+
+        // The Mini-Stingray of the Freshwater World
+        class HillstreamLoach {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = 5;
+                this.vy = 0;
+                this.seed = Math.random() * 1000;
+            }
+
+            update() {
+                this.seed += 0.04;
+                let direction = this.vx > 0 ? 1 : -1;
+                // Gliding motion (less wavy than Kuhli)
+                this.vx = Math.cos(this.seed * 0.5) * 2 + (direction * 6); 
+                this.vy = Math.sin(this.seed * 0.7) * 3;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x > canvas.width + 150) { this.x = -100; this.y = Math.random() * canvas.height; this.vx = 6; }
+                if (this.x < -150) { this.x = canvas.width + 100; this.y = Math.random() * canvas.height; this.vx = -6; }
+                
+                if (this.y > canvas.height - 30) this.y = canvas.height - 30;
+                if (this.y < 30) this.y = 30;
+            }
+
+            draw(ctx, pt, scale = 1) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(scale, scale);
+                
+                if (this.vx < 0) ctx.scale(-1, 1);
+                ctx.rotate(this.vy * 0.05 * (this.vx < 0 ? -1 : 1));
+                
+                let flutter = Math.sin(pt * 25) * 1.5;
+
+                // Small Fan Tail
+                ctx.fillStyle = '#2d241b';
+                ctx.beginPath();
+                ctx.moveTo(-15, 0);
+                ctx.lineTo(-30, -6 - flutter);
+                ctx.lineTo(-32, 0);
+                ctx.lineTo(-30, 6 + flutter);
+                ctx.fill();
+
+                // Broad flat body (Shield shape like a miniature stingray)
+                ctx.fillStyle = '#5c4a36';
+                ctx.beginPath();
+                ctx.moveTo(18, 0); // nose
+                ctx.bezierCurveTo(18, -20, -5, -22, -15, -6); // top fin edge
+                ctx.lineTo(-15, 6);
+                ctx.bezierCurveTo(-5, 22, 18, 20, 18, 0); // bottom fin edge
+                ctx.fill();
+
+                // Fin ripples (darker edges fluttering)
+                ctx.strokeStyle = 'rgba(45, 36, 27, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(14, 10);
+                ctx.bezierCurveTo(5, 18 + flutter, -10, 18 - flutter, -15, 6);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(14, -10);
+                ctx.bezierCurveTo(5, -18 - flutter, -10, -18 + flutter, -15, -6);
+                ctx.stroke();
+                
+                // Spotted Pattern (Beaufortia kweichowensis style)
+                ctx.fillStyle = '#d6b88a'; // Pale sandy spots
+                const spots = [
+                    // Center row
+                    [-8, 0, 1.5], [-2, 0, 1.5], [4, 0, 1.5], [12, 0, 1.2],
+                    // Inner Top row
+                    [-10, -5, 1], [-4, -6, 1.2], [2, -7, 1.2], [8, -5, 1], [14, -3, 0.8],
+                    // Inner Bottom row
+                    [-10, 5, 1], [-4, 6, 1.2], [2, 7, 1.2], [8, 5, 1], [14, 3, 0.8],
+                    // Outer top fin
+                    [-6, -11, 1], [0, -14, 1], [6, -11, 0.8], [-11, -9, 0.8],
+                    // Outer bottom fin
+                    [-6, 11, 1], [0, 14, 1], [6, 11, 0.8], [-11, 9, 0.8]
+                ];
+                
+                spots.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s[0], s[1], s[2], 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Eyes (Top down, slightly bulging)
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(10, -5, 1.8, 0, Math.PI*2);
+                ctx.arc(10, 5, 1.8, 0, Math.PI*2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(10.5, -5.5, 0.6, 0, Math.PI*2);
+                ctx.arc(10.5, 4.5, 0.6, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        const sfx = {
+            click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
+            glitch: 'https://www.soundjay.com/mechanical/sounds/tv-static-05.mp3',
+            wood: 'https://www.soundjay.com/buttons/sounds/button-3.mp3',
+            splash: 'https://www.soundjay.com/nature/sounds/water-splash-1.mp3',
+            sip: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3' // Used for Radar Pings
+        };
+
+        function playSfx(src) { new Audio(src).play().catch(()=>{}); }
+
+        let isCinematicPlaying = false;
+
+        /* Full-Screen Cinematic Event Triggers */
+        function triggerCinematic(type) {
+            const overlay = document.getElementById('cinematic-overlay');
+            overlay.innerHTML = '';
+            overlay.style.display = 'block';
+            void overlay.offsetWidth; // force reflow
+            overlay.style.opacity = '1';
+
+            let cinematicDuration = 3800; // Default duration
+
+            if (type === 'programming') {
+                cinematicDuration = 4000;
+                overlay.style.background = 'rgba(0, 20, 0, 0.95)';
+                playSfx(sfx.glitch);
+                
+                // Typing Terminal
+                let terminal = document.createElement('div');
+                terminal.style.cssText = "position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); color:#0f0; font-family:'Courier New', monospace; font-size:2.5rem; text-align:left; text-shadow: 0 0 10px #0f0; width:80%; max-width:800px; font-weight:bold;";
+                overlay.appendChild(terminal);
+                
+                const lines = ["> INITIALIZING ROOT OVERRIDE...", "> BYPASSING FIREWALL...", "> DECRYPTING MAINFRAME...", "> SYSTEM COMPROMISED."];
+                lines.forEach((line, i) => {
+                    setTimeout(() => { 
+                        terminal.innerHTML += line + "<br>"; 
+                        playSfx(sfx.click); 
+                    }, i * 600);
+                });
+
+                // Matrix Rain
+                for(let i=0; i<80; i++) {
+                    let span = document.createElement('span');
+                    span.innerText = Math.random()>0.5 ? '0' : '1';
+                    span.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:-10vh; color:#0f0; font-family:monospace; font-size:1.8rem; opacity:${Math.random()}; animation: rain ${Math.random()*1.5+0.5}s linear infinite; text-shadow: 0 0 5px #0f0;`;
+                    overlay.appendChild(span);
+                }
+            } 
+            else if (type === 'aquascaping') {
+                cinematicDuration = 5500;
+                overlay.style.background = 'linear-gradient(to bottom, rgba(0,20,50,0.95), rgba(0,50,100,0.98))';
+                playSfx(sfx.splash);
+                
+                // Falling Rocks
+                for(let i=0; i<15; i++) {
+                    let rock = document.createElement('div');
+                    let size = Math.random() * 130 + 70; // 70px to 200px
+                    let left = Math.random() * 95; // 0vw to 95vw
+                    let rot = (Math.random() - 0.5) * 120; // rotation
+                    let duration = Math.random() * 0.5 + 0.4; // 0.4s to 0.9s
+                    let delay = Math.random() * 0.4;
+                    
+                    let br = `${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% / ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}%`;
+
+                    rock.style.cssText = `position:absolute; left:${left}vw; bottom:-${size*0.3}px; width:${size}px; height:${size*0.8}px; background:radial-gradient(circle at 30% 30%, #666, #222); border-radius:${br}; box-shadow:inset -10px -10px 20px rgba(0,0,0,0.6), 5px 10px 15px rgba(0,0,0,0.5); animation: rockDrop ${duration}s ${delay}s cubic-bezier(0.3, 0.8, 0.4, 1) forwards; transform: translateY(-120vh); z-index:1;`;
+                    rock.style.setProperty('--rot', `${rot}deg`);
+
+                    overlay.appendChild(rock);
+
+                    setTimeout(() => {
+                        if(size > 150) {
+                            playSfx(sfx.wood); 
+                            document.body.classList.add('shake-active-target'); 
+                            setTimeout(()=>document.body.classList.remove('shake-active-target'), 150); 
+                        }
+                    }, (duration + delay) * 1000);
+                }
+
+                // Growing Foliage
+                setTimeout(() => {
+                    for(let i=0; i<18; i++) {
+                        let plantGroup = document.createElement('div');
+                        let left = Math.random() * 95;
+                        plantGroup.style.cssText = `position:absolute; left:${left}vw; bottom:0; display:flex; align-items:flex-end; transform-origin:bottom; animation: plantGrow 0.8s ease-out forwards; transform: scaleY(0); z-index:2; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));`;
+
+                        let stems = Math.floor(Math.random() * 4) + 2;
+                        for(let j=0; j<stems; j++) {
+                            let stem = document.createElement('div');
+                            let height = Math.random() * 25 + 15; 
+                            let delay = Math.random() * 2;
+                            stem.style.cssText = `width:${Math.random()*6+8}px; height:${height}vh; background:linear-gradient(to top, #0a2e0a, #2ecc71); border-radius:10px 10px 0 0; margin:0 -3px; transform-origin:bottom center; animation: plantSway ${Math.random()*1.5+1.5}s ${delay}s ease-in-out infinite alternate; box-shadow:inset 2px 0 5px rgba(0,0,0,0.3);`;
+                            plantGroup.appendChild(stem);
+                        }
+                        overlay.appendChild(plantGroup);
+                    }
+                }, 600); 
+
+                // Bubbles
+                for(let i=0; i<40; i++) {
+                    let b = document.createElement('div');
+                    b.style.cssText = `position:absolute; left:${Math.random()*100}vw; bottom:-10vh; width:${Math.random()*20+5}px; height:${Math.random()*20+5}px; border-radius:50%; border:2px solid rgba(255,255,255,0.4); animation: bubbleUp ${Math.random()*3+2}s ease-in infinite; box-shadow: inset 0 0 5px rgba(255,255,255,0.2); z-index:3;`;
+                    overlay.appendChild(b);
+                }
+
+                // --- CINEMATIC KUHLI & HILLSTREAM LOACHES ---
+                let cCanvas = document.createElement('canvas');
+                cCanvas.width = window.innerWidth;
+                cCanvas.height = window.innerHeight;
+                cCanvas.style.cssText = "position:absolute; top:0; left:0; z-index:5; pointer-events:none;";
+                overlay.appendChild(cCanvas);
+                let cCtx = cCanvas.getContext('2d');
+
+                let loach1 = new ZoomyLoach();
+                loach1.x = -200; loach1.y = window.innerHeight * 0.6; loach1.vx = 14; 
+                
+                let loach2 = new HillstreamLoach();
+                loach2.x = window.innerWidth + 600; loach2.y = window.innerHeight * 0.3; loach2.vx = -12;
+
+                function renderCinematicLoaches() {
+                    if (overlay.style.opacity === '0' || overlay.style.display === 'none') return;
+                    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+                    let pt = Date.now() * 0.002;
+                    
+                    [loach1, loach2].forEach(l => {
+                        l.x += l.vx;
+                        l.y += Math.sin(pt * 5 + l.seed) * 4;
+                        l.vy = Math.sin(pt * 5 + l.seed) * 4; 
+                        
+                        l.draw(cCtx, pt, 1.8);
+                    });
+                    requestAnimationFrame(renderCinematicLoaches);
+                }
+                
+                setTimeout(() => {
+                    renderCinematicLoaches();
+                }, 300);
+            }
+            else if (type === 'carpentry') {
+                cinematicDuration = 5500;
+                overlay.style.background = 'rgba(30, 15, 5, 0.95)';
+                
+                // Giant Planks with Nails and Hammers
+                for(let i=0; i<6; i++) {
+                    let plankX = 10 + i*14; // spacing along width
+                    
+                    // Create Plank
+                    let plank = document.createElement('div');
+                    plank.style.cssText = `position:absolute; left:${plankX}vw; top:-60vh; width:8vw; height:60vh; background:#8b5a2b; border:3px solid #5c3a21; box-shadow: 0 10px 30px #000; animation: slamDown 0.4s ${i*0.1}s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border-radius: 4px;`;
+                    plank.style.backgroundImage = "radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%), repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px)";
+                    overlay.appendChild(plank);
+                    
+                    // Plank Impact
+                    setTimeout(() => { 
+                        playSfx(sfx.wood); 
+                        document.body.classList.add('shake-active-target'); 
+                        setTimeout(()=>document.body.classList.remove('shake-active-target'), 150); 
+                    }, 400 + (i*100));
+
+                    // Create Nail (Resting on top of the plank)
+                    let nail = document.createElement('div');
+                    nail.style.cssText = `position:absolute; left:${plankX + 3.75}vw; top:18vh; width:0.5vw; height:50px; background:linear-gradient(to right, #ccc, #fff, #999); border-radius:0 0 3px 3px; box-shadow: 2px 5px 5px rgba(0,0,0,0.5); opacity:0; z-index: 2;`;
+                    
+                    // The Flat Nail Head
+                    let nailHead = document.createElement('div');
+                    nailHead.style.cssText = `position:absolute; top:-3px; left:-0.5vw; width:1.5vw; height:5px; background:linear-gradient(to bottom, #eee, #888); border-radius:2px; box-shadow: 0 2px 4px rgba(0,0,0,0.6);`;
+                    nail.appendChild(nailHead);
+
+                    overlay.appendChild(nail);
+
+                    // Create Hammer (Hovering above the nail)
+                    let hammer = document.createElement('i');
+                    hammer.className = 'fa-solid fa-hammer';
+                    hammer.style.cssText = `position:absolute; left:${plankX + 1}vw; top:10vh; font-size:4.5rem; color:#999; filter:drop-shadow(5px 5px 5px rgba(0,0,0,0.6)); opacity:0; z-index: 3; transform-origin: bottom left;`;
+                    overlay.appendChild(hammer);
+
+                    // Animate Nail and Hammer after planks settle
+                    setTimeout(() => {
+                        nail.style.opacity = '1';
+                        hammer.style.opacity = '1';
+
+                        const strike = (animHammer, animNail, topOffset) => {
+                            hammer.style.animation = 'none';
+                            nail.style.animation = 'none';
+                            void hammer.offsetWidth; // force reflow
+                            
+                            hammer.style.animation = `${animHammer} 0.5s ease-in-out forwards`;
+                            nail.style.animation = `${animNail} 0.5s ease-in-out forwards`;
+
+                            // Impact effects
+                            setTimeout(() => {
+                                playSfx(sfx.wood);
+                                document.body.classList.add('shake-active-target'); 
+                                setTimeout(()=>document.body.classList.remove('shake-active-target'), 150);
+                                
+                                // Sawdust explosion from the nail head
+                                for(let j=0; j<15; j++) {
+                                    let dust = document.createElement('div');
+                                    dust.style.cssText = `position:absolute; left:${plankX + 4}vw; top:${topOffset}vh; width:${Math.random()*8+4}px; height:${Math.random()*8+4}px; background:#d4a373; border-radius:2px; transform:translate(-50%,-50%); animation: explode 0.8s ease-out forwards; z-index:4; pointer-events: none;`;
+                                    dust.style.setProperty('--tx', `${(Math.random()-0.5)*15}vw`);
+                                    dust.style.setProperty('--ty', `${(Math.random()-0.5)*15}vh`);
+                                    overlay.appendChild(dust);
+                                }
+                            }, 225); // 45% of 500ms
+                        };
+
+                        strike('hammerStrike1', 'nailDrive1', 20); // Strike 1
+                        
+                        setTimeout(() => {
+                            strike('hammerStrike2', 'nailDrive2', 22); // Strike 2
+                        }, 800);
+
+                    }, 1200 + i*150);
+                }
+
+                // Final massive sawdust explosion to cap off the animation
+                setTimeout(() => {
+                    for(let i=0; i<80; i++) {
+                        let dust = document.createElement('div');
+                        dust.style.cssText = `position:absolute; left:50vw; top:30vh; width:${Math.random()*15+5}px; height:${Math.random()*15+5}px; background:#d4a373; border-radius:2px; transform:translate(-50%,-50%); animation: explode ${Math.random()*1.5+0.5}s ease-out forwards; z-index:5; pointer-events:none;`;
+                        dust.style.setProperty('--tx', `${(Math.random()-0.5)*100}vw`);
+                        dust.style.setProperty('--ty', `${(Math.random()-0.5)*100}vh`);
+                        overlay.appendChild(dust);
+                    }
+                }, 2800);
+            }
+            else if (type === 'farmhand') {
+                cinematicDuration = 4500;
+                overlay.style.background = 'rgba(50, 40, 10, 0.95)';
+                
+                // Glowing Sun
+                let sun = document.createElement('div');
+                sun.style.cssText = "position:absolute; top:-20vh; right:-10vw; width:60vw; height:60vw; background:radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%); animation: pulseSun 2s infinite alternate;";
+                overlay.appendChild(sun);
+                
+                // Wheat Field Growing
+                for(let i=0; i<25; i++) {
+                    let wheat = document.createElement('i');
+                    wheat.className = "fa-solid fa-wheat-awn";
+                    wheat.style.cssText = `position:absolute; left:${i*4.5}vw; bottom:-20vh; font-size:6rem; color:#f1c40f; filter:drop-shadow(0 0 15px rgba(0,0,0,0.9)); animation: growUp 1s ${Math.random()*0.5}s ease-out forwards, sway ${Math.random()*1+1.5}s ease-in-out infinite alternate; transform-origin: bottom; z-index:2;`;
+                    overlay.appendChild(wheat);
+                }
+                
+                // Falling Leaves
+                for(let i=0; i<15; i++) {
+                    let leaf = document.createElement('div');
+                    leaf.innerHTML = '🍃';
+                    leaf.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:-10vh; font-size:2.5rem; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); animation: fallLeaf ${Math.random()*2+2}s linear forwards; z-index:4;`;
+                    overlay.appendChild(leaf);
+                }
+
+                // Tractor driving by
+                let tractor = document.createElement('div');
+                tractor.innerHTML = '🚜';
+                tractor.style.cssText = "position:absolute; font-size:14rem; bottom:5vh; left:-40vw; animation: driveRight 3.5s linear forwards; z-index:3; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.9));";
+                overlay.appendChild(tractor);
+            }
+            else if (type === 'player2') {
+                cinematicDuration = 5500;
+                overlay.style.background = 'rgba(20, 0, 20, 0.95)';
+                playSfx(sfx.glitch);
+
+                let text = document.createElement('div');
+                text.innerHTML = 'INSERT COIN<br><br><span style="font-size:2.5rem; animation: blink 1s infinite;">PRESS START</span>';
+                text.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#ff3333; font-family:'Oxanium', sans-serif; font-size:6rem; font-weight:800; text-align:center; text-shadow: 0 0 25px #ff3333; width: 100%;";
+                overlay.appendChild(text);
+
+                // Falling 8-bit coins
+                for(let i=0; i<30; i++) {
+                    let coin = document.createElement('div');
+                    coin.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:-10vh; width:30px; height:30px; background:#ffd700; border-radius:50%; border:4px dashed #b8860b; animation: rain ${Math.random()*2+1}s linear forwards; box-shadow: 0 0 10px #ffd700;`;
+                    overlay.appendChild(coin);
+                    
+                    setTimeout(() => { playSfx(sfx.click); }, Math.random() * 2000);
+                }
+            }
+            else if (type === 'lfg') {
+                cinematicDuration = 5000;
+                overlay.style.background = 'rgba(0, 25, 10, 0.95)';
+
+                let radar = document.createElement('div');
+                radar.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:60vmin; height:60vmin; border-radius:50%; border:2px solid #0f0; box-shadow: 0 0 20px #0f0, inset 0 0 20px #0f0;";
+                
+                // Radar grid lines
+                let grid1 = document.createElement('div'); grid1.style.cssText = "position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(0,255,0,0.5);";
+                let grid2 = document.createElement('div'); grid2.style.cssText = "position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(0,255,0,0.5);";
+                let grid3 = document.createElement('div'); grid3.style.cssText = "position:absolute; top:25%; left:25%; width:50%; height:50%; border-radius:50%; border:1px solid rgba(0,255,0,0.5);";
+                radar.appendChild(grid1); radar.appendChild(grid2); radar.appendChild(grid3);
+                
+                // Green Sweep
+                let sweep = document.createElement('div');
+                sweep.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%; border-radius:50%; background:conic-gradient(from 0deg, transparent 75%, rgba(0,255,0,0.3) 95%, rgba(0,255,0,0.8) 100%); animation: radarSweep 2s linear infinite;";
+                radar.appendChild(sweep);
+                overlay.appendChild(radar);
+
+                // Scanning Pings
+                for(let i=0; i<5; i++) {
+                    setTimeout(() => {
+                        playSfx(sfx.sip); // Using sip as a cool "sonar ping" sound!
+                        let ping = document.createElement('i');
+                        ping.className = "fa-solid fa-user";
+                        let ang = Math.random() * Math.PI * 2;
+                        let dist = Math.random() * 25 + 5; // Distance from center inside radar
+                        ping.style.cssText = `position:absolute; top:calc(50% + ${Math.sin(ang)*dist}vmin); left:calc(50% + ${Math.cos(ang)*dist}vmin); color:#0f0; font-size:2rem; animation: pingAppear 1.5s ease-out forwards; transform: translate(-50%, -50%);`;
+                        overlay.appendChild(ping);
+                    }, 500 + i*600);
+                }
+            }
+            else if (type === 'coop') {
+                cinematicDuration = 5500; 
+                overlay.style.background = 'linear-gradient(to bottom, #070d1c, #1a0f2e)';
+
+                // Background Stars
+                for(let i=0; i<40; i++) {
+                    let star = document.createElement('div');
+                    star.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:${Math.random()*70}vh; width:${Math.random()*3}px; height:${Math.random()*3}px; background:#fff; border-radius:50%; opacity:${Math.random()}; animation: blink ${Math.random()*2+1}s infinite; box-shadow: 0 0 5px #fff;`;
+                    overlay.appendChild(star);
+                }
+
+                // The Mountain / Cliff Base
+                let cliff = document.createElement('div');
+                cliff.style.cssText = "position:absolute; left:50vw; bottom:0; width:50vw; height:40vh; background:linear-gradient(135deg, #232a3b, #090a0f); border-top-left-radius: 15px; box-shadow: -15px 0 40px rgba(0,0,0,0.8); border-top: 2px solid #3a445c; border-left: 2px solid #232a3b;";
+                overlay.appendChild(cliff);
+
+                // Helper (Player 1 - Blue) safe on the cliff
+                let p1 = document.createElement('i');
+                p1.className = 'fa-solid fa-person';
+                p1.style.cssText = "position:absolute; left:53vw; bottom:40vh; font-size:7rem; color:#00f2fe; filter:drop-shadow(0 0 20px rgba(0,242,254,0.6)); transform-origin: bottom center; transition: transform 0.5s ease-out; z-index: 2;";
+                overlay.appendChild(p1);
+
+                // Helpee (Player 2 - Red) hanging below
+                let p2 = document.createElement('i');
+                p2.className = 'fa-solid fa-person';
+                p2.style.cssText = "position:absolute; left:44vw; bottom:5vh; font-size:7rem; color:#ff3333; filter:drop-shadow(0 0 20px rgba(255,51,51,0.6)); transition: all 1.5s ease-in-out; z-index: 2;";
+                overlay.appendChild(p2);
+
+                // The Rope
+                let rope = document.createElement('div');
+                rope.style.cssText = "position:absolute; left:49.5vw; top:60vh; width:4px; height:0; background:#e0e0e0; box-shadow: 0 0 10px #fff; transform-origin: top; transition: height 0.5s ease-out; z-index: 1;";
+                overlay.appendChild(rope);
+
+                // Animation Sequence
+                setTimeout(() => {
+                    // P1 leans down over the edge
+                    p1.style.transform = "rotate(-45deg)";
+                }, 200);
+
+                setTimeout(() => {
+                    // Throw the rope down
+                    playSfx(sfx.wood); 
+                    rope.style.height = "35vh";
+                }, 700);
+
+                setTimeout(() => {
+                    // P2 grabs and gets pulled up
+                    playSfx(sfx.click);
+                    rope.style.transition = "height 1.5s ease-in-out";
+                    rope.style.height = "0";
+                    p2.style.bottom = "40vh";
+                    p2.style.left = "48vw";
+                }, 1300);
+
+                setTimeout(() => {
+                    // P2 moves to safety, P1 stands up
+                    p1.style.transform = "rotate(0deg)";
+                    p2.style.left = "62vw"; 
+                }, 2800);
+
+                setTimeout(() => {
+                    // Epic Sync Flash
+                    playSfx(sfx.glitch);
+                    let flash = document.createElement('div');
+                    flash.style.cssText = "position:absolute; top:0; left:0; width:100vw; height:100vh; background:#fff; animation: flashOverlay 0.5s ease-out forwards; z-index: 10;";
+                    overlay.appendChild(flash);
+                    
+                    let text = document.createElement('div');
+                    text.innerText = "CO-OP SYNCED";
+                    text.style.cssText = "position:absolute; top:25%; left:50%; color:#fff; font-family:'Oxanium', sans-serif; font-size:4.5rem; font-weight:800; letter-spacing:5px; text-shadow:0 0 30px #00f2fe; animation: scaleUpFade 0.6s ease-out forwards; z-index: 11;";
+                    overlay.appendChild(text);
+
+                    // High-five Sparks!
+                    for(let i=0; i<50; i++) {
+                        let spark = document.createElement('div');
+                        spark.style.cssText = `position:absolute; left:58vw; top:55vh; width:${Math.random()*8+4}px; height:${Math.random()*8+4}px; background:${Math.random()>0.5?'#00f2fe':'#ff3333'}; border-radius:50%; box-shadow:0 0 15px ${spark.style.background}; animation: explode 1.2s ease-out forwards; z-index: 5;`;
+                        spark.style.setProperty('--tx', `${(Math.random()-0.5)*80}vw`);
+                        spark.style.setProperty('--ty', `${(Math.random()-0.5)*80}vh`);
+                        overlay.appendChild(spark);
+                    }
+                }, 3300);
+            }
+            else if (type === 'loyal') {
+                cinematicDuration = 4500;
+                overlay.style.background = 'rgba(40, 5, 5, 0.95)';
+                
+                let shield = document.createElement('i');
+                shield.className = 'fa-solid fa-shield-heart';
+                shield.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:18rem; color:#ff3333; filter:drop-shadow(0 0 40px #ff3333); transition: transform 0.1s;";
+                overlay.appendChild(shield);
+
+                // Incoming projectiles that bounce off the shield
+                for(let i=0; i<18; i++) {
+                    setTimeout(() => {
+                        let proj = document.createElement('div');
+                        
+                        let isLeft = Math.random() > 0.5;
+                        let startX = isLeft ? '-10vw' : '110vw';
+                        let startY = `${Math.random()*100}vh`;
+                        let angle = Math.atan2(50 - parseFloat(startY), isLeft ? 60 : -60);
+                        
+                        proj.style.cssText = `position:absolute; width:40px; height:8px; background:#00f2fe; box-shadow:0 0 20px #00f2fe; border-radius:4px; transform: rotate(${angle}rad); animation: projectileFly 0.35s linear forwards;`;
+                        proj.style.setProperty('--startX', startX);
+                        proj.style.setProperty('--startY', startY);
+                        overlay.appendChild(proj);
+
+                        setTimeout(() => {
+                            playSfx(sfx.wood); 
+                            proj.remove();
+                            
+                            // Deflection spark
+                            let spark = document.createElement('div');
+                            spark.style.cssText = `position:absolute; left:50vw; top:50vh; width:40px; height:40px; border-radius:50%; background:radial-gradient(circle, #fff, transparent); filter:drop-shadow(0 0 20px #fff); animation: flashOverlay 0.3s ease-out forwards;`;
+                            let sparkAngle = angle + Math.PI + (Math.random()-0.5)*1;
+                            spark.style.transform = `translate(${Math.cos(sparkAngle)*15}vw, ${Math.sin(sparkAngle)*15}vh)`;
+                            overlay.appendChild(spark);
+
+                            // Shield pulse
+                            shield.style.transform = "translate(-50%,-50%) scale(1.15)";
+                            setTimeout(() => shield.style.transform = "translate(-50%,-50%) scale(1)", 50);
+                        }, 350);
+                    }, i * 150);
+                }
+            }
+
+            // Cleanup & Fade out
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => { 
+                    overlay.style.display = 'none'; 
+                    overlay.innerHTML = ''; 
+                    isCinematicPlaying = false; // Unlock clicks
+                }, 500);
+            }, cinematicDuration);
+        }
+
+        /* Master Button Click Handler */
+        function btnEffect(e, type) {
+            // Ignore clicks if an animation is already active
+            if (isCinematicPlaying) return;
+
+            // Trigger cinematic overlay for all tags
+            if (['programming', 'aquascaping', 'carpentry', 'farmhand', 'player2', 'lfg', 'coop', 'loyal'].includes(type)) {
+                isCinematicPlaying = true; // Lock further clicks
+                triggerCinematic(type);
+                return;
+            }
+
+            // Otherwise, fallback to standard particle logic
+            playSfx(sfx.click);
+        }
+
+        let particles = [];
+        for (let i = 0; i < 70; i++) {
+            particles.push(new Ember());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
