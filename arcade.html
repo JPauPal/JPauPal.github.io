@@ -77,6 +77,53 @@
         .roll-faction-btn { background-color: #222; border: 2px solid #555; color: #fff; padding: 12px 35px; border-radius: 50px; cursor: pointer; font-family: var(--main-font); font-weight: bold; font-size: 1.3rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-decoration: none; display: inline-block; margin-top: 40px; }
         .roll-faction-btn:hover { border-color: #00f2fe; box-shadow: 0 0 20px #00f2fe; transform: translateY(-3px); }
 
+        /* --- UNIQUE RETURN BUTTON --- */
+        .cyber-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(25, 30, 40, 0.8);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 15px 45px;
+            font-family: 'Oxanium', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2), inset 0 0 15px rgba(0, 242, 254, 0.1);
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cyber-btn:hover::before { left: 100%; }
+
+        .cyber-btn:hover {
+            background: var(--accent-color);
+            color: #050505;
+            box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05) translateY(-3px);
+            text-shadow: none;
+        }
+
+        .cyber-btn:hover i {
+            color: #050505;
+        }
+
         /* Game Containers */
         .full-screen-game { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 95000; cursor: crosshair; background: #000; }
         .game-canvas { display: block; width: 100%; height: 100%; }
@@ -163,7 +210,7 @@
             </div>
         </div>
         
-        <a href="index.html" class="roll-faction-btn">🔙 BACK TO HUB</a>
+        <a href="index.html" class="cyber-btn"><i class="fa-solid fa-angles-left"></i> RETURN TO HUB</a>
     </div>
 
     <!-- ==============================================
