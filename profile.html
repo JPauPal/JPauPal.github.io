@@ -191,7 +191,7 @@
         /* Cinematic Animations */
         @keyframes rain { to { transform: translateY(120vh); } }
         @keyframes bubbleUp { to { transform: translateY(-120vh) scale(1.5); opacity: 0; } }
-        @keyframes dustFade { 0% { transform: translateY(0) scale(1); opacity: 0.6; } 100% { transform: translateY(-30px) scale(2); opacity: 0; } }
+        @keyframes dustFade { 0% { transform: translateY(0) scale(1.5); opacity: 0.6; } 100% { transform: translateY(-30px) scale(3); opacity: 0; } }
         @keyframes slamDown { to { top: 15vh; } }
         @keyframes explode { to { transform: translate(var(--tx), var(--ty)) rotate(720deg); opacity: 0; } }
         @keyframes growUp { to { bottom: -2vh; } }
@@ -237,48 +237,139 @@
         @keyframes scaleUpFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         @keyframes projectileFly { from { left: var(--startX); top: var(--startY); } to { left: 50vw; top: 50vh; } }
 
-        /* --- BULLETPROOF CSS FOX --- */
-        /* By separating the scaler from the animated class, the transform overrides are prevented! */
-        .fox-scaler { position: relative; transform: scale(1.5); transform-origin: bottom left; z-index: 5; }
-        .css-fox { position: relative; width: 160px; height: 100px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));}
-        .fox-part { position: absolute; }
-        
-        .fox-body { top: 30px; left: 30px; width: 90px; height: 35px; background: #e86a28; border-radius: 20px 20px 30px 20px; z-index: 3; overflow: hidden; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);}
-        /* White Belly */
-        .fox-body::after { content: ''; position: absolute; bottom: 0; left: 10px; width: 80px; height: 15px; background: #fff; border-radius: 20px 20px 0 0; }
-
-        .fox-tail { top: 20px; left: -25px; width: 70px; height: 35px; background: linear-gradient(to left, #e86a28 50%, #fff 100%); border-radius: 40px 0 0 40px; transform-origin: right center; animation: tailWag 0.2s linear infinite alternate; z-index: 2; }
-        
-        /* Grouping the head saves it from detaching! All facial features belong inside this container. */
-        .fox-head-group { top: 5px; left: 95px; width: 60px; height: 60px; z-index: 4; transform-origin: bottom left; animation: headBob 0.3s ease-in-out infinite alternate; }
-        .fox-head { top: 5px; left: 5px; width: 40px; height: 40px; background: #e86a28; border-radius: 50%; }
-        .fox-snout { top: 20px; left: 25px; width: 35px; height: 20px; background: #e86a28; border-radius: 0 15px 15px 0; overflow: hidden; }
-        /* White under-snout */
-        .fox-snout::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 10px; background: #fff; }
-        .fox-nose { top: 20px; left: 55px; width: 7px; height: 7px; background: #111; border-radius: 50%; z-index: 5; }
-        .fox-eye { top: 15px; left: 25px; width: 6px; height: 6px; background: #111; border-radius: 50%; z-index: 5; }
-        .fox-ear { width: 16px; height: 25px; background: #e86a28; border-radius: 5px 15px 0 0; }
-        .fox-ear.left { top: -5px; left: 10px; transform: rotate(-25deg); z-index: -1; background: #c25217; border-top: 4px solid #111;}
-        .fox-ear.right { top: 0px; left: 25px; transform: rotate(10deg); z-index: 1; border-top: 4px solid #111;}
-
-        /* Leg container with black "socks" via ::after */
-        .fox-leg { width: 12px; height: 35px; background: #e86a28; top: 55px; transform-origin: top center; border-radius: 5px; z-index: 2; overflow: hidden; }
-        .fox-leg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 15px; background: #111; }
-        
-        .fox-leg.back-left { left: 45px; background: #c25217; animation: runLeg1 0.25s linear infinite; z-index: 1; }
-        .fox-leg.back-right { left: 55px; animation: runLeg2 0.25s linear infinite; z-index: 4; }
-        .fox-leg.front-left { left: 95px; background: #c25217; animation: runLeg2 0.25s linear infinite; z-index: 1; }
-        .fox-leg.front-right { left: 105px; animation: runLeg1 0.25s linear infinite; z-index: 4; }
-        
-        @keyframes runLeg1 { 0%, 100% { transform: rotate(-35deg); } 50% { transform: rotate(45deg); } }
-        @keyframes runLeg2 { 0%, 100% { transform: rotate(45deg); } 50% { transform: rotate(-35deg); } }
-        @keyframes tailWag { 0% { transform: rotate(-5deg); } 100% { transform: rotate(15deg); } }
-        @keyframes headBob { 0% { transform: rotate(0deg); } 100% { transform: rotate(4deg); } }
-        @keyframes foxHop { 
-            0%, 100% { transform: translateY(0) scaleX(1.03) scaleY(0.97); } 
-            50% { transform: translateY(-20px) scaleX(0.97) scaleY(1.03); } 
+        /* =========================================
+           SLEEK VECTOR FOX (NIGHT IN THE WOODS STYLE) 
+           ========================================= */
+        .sf-wrapper {
+            position: absolute; bottom: 15vh; left: -20vw;
+            animation: sfRunRight 4s linear forwards;
+            z-index: 4; transform: scale(1.8);
         }
-        @keyframes foxRunRight { 0% { transform: translateX(0); } 100% { transform: translateX(140vw); } }
+
+        .sleek-fox {
+            --f-main: #d95a2b;  /* Vibrant orange body */
+            --f-dark: #a83d16;  /* Shadow/Far side legs */
+            --f-light: #ffffff; /* Belly and tail tip */
+            --f-black: #151515; /* Nose and socks */
+            
+            position: relative;
+            width: 160px; height: 100px;
+            animation: sfHop 0.3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.4));
+        }
+
+        .sf-body {
+            position: absolute; top: 40px; left: 40px;
+            width: 85px; height: 32px;
+            background: var(--f-main);
+            border-radius: 40px 30px 20px 40px;
+            z-index: 3; overflow: hidden;
+        }
+        /* White Sweeping Belly */
+        .sf-body::after {
+            content: ''; position: absolute;
+            bottom: -5px; left: 10px; width: 70px; height: 15px;
+            background: var(--f-light);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .sf-tail {
+            position: absolute; top: 8px; left: -35px;
+            width: 80px; height: 45px;
+            background: var(--f-main);
+            /* Perfect teardrop pointing left */
+            border-radius: 0 50% 50% 50%;
+            transform-origin: 90% 50%;
+            animation: sfTail 0.3s ease-in-out infinite alternate;
+            z-index: 2; transform: rotate(-5deg); overflow: hidden;
+        }
+        /* Fluffy white tail tip */
+        .sf-tail::after {
+            content: ''; position: absolute;
+            top: -5px; left: -5px; width: 40px; height: 40px;
+            background: var(--f-light);
+            border-radius: 0 50% 50% 50%;
+        }
+
+        .sf-head {
+            position: absolute; top: 22px; left: 105px;
+            width: 45px; height: 35px;
+            background: var(--f-main);
+            border-radius: 30px 40px 30px 30px;
+            z-index: 4; transform: rotate(5deg);
+        }
+        
+        /* Continuous Snout/Muzzle */
+        .sf-snout {
+            position: absolute; top: 15px; left: 30px;
+            width: 35px; height: 18px;
+            background: var(--f-main);
+            border-radius: 0 10px 10px 0;
+        }
+        /* White lower jaw extending into the cheek */
+        .sf-snout::after {
+            content: ''; position: absolute; bottom: 0; left: -15px;
+            width: 45px; height: 8px; background: var(--f-light);
+            border-radius: 0 0 10px 10px;
+        }
+        /* Nose */
+        .sf-snout::before {
+            content: ''; position: absolute; top: -1px; right: -2px;
+            width: 7px; height: 7px; background: var(--f-black); border-radius: 50%; z-index: 5;
+        }
+
+        /* Eye */
+        .sf-head::before {
+            content: ''; position: absolute; top: 14px; left: 26px;
+            width: 6px; height: 6px; background: var(--f-black); border-radius: 50%; z-index: 5;
+        }
+
+        /* Ears */
+        .sf-ear {
+            position: absolute; width: 18px; height: 28px;
+            background: var(--f-main); border-radius: 10px 10px 0 0;
+        }
+        .sf-ear.far { top: -12px; left: 10px; background: var(--f-dark); transform: rotate(-25deg); z-index: -1; }
+        .sf-ear.near { top: -8px; left: 24px; transform: rotate(10deg); z-index: 1; border-top: 5px solid var(--f-black);}
+
+        /* Legs */
+        .sf-leg {
+            position: absolute; top: 60px;
+            width: 14px; height: 32px;
+            background: var(--f-main);
+            border-radius: 6px;
+            transform-origin: top center;
+        }
+        /* Black paw with a slight backward bend (the hock joint) */
+        .sf-leg::after {
+            content: ''; position: absolute; top: 18px; left: -1px;
+            width: 14px; height: 20px;
+            background: var(--f-black); border-radius: 6px;
+            transform-origin: top center;
+            transform: rotate(-15deg);
+        }
+
+        /* Animation Assignments */
+        .sf-hind-leg-near { left: 55px; z-index: 4; animation: sfRun1 0.3s ease-in-out infinite; }
+        .sf-hind-leg-far { left: 65px; background: var(--f-dark); z-index: 1; animation: sfRun2 0.3s ease-in-out infinite; }
+        .sf-front-leg-near { left: 100px; z-index: 4; animation: sfRun2 0.3s ease-in-out infinite; }
+        .sf-front-leg-far { left: 110px; background: var(--f-dark); z-index: 1; animation: sfRun1 0.3s ease-in-out infinite; }
+
+        /* Ground Drop Shadow */
+        .sf-shadow {
+            position: absolute; bottom: 0px; left: 35px;
+            width: 90px; height: 12px; background: rgba(0,0,0,0.5);
+            border-radius: 50%; filter: blur(2px);
+            animation: sfShadowPulse 0.3s ease-in-out infinite alternate;
+        }
+
+        /* Fox Keyframes */
+        @keyframes sfRun1 { 0%, 100% { transform: rotate(-35deg); } 50% { transform: rotate(40deg); } }
+        @keyframes sfRun2 { 0%, 100% { transform: rotate(40deg); } 50% { transform: rotate(-35deg); } }
+        @keyframes sfHop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(-2deg); } }
+        @keyframes sfTail { 0% { transform: rotate(-10deg); } 100% { transform: rotate(8deg); } }
+        @keyframes sfShadowPulse { 0%, 100% { transform: scaleX(1); opacity: 0.5; } 50% { transform: scaleX(0.7); opacity: 0.2; } }
+        @keyframes sfRunRight { 0% { transform: translateX(0); } 100% { transform: translateX(140vw); } }
 
         /* Button Effects CSS */
         .btn-particle { position: fixed; z-index: 100000; pointer-events: none; user-select: none; display: flex; justify-content: center; align-items: center; }
@@ -409,7 +500,7 @@
             }
         }
 
-        // Shared Kuhli Loach Drawer (Used by background & cinematic)
+        // Shared Kuhli Loach Drawer
         class ZoomyLoach {
             constructor() {
                 this.x = Math.random() * canvas.width;
@@ -448,10 +539,7 @@
                 ctx.translate(this.x, this.y);
                 ctx.scale(scale, scale);
                 
-                if (this.vx < 0) {
-                    ctx.scale(-1, 1);
-                }
-                
+                if (this.vx < 0) ctx.scale(-1, 1);
                 ctx.rotate(this.vy * 0.05 * (this.vx < 0 ? -1 : 1));
 
                 let segments = 25; let segLen = 3.5; 
@@ -856,39 +944,32 @@
                     overlay.appendChild(heart);
                 }
 
-                // Full Body CSS Fox Container (with separated scale & animation)
+                // Smooth Vector-Style CSS Fox
                 let foxWrap = document.createElement('div');
-                foxWrap.style.cssText = "position:absolute; bottom:15vh; left:-20vw; animation: foxRunRight 5s linear forwards; z-index:4;";
+                foxWrap.className = "sf-wrapper";
                 
-                let foxScaler = document.createElement('div');
-                foxScaler.className = "fox-scaler";
-
                 let fox = document.createElement('div');
-                fox.className = "css-fox";
-                fox.style.animation = "foxHop 0.3s ease-in-out infinite alternate";
+                fox.className = "sleek-fox";
                 
-                // Injecting grouped CSS Fox parts
                 fox.innerHTML = `
-                    <div class="fox-part fox-tail"></div>
-                    <div class="fox-part fox-leg back-left"></div>
-                    <div class="fox-part fox-leg front-left"></div>
-                    <div class="fox-part fox-body"></div>
-                    <div class="fox-part fox-leg back-right"></div>
-                    <div class="fox-part fox-leg front-right"></div>
-                    
-                    <!-- Head Group ensures features never separate -->
-                    <div class="fox-part fox-head-group">
-                        <div class="fox-part fox-ear left"></div>
-                        <div class="fox-part fox-ear right"></div>
-                        <div class="fox-part fox-head"></div>
-                        <div class="fox-part fox-snout"></div>
-                        <div class="fox-part fox-nose"></div>
-                        <div class="fox-part fox-eye"></div>
+                    <div class="sf-tail"></div>
+                    <div class="sf-leg sf-hind-leg-far"></div>
+                    <div class="sf-leg sf-front-leg-far"></div>
+                    <div class="sf-body"></div>
+                    <div class="sf-leg sf-hind-leg-near"></div>
+                    <div class="sf-leg sf-front-leg-near"></div>
+                    <div class="sf-head">
+                        <div class="sf-ear far"></div>
+                        <div class="sf-ear near"></div>
+                        <div class="sf-snout"></div>
                     </div>
                 `;
                 
-                foxScaler.appendChild(fox);
-                foxWrap.appendChild(foxScaler);
+                let shadow = document.createElement('div');
+                shadow.className = "sf-shadow";
+
+                foxWrap.appendChild(shadow);
+                foxWrap.appendChild(fox);
                 overlay.appendChild(foxWrap);
                 
                 let dustInterval = setInterval(() => {
