@@ -14,6 +14,8 @@
             --accent-color: #8ab07d; /* Soft sage green */
             --accent-glow: rgba(138, 176, 125, 0.5);
             --warm-accent: #d4a373; /* Earthy wood/sand */
+            --p2-color: #ff66b2; /* Player 2 Pink */
+            --p2-glow: rgba(255, 102, 178, 0.6);
             --main-font: 'Cinzel', serif;
             --text-font: 'Oxanium', sans-serif;
             --bg-color: #121a16; 
@@ -127,7 +129,7 @@
 
         /* Personal Profile Status */
         .status-header { display: flex; align-items: center; gap: 25px; margin-bottom: 20px; }
-        .status-icon { font-size: 4rem; color: #e07a5f; filter: drop-shadow(0 0 15px rgba(224,122,95,0.5)); animation: floatHeart 4s ease-in-out infinite; }
+        .status-icon { font-size: 4rem; color: var(--p2-color); filter: drop-shadow(0 0 15px rgba(255,102,178,0.5)); animation: floatHeart 4s ease-in-out infinite; }
 
         @keyframes floatHeart { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.05); } }
 
@@ -223,12 +225,13 @@
         @keyframes flashOverlay { 0% { opacity: 1; } 100% { opacity: 0; } }
         @keyframes scaleUpFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         @keyframes projectileFly { from { left: var(--startX); top: var(--startY); } to { left: 50vw; top: 50vh; } }
+        @keyframes floatHeartUp { 0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; } 20% { transform: translate(-50%, -20px) scale(1.2); opacity: 1; } 80% { transform: translate(-50%, -80px) scale(1); opacity: 1; } 100% { transform: translate(-50%, -100px) scale(1); opacity: 0; } }
 
         /* =========================================
            SLEEK VECTOR FOX (NIGHT IN THE WOODS STYLE) 
            ========================================= */
         .sf-wrapper {
-            position: absolute; bottom: 14vh; left: -20vw; /* Sits perfectly on ground */
+            position: absolute; bottom: 14vh; left: -20vw; 
             animation: sfRunRight 4.5s linear forwards;
             z-index: 4; transform: scale(1.8);
         }
@@ -961,7 +964,6 @@
                         <div class="sf-ear near"></div>
                         <div class="sf-snout"></div>
                     </div>
-                    <!-- The Magic Wisp Companion is still here! -->
                     <div class="sf-wisp"></div>
                 `;
                 
@@ -1019,9 +1021,10 @@
                 p1.style.cssText = "position:absolute; left:53vw; bottom:40vh; font-size:7rem; color:#d4a373; filter:drop-shadow(0 0 15px rgba(212,163,115,0.6)); transform-origin: bottom center; transition: transform 0.5s ease-out; z-index: 2;";
                 overlay.appendChild(p1);
 
+                // Player 2 - Vibrant Pink!
                 let p2 = document.createElement('i');
                 p2.className = 'fa-solid fa-person';
-                p2.style.cssText = "position:absolute; left:44vw; bottom:5vh; font-size:7rem; color:#8ab07d; filter:drop-shadow(0 0 15px rgba(138,176,125,0.6)); transition: all 1.5s ease-in-out; z-index: 2;";
+                p2.style.cssText = "position:absolute; left:44vw; bottom:5vh; font-size:7rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); transition: all 1.5s ease-in-out; z-index: 2;";
                 overlay.appendChild(p2);
 
                 let vine = document.createElement('div');
@@ -1048,6 +1051,14 @@
                 setTimeout(() => {
                     p1.style.transform = "rotate(0deg)";
                     p2.style.left = "62vw"; 
+                    
+                    // Floating Heart when they stand together
+                    setTimeout(() => {
+                        let heart = document.createElement('i');
+                        heart.className = 'fa-solid fa-heart';
+                        heart.style.cssText = "position:absolute; left:57.5vw; bottom:55vh; font-size:4rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); z-index: 5; animation: floatHeartUp 1.8s ease-out forwards;";
+                        overlay.appendChild(heart);
+                    }, 200);
                 }, 2800);
 
                 setTimeout(() => {
@@ -1064,7 +1075,7 @@
                     for(let i=0; i<40; i++) {
                         let spark = document.createElement('i');
                         spark.className = "fa-solid fa-leaf";
-                        spark.style.cssText = `position:absolute; left:58vw; top:55vh; font-size:${Math.random()*1.5+1}rem; color:${Math.random()>0.5?'#8ab07d':'#d4a373'}; filter:drop-shadow(0 0 10px rgba(0,0,0,0.3)); animation: explode 1.2s ease-out forwards; z-index: 5;`;
+                        spark.style.cssText = `position:absolute; left:58vw; top:55vh; font-size:${Math.random()*1.5+1}rem; color:${Math.random()>0.5?'var(--accent-color)':'var(--p2-color)'}; filter:drop-shadow(0 0 10px rgba(0,0,0,0.3)); animation: explode 1.2s ease-out forwards; z-index: 5;`;
                         spark.style.setProperty('--tx', `${(Math.random()-0.5)*80}vw`);
                         spark.style.setProperty('--ty', `${(Math.random()-0.5)*80}vh`);
                         overlay.appendChild(spark);
@@ -1075,10 +1086,10 @@
                 cinematicDuration = 5500;
                 overlay.style.background = 'radial-gradient(circle at center, #0a1410, #050a08)';
                 
-                // P2 (Resting/Hurt)
+                // P2 (Resting/Hurt) - Vibrant Pink
                 let p2 = document.createElement('i');
                 p2.className = 'fa-solid fa-person';
-                p2.style.cssText = "position:absolute; top:55%; left:53%; transform:translate(-50%,-50%) rotate(20deg) scale(0.8); font-size:8rem; color:#d4a373; filter:drop-shadow(0 0 10px rgba(212,163,115,0.4)); opacity: 0.6; z-index: 2;";
+                p2.style.cssText = "position:absolute; top:55%; left:53%; transform:translate(-50%,-50%) rotate(20deg) scale(0.8); font-size:8rem; color:var(--p2-color); filter:drop-shadow(0 0 10px var(--p2-glow)); opacity: 0.6; z-index: 2;";
                 overlay.appendChild(p2);
 
                 // P1 (Protector)
@@ -1087,12 +1098,10 @@
                 p1.style.cssText = "position:absolute; top:50%; left:47%; transform:translate(-50%,-50%); font-size:9rem; color:#8ab07d; filter:drop-shadow(0 0 20px rgba(138,176,125,0.8)); z-index: 3;";
                 overlay.appendChild(p1);
 
-                // The Protective Nature Dome
                 let dome = document.createElement('div');
                 dome.style.cssText = "position:absolute; top:50%; left:50%; width:0; height:0; background:radial-gradient(circle, rgba(138,176,125,0.1) 0%, rgba(138,176,125,0.3) 80%, rgba(138,176,125,0.8) 100%); border-radius:50%; transform:translate(-50%, -50%); box-shadow: 0 0 40px rgba(138,176,125,0.8), inset 0 0 20px rgba(138,176,125,0.5); z-index: 4; opacity: 0; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #a3b8aa;";
                 overlay.appendChild(dome);
 
-                // Shadows attack!
                 setTimeout(() => {
                     playSfx(sfx.wood); 
                     for(let i=0; i<25; i++) {
@@ -1120,7 +1129,6 @@
                     }
                 }, 500);
 
-                // Dome expands
                 setTimeout(() => {
                     playSfx(sfx.nature);
                     dome.style.opacity = '1';
@@ -1137,7 +1145,6 @@
                     }
                 }, 1100);
 
-                // P1 Helps P2 up
                 setTimeout(() => {
                     playSfx(sfx.nature);
                     p2.style.transition = "all 1s ease-out";
@@ -1146,7 +1153,7 @@
                     p2.style.top = "50%";
                     p2.style.left = "53%";
                     p2.style.fontSize = "9rem";
-                    p2.style.filter = "drop-shadow(0 0 20px rgba(212,163,115,0.8))";
+                    p2.style.filter = "drop-shadow(0 0 20px var(--p2-glow))";
                     
                     dome.style.boxShadow = "0 0 60px rgba(138,176,125,1), inset 0 0 40px rgba(138,176,125,0.8)";
                 }, 2200);
