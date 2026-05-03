@@ -128,7 +128,7 @@
         .status-icon { font-size: 4.5rem; color: var(--accent-color); filter: drop-shadow(0 0 15px rgba(255,51,51,0.6)); animation: floatHeart 4s ease-in-out infinite; }
 
         @keyframes floatHeart { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes foxHop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-50px) rotate(5deg); } }
+        @keyframes foxHop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(3deg); } }
 
         .status-label { font-size: 1rem; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-weight: bold;}
         .status-value { font-family: var(--main-font); color: var(--accent-color); font-size: 2.2rem; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,51,51,0.5); }
@@ -237,6 +237,29 @@
         @keyframes flashOverlay { 0% { opacity: 1; } 100% { opacity: 0; } }
         @keyframes scaleUpFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         @keyframes projectileFly { from { left: var(--startX); top: var(--startY); } to { left: 50vw; top: 50vh; } }
+
+        /* --- CSS FULL BODY FOX ANIMATIONS --- */
+        .css-fox { position: relative; width: 200px; height: 120px; transform: scale(1.5); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); }
+        .fox-body { position: absolute; top: 40px; left: 40px; width: 100px; height: 45px; background: #d95a2b; border-radius: 40px 40px 30px 40px; z-index: 3; }
+        .fox-head { position: absolute; top: 15px; left: 100px; width: 60px; height: 55px; background: #d95a2b; border-radius: 30px 40px 30px 30px; z-index: 4; }
+        .fox-snout-wrapper { position: absolute; top: 30px; left: 150px; width: 35px; height: 20px; z-index: 5; }
+        .fox-snout { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #d95a2b 20%, #fff 50%); border-radius: 0 20px 20px 0; }
+        .fox-nose { position: absolute; top: 2px; left: 30px; width: 8px; height: 8px; background: #111; border-radius: 50%; }
+        .fox-eye { position: absolute; top: 25px; left: 140px; width: 6px; height: 6px; background: #111; border-radius: 50%; z-index: 6; }
+        .fox-ear { position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 25px solid #d95a2b; z-index: 2; }
+        .fox-ear.left { top: -5px; left: 110px; transform: rotate(-15deg); }
+        .fox-ear.right { top: 0px; left: 135px; transform: rotate(15deg); }
+        .fox-tail { position: absolute; top: 25px; left: -30px; width: 85px; height: 45px; background: linear-gradient(to left, #d95a2b 60%, #fff 100%); border-radius: 50px 0 0 50px; transform-origin: right center; animation: tailWag 0.3s ease-in-out infinite alternate; z-index: 2; }
+        .fox-leg { position: absolute; width: 12px; height: 40px; background: #c05510; border-radius: 6px; top: 75px; transform-origin: top center; z-index: 1; }
+        .fox-leg.front-1 { left: 120px; z-index: 4; animation: runLeg1 0.25s linear infinite; }
+        .fox-leg.front-2 { left: 105px; background: #9c420a; animation: runLeg2 0.25s linear infinite; }
+        .fox-leg.back-1 { left: 60px; z-index: 4; animation: runLeg2 0.25s linear infinite; }
+        .fox-leg.back-2 { left: 45px; background: #9c420a; animation: runLeg1 0.25s linear infinite; }
+        
+        @keyframes tailWag { 0% { transform: rotate(-5deg); } 100% { transform: rotate(15deg); } }
+        @keyframes runLeg1 { 0%, 100% { transform: rotate(-40deg); } 50% { transform: rotate(40deg); } }
+        @keyframes runLeg2 { 0%, 100% { transform: rotate(40deg); } 50% { transform: rotate(-40deg); } }
+        @keyframes foxRunRight { 0% { transform: translateX(0); } 100% { transform: translateX(140vw); } }
 
         /* Button Effects CSS */
         .btn-particle { position: fixed; z-index: 100000; pointer-events: none; user-select: none; display: flex; justify-content: center; align-items: center; }
@@ -845,7 +868,7 @@
                 cinematicDuration = 4500;
                 overlay.style.background = 'rgba(25, 10, 5, 0.95)';
                 
-                // Add a glowing sun
+                // Add a glowing sun/moon
                 let moon = document.createElement('div');
                 moon.style.cssText = "position:absolute; top:-10vh; right:-10vw; width:50vw; height:50vw; background:radial-gradient(circle, rgba(255,100,50,0.6) 0%, transparent 60%); animation: pulseSun 2s infinite alternate;";
                 overlay.appendChild(moon);
@@ -858,13 +881,31 @@
                     overlay.appendChild(heart);
                 }
 
-                // Hopping Fox
+                // Full Body CSS Fox Container
                 let foxWrap = document.createElement('div');
-                foxWrap.style.cssText = "position:absolute; bottom:5vh; left:-20vw; animation: driveRight 4s linear forwards; z-index:4;";
+                foxWrap.style.cssText = "position:absolute; bottom:15vh; left:-20vw; animation: foxRunRight 4.5s linear forwards; z-index:4;";
                 
                 let fox = document.createElement('div');
-                fox.innerHTML = '🦊';
-                fox.style.cssText = "font-size:14rem; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.9)); animation: foxHop 0.4s ease-in-out infinite alternate;";
+                fox.className = "css-fox";
+                fox.style.animation = "foxHop 0.4s ease-in-out infinite alternate";
+                
+                // Injecting CSS Fox parts
+                fox.innerHTML = `
+                    <div class="fox-tail"></div>
+                    <div class="fox-leg back-2"></div>
+                    <div class="fox-leg front-2"></div>
+                    <div class="fox-body"></div>
+                    <div class="fox-leg back-1"></div>
+                    <div class="fox-leg front-1"></div>
+                    <div class="fox-ear left"></div>
+                    <div class="fox-ear right"></div>
+                    <div class="fox-head"></div>
+                    <div class="fox-eye"></div>
+                    <div class="fox-snout-wrapper">
+                        <div class="fox-snout"></div>
+                        <div class="fox-nose"></div>
+                    </div>
+                `;
                 
                 foxWrap.appendChild(fox);
                 overlay.appendChild(foxWrap);
