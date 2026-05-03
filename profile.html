@@ -218,6 +218,11 @@
         @keyframes driveRight { 0% { transform: translateX(0) scaleX(-1) rotate(-2deg); } 50% { transform: translateX(70vw) scaleX(-1) rotate(2deg); } 100% { transform: translateX(140vw) scaleX(-1) rotate(-2deg); } }
         @keyframes pulseGlow { from { transform: scale(1); opacity:0.6;} to { transform: scale(1.1); opacity:0.9; } }
         @keyframes fallLeaf { to { transform: translate(-20vw, 120vh) rotate(360deg); } }
+        @keyframes shootingStarAnim {
+            0% { transform: translate(0, 0) rotate(-35deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate(-100vw, 70vh) rotate(-35deg); opacity: 0; }
+        }
         
         /* Aquascaping Animations */
         @keyframes rockDrop { 0% { transform: translateY(-120vh) rotate(0deg); } 100% { transform: translateY(0) rotate(var(--rot)); } }
@@ -1179,7 +1184,7 @@
                 }
 
                 let cliff = document.createElement('div');
-                cliff.style.cssText = "position:absolute; left:50vw; bottom:0; width:50vw; height:40vh; background:linear-gradient(135deg, #2c3e33, #16211a); border-top-left-radius: 20px; box-shadow: -15px 0 40px rgba(0,0,0,0.6); border-top: 3px solid #486653; border-left: 3px solid #2c3e33;";
+                cliff.style.cssText = "position:absolute; left:45vw; bottom:0; width:55vw; height:40vh; background:linear-gradient(135deg, #2c3e33, #16211a); border-top-left-radius: 20px; box-shadow: -15px 0 40px rgba(0,0,0,0.6); border-top: 3px solid #486653; border-left: 3px solid #2c3e33;";
                 overlay.appendChild(cliff);
 
                 let p1 = document.createElement('i');
@@ -1190,11 +1195,11 @@
                 // Player 2 - Vibrant Pink!
                 let p2 = document.createElement('i');
                 p2.className = 'fa-solid fa-person-dress';
-                p2.style.cssText = "position:absolute; left:44vw; bottom:5vh; font-size:7rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); transition: all 1.5s ease-in-out; z-index: 2;";
+                p2.style.cssText = "position:absolute; left:40vw; bottom:5vh; font-size:7rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); transition: all 1.5s ease-in-out; z-index: 2;";
                 overlay.appendChild(p2);
 
                 let vine = document.createElement('div');
-                vine.style.cssText = "position:absolute; left:49.5vw; top:60vh; width:6px; height:0; background:#5b8252; box-shadow: 0 0 10px rgba(91,130,82,0.5); transform-origin: top; transition: height 0.5s ease-out; z-index: 1; border-radius:3px;";
+                vine.style.cssText = "position:absolute; left:47.5vw; top:60vh; width:6px; height:0; background:#5b8252; box-shadow: 0 0 10px rgba(91,130,82,0.5); transform-origin: top; transition: height 0.5s ease-out; z-index: 1; border-radius:3px;";
                 overlay.appendChild(vine);
 
                 setTimeout(() => {
@@ -1210,28 +1215,33 @@
                     playSfx(sfx.nature);
                     vine.style.transition = "height 1.5s ease-in-out";
                     vine.style.height = "0";
+                    // Pull her up to the edge of the cliff
                     p2.style.bottom = "40vh";
-                    p2.style.left = "48vw";
+                    p2.style.left = "46vw"; 
                 }, 1300);
 
                 setTimeout(() => {
                     p1.style.transform = "rotate(0deg)";
-                    p2.style.left = "62vw"; 
+                    // She no longer walks behind you!
                     
-                    // Floating Heart when they stand together
+                    // Floating Heart when they stand side by side
                     setTimeout(() => {
                         let heart = document.createElement('i');
                         heart.className = 'fa-solid fa-heart';
-                        heart.style.cssText = "position:absolute; left:57.5vw; bottom:55vh; font-size:4rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); z-index: 5; animation: floatHeartUp 1.8s ease-out forwards;";
+                        heart.style.cssText = "position:absolute; left:50.5vw; bottom:55vh; font-size:4rem; color:var(--p2-color); filter:drop-shadow(0 0 15px var(--p2-glow)); z-index: 5; animation: floatHeartUp 1.8s ease-out forwards; transform: translateX(-50%);";
                         overlay.appendChild(heart);
                     }, 200);
+
+                    // Shooting Star appears across the sky
+                    let star = document.createElement('div');
+                    star.style.cssText = "position:absolute; top:10vh; right:-10vw; width:150px; height:3px; background:linear-gradient(to right, transparent, #fff); border-radius:3px; filter:drop-shadow(0 0 10px #fff); animation: shootingStarAnim 1.2s ease-in forwards; z-index: 1;";
+                    overlay.appendChild(star);
+
                 }, 2800);
 
                 setTimeout(() => {
                     playSfx(sfx.nature);
-                    let flash = document.createElement('div');
-                    flash.style.cssText = "position:absolute; top:0; left:0; width:100vw; height:100vh; background:#e8f0eb; animation: flashOverlay 0.6s ease-out forwards; z-index: 10;";
-                    overlay.appendChild(flash);
+                    // Flash removed!
                     
                     let text = document.createElement('div');
                     text.innerText = "BOND FORGED";
@@ -1241,7 +1251,7 @@
                     for(let i=0; i<40; i++) {
                         let spark = document.createElement('i');
                         spark.className = "fa-solid fa-leaf";
-                        spark.style.cssText = `position:absolute; left:58vw; top:55vh; font-size:${Math.random()*1.5+1}rem; color:${Math.random()>0.5?'var(--p1-color)':'var(--p2-color)'}; filter:drop-shadow(0 0 10px rgba(0,0,0,0.3)); animation: explode 1.2s ease-out forwards; z-index: 5;`;
+                        spark.style.cssText = `position:absolute; left:50.5vw; top:55vh; font-size:${Math.random()*1.5+1}rem; color:${Math.random()>0.5?'var(--p1-color)':'var(--p2-color)'}; filter:drop-shadow(0 0 10px rgba(0,0,0,0.3)); animation: explode 1.2s ease-out forwards; z-index: 5;`;
                         spark.style.setProperty('--tx', `${(Math.random()-0.5)*80}vw`);
                         spark.style.setProperty('--ty', `${(Math.random()-0.5)*80}vh`);
                         overlay.appendChild(spark);
