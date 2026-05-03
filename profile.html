@@ -242,7 +242,6 @@
             position: relative;
             width: 160px; height: 100px;
             animation: sfHop 0.35s ease-in-out infinite alternate;
-            /* Filter shadow ensures the Fox pops against the layered trees */
             filter: drop-shadow(0 15px 10px rgba(0,0,0,0.5));
         }
 
@@ -682,7 +681,6 @@
             let cinematicDuration = 4000; 
 
             if (type === 'programming') {
-                // CYBER-HACKER LOOK IS PRESERVED
                 cinematicDuration = 4000;
                 overlay.style.background = 'rgba(0, 20, 0, 0.95)';
                 playSfx(sfx.glitch);
@@ -699,7 +697,6 @@
                     }, i * 600);
                 });
 
-                // Matrix Rain
                 for(let i=0; i<80; i++) {
                     let span = document.createElement('span');
                     span.innerText = Math.random()>0.5 ? '0' : '1';
@@ -914,7 +911,6 @@
                 }
             }
             else if (type === 'fox') {
-                // THE FULL 3D LAYERED FOREST FOX SCENE
                 cinematicDuration = 5500; 
                 overlay.style.background = 'linear-gradient(to bottom, #0a110d, #142219)'; 
                 
@@ -922,7 +918,6 @@
                 moon.style.cssText = "position:absolute; top:-10vh; right:5vw; width:40vw; height:40vw; background:radial-gradient(circle, rgba(138,176,125,0.15) 0%, transparent 60%); animation: pulseGlow 4s infinite alternate; z-index:0;";
                 overlay.appendChild(moon);
 
-                // Background Trees (Mist/Blurry behind fox)
                 for(let i=0; i<15; i++) {
                     let tree = document.createElement('div');
                     let w = Math.random() * 5 + 2;
@@ -931,19 +926,16 @@
                     overlay.appendChild(tree);
                 }
 
-                // Solid Earth Ground
                 let ground = document.createElement('div');
                 ground.style.cssText = "position:absolute; bottom:0; left:0; width:100vw; height:14vh; background:linear-gradient(to bottom, #0e1712, #050906); border-top: 2px solid #1a2920; z-index: 2;";
                 overlay.appendChild(ground);
                 
-                // Glowing Ground Ferns
                 for(let i=0; i<20; i++) {
                     let flora = document.createElement('div');
                     flora.style.cssText = `position:absolute; bottom:${Math.random()*12}vh; left:${Math.random()*100}vw; width:${Math.random()*15+5}px; height:${Math.random()*8+4}px; background:#8ab07d; border-radius:50%; box-shadow: 0 0 10px rgba(138,176,125,0.6); opacity:${Math.random()*0.6+0.2}; z-index:3;`;
                     overlay.appendChild(flora);
                 }
 
-                // Falling leaves
                 for(let i=0; i<25; i++) {
                     let leaf = document.createElement('i');
                     leaf.className = "fa-solid fa-leaf";
@@ -980,7 +972,6 @@
                 foxWrap.appendChild(fox);
                 overlay.appendChild(foxWrap);
                 
-                // Foreground Giant Trees (Fox runs BEHIND these for deep parallax)
                 for(let i=0; i<8; i++) {
                     let tree = document.createElement('div');
                     let w = Math.random() * 8 + 4;
@@ -1081,43 +1072,91 @@
                 }, 3300);
             }
             else if (type === 'loyal') {
-                cinematicDuration = 4500;
-                overlay.style.background = 'radial-gradient(circle at center, #2b2520, #15120e)';
+                cinematicDuration = 5500;
+                overlay.style.background = 'radial-gradient(circle at center, #0a1410, #050a08)';
                 
-                let shield = document.createElement('i');
-                shield.className = 'fa-solid fa-shield-halved';
-                shield.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:18rem; color:#8c6239; filter:drop-shadow(0 0 25px rgba(140,98,57,0.5)); transition: transform 0.1s;";
-                overlay.appendChild(shield);
+                // P2 (Resting/Hurt)
+                let p2 = document.createElement('i');
+                p2.className = 'fa-solid fa-person';
+                p2.style.cssText = "position:absolute; top:55%; left:53%; transform:translate(-50%,-50%) rotate(20deg) scale(0.8); font-size:8rem; color:#d4a373; filter:drop-shadow(0 0 10px rgba(212,163,115,0.4)); opacity: 0.6; z-index: 2;";
+                overlay.appendChild(p2);
 
-                for(let i=0; i<18; i++) {
-                    setTimeout(() => {
-                        let proj = document.createElement('div');
-                        
-                        let isLeft = Math.random() > 0.5;
-                        let startX = isLeft ? '-10vw' : '110vw';
-                        let startY = `${Math.random()*100}vh`;
-                        let angle = Math.atan2(50 - parseFloat(startY), isLeft ? 60 : -60);
-                        
-                        proj.style.cssText = `position:absolute; width:25px; height:15px; background:#6b6b6b; border-radius:40%; box-shadow:inset -3px -3px 5px rgba(0,0,0,0.5); transform: rotate(${angle}rad); animation: projectileFly 0.35s linear forwards;`;
-                        proj.style.setProperty('--startX', startX);
-                        proj.style.setProperty('--startY', startY);
-                        overlay.appendChild(proj);
+                // P1 (Protector)
+                let p1 = document.createElement('i');
+                p1.className = 'fa-solid fa-person';
+                p1.style.cssText = "position:absolute; top:50%; left:47%; transform:translate(-50%,-50%); font-size:9rem; color:#8ab07d; filter:drop-shadow(0 0 20px rgba(138,176,125,0.8)); z-index: 3;";
+                overlay.appendChild(p1);
 
+                // The Protective Nature Dome
+                let dome = document.createElement('div');
+                dome.style.cssText = "position:absolute; top:50%; left:50%; width:0; height:0; background:radial-gradient(circle, rgba(138,176,125,0.1) 0%, rgba(138,176,125,0.3) 80%, rgba(138,176,125,0.8) 100%); border-radius:50%; transform:translate(-50%, -50%); box-shadow: 0 0 40px rgba(138,176,125,0.8), inset 0 0 20px rgba(138,176,125,0.5); z-index: 4; opacity: 0; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #a3b8aa;";
+                overlay.appendChild(dome);
+
+                // Shadows attack!
+                setTimeout(() => {
+                    playSfx(sfx.wood); 
+                    for(let i=0; i<25; i++) {
                         setTimeout(() => {
-                            playSfx(sfx.wood); 
-                            proj.remove();
+                            let proj = document.createElement('div');
+                            let angle = Math.random() * Math.PI * 2;
+                            let dist = 80; 
+                            let startX = `calc(50vw + ${Math.cos(angle)*dist}vw)`;
+                            let startY = `calc(50vh + ${Math.sin(angle)*dist}vh)`;
                             
-                            let spark = document.createElement('div');
-                            spark.style.cssText = `position:absolute; left:50vw; top:50vh; width:50px; height:50px; border-radius:50%; background:radial-gradient(circle, rgba(212,163,115,0.8), transparent); animation: flashOverlay 0.3s ease-out forwards;`;
-                            let sparkAngle = angle + Math.PI + (Math.random()-0.5)*1;
-                            spark.style.transform = `translate(${Math.cos(sparkAngle)*15}vw, ${Math.sin(sparkAngle)*15}vh)`;
-                            overlay.appendChild(spark);
+                            proj.style.cssText = `position:absolute; width:30px; height:8px; background:#000; box-shadow:0 0 10px #000; border-radius:4px; transform: rotate(${angle + Math.PI}rad); animation: projectileFly 0.4s linear forwards; z-index: 5; opacity: 0.8;`;
+                            proj.style.setProperty('--startX', startX);
+                            proj.style.setProperty('--startY', startY);
+                            overlay.appendChild(proj);
 
-                            shield.style.transform = "translate(-50%,-50%) scale(1.1)";
-                            setTimeout(() => shield.style.transform = "translate(-50%,-50%) scale(1)", 50);
-                        }, 350);
-                    }, i * 150);
-                }
+                            setTimeout(() => {
+                                proj.remove();
+                                let spark = document.createElement('div');
+                                spark.style.cssText = `position:absolute; left:50vw; top:50vh; width:20px; height:20px; border-radius:50%; background:#8ab07d; filter:drop-shadow(0 0 15px #8ab07d); animation: flashOverlay 0.3s ease-out forwards; z-index: 7;`;
+                                spark.style.transform = `translate(${Math.cos(angle + Math.PI)*15}vw, ${Math.sin(angle + Math.PI)*15}vh)`;
+                                overlay.appendChild(spark);
+                            }, 350);
+
+                        }, i * 40); 
+                    }
+                }, 500);
+
+                // Dome expands
+                setTimeout(() => {
+                    playSfx(sfx.nature);
+                    dome.style.opacity = '1';
+                    dome.style.width = '35vw';
+                    dome.style.height = '35vw';
+                    
+                    for(let i=0; i<30; i++) {
+                        let spark = document.createElement('i');
+                        spark.className = "fa-solid fa-leaf";
+                        spark.style.cssText = `position:absolute; left:50vw; top:50vh; font-size:${Math.random()*1.5+1}rem; color:#8ab07d; filter:drop-shadow(0 0 10px #8ab07d); animation: explode 1s ease-out forwards; z-index: 6;`;
+                        spark.style.setProperty('--tx', `${(Math.random()-0.5)*40}vw`);
+                        spark.style.setProperty('--ty', `${(Math.random()-0.5)*40}vh`);
+                        overlay.appendChild(spark);
+                    }
+                }, 1100);
+
+                // P1 Helps P2 up
+                setTimeout(() => {
+                    playSfx(sfx.nature);
+                    p2.style.transition = "all 1s ease-out";
+                    p2.style.transform = "translate(-50%,-50%) rotate(0deg) scale(1)";
+                    p2.style.opacity = "1";
+                    p2.style.top = "50%";
+                    p2.style.left = "53%";
+                    p2.style.fontSize = "9rem";
+                    p2.style.filter = "drop-shadow(0 0 20px rgba(212,163,115,0.8))";
+                    
+                    dome.style.boxShadow = "0 0 60px rgba(138,176,125,1), inset 0 0 40px rgba(138,176,125,0.8)";
+                }, 2200);
+
+                setTimeout(() => {
+                    let text = document.createElement('div');
+                    text.innerText = "I'VE GOT YOUR BACK";
+                    text.style.cssText = "position:absolute; top:20%; left:50%; color:#f4f1ea; font-family:var(--main-font); font-size:4rem; font-weight:700; letter-spacing:4px; text-shadow:0 0 25px rgba(138,176,125,0.8); animation: scaleUpFade 0.8s ease-out forwards; z-index: 11; width: 100%; transform: translateX(-50%);";
+                    overlay.appendChild(text);
+                }, 2800);
             }
 
             setTimeout(() => {
