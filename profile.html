@@ -237,45 +237,48 @@
         @keyframes scaleUpFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         @keyframes projectileFly { from { left: var(--startX); top: var(--startY); } to { left: 50vw; top: 50vh; } }
 
-        /* --- ENHANCED CSS FULL BODY FOX --- */
-        .css-fox { position: relative; width: 220px; height: 120px; transform: scale(1.5); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); z-index: 5;}
+        /* --- BULLETPROOF CSS FOX --- */
+        /* By separating the scaler from the animated class, the transform overrides are prevented! */
+        .fox-scaler { position: relative; transform: scale(1.5); transform-origin: bottom left; z-index: 5; }
+        .css-fox { position: relative; width: 160px; height: 100px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));}
+        .fox-part { position: absolute; }
         
-        .fox-body { position: absolute; top: 40px; left: 50px; width: 110px; height: 45px; background: #e86a28; border-radius: 40px 40px 30px 40px; z-index: 3; overflow: hidden; }
-        .fox-body::after { content: ''; position: absolute; bottom: -15px; left: 10px; width: 90px; height: 30px; background: #fff; border-radius: 50%; }
+        .fox-body { top: 30px; left: 30px; width: 90px; height: 35px; background: #e86a28; border-radius: 20px 20px 30px 20px; z-index: 3; overflow: hidden; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);}
+        /* White Belly */
+        .fox-body::after { content: ''; position: absolute; bottom: 0; left: 10px; width: 80px; height: 15px; background: #fff; border-radius: 20px 20px 0 0; }
 
-        .fox-head { position: absolute; top: 15px; left: 130px; width: 65px; height: 60px; background: #e86a28; border-radius: 40px 40px 30px 40px; z-index: 4; transform: rotate(10deg); overflow: hidden;}
-        .fox-head::after { content: ''; position: absolute; bottom: 0px; left: 5px; width: 60px; height: 25px; background: #fff; border-radius: 50%; }
-
-        .fox-snout { position: absolute; top: 25px; left: 175px; width: 35px; height: 20px; background: #fff; border-radius: 0 20px 20px 0; z-index: 5; }
-        .fox-nose { position: absolute; top: 27px; left: 202px; width: 8px; height: 8px; background: #222; border-radius: 50%; z-index: 6;}
-        .fox-eye { position: absolute; top: 35px; left: 170px; width: 7px; height: 7px; background: #222; border-radius: 50%; z-index: 6; }
-
-        .fox-ear { position: absolute; width: 25px; height: 35px; background: #e86a28; border-radius: 10px 40px 0 0; border-top: 6px solid #222; z-index: 2; }
-        .fox-ear.left { top: 0px; left: 140px; transform: rotate(-25deg); }
-        .fox-ear.right { top: 10px; left: 165px; transform: rotate(5deg); z-index: 5;}
-
-        .fox-tail { position: absolute; top: 25px; left: -25px; width: 95px; height: 50px; background: #e86a28; border-radius: 50px 0 0 50px; transform-origin: right center; animation: tailWag 0.3s ease-in-out infinite alternate; z-index: 2; overflow: hidden;}
-        .fox-tail::before { content: ''; position: absolute; top: 5px; left: -10px; width: 40px; height: 40px; background: #fff; border-radius: 50%; filter: blur(2px);}
-
-        .fox-leg { position: absolute; width: 14px; height: 45px; background: #e86a28; border-radius: 10px 10px 8px 8px; top: 75px; transform-origin: top center; z-index: 1; overflow: hidden;}
-        .fox-leg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; background: #222; }
-
-        .fox-leg.front-1 { left: 135px; z-index: 4; animation: runLeg1 0.25s linear infinite; }
-        .fox-leg.front-2 { left: 115px; background: #c25217; animation: runLeg2 0.25s linear infinite; }
-        .fox-leg.front-2::after { background: #000; }
-        .fox-leg.back-1 { left: 70px; z-index: 4; animation: runLeg2 0.25s linear infinite; }
-        .fox-leg.back-2 { left: 55px; background: #c25217; animation: runLeg1 0.25s linear infinite; }
-        .fox-leg.back-2::after { background: #000; }
+        .fox-tail { top: 20px; left: -25px; width: 70px; height: 35px; background: linear-gradient(to left, #e86a28 50%, #fff 100%); border-radius: 40px 0 0 40px; transform-origin: right center; animation: tailWag 0.2s linear infinite alternate; z-index: 2; }
         
+        /* Grouping the head saves it from detaching! All facial features belong inside this container. */
+        .fox-head-group { top: 5px; left: 95px; width: 60px; height: 60px; z-index: 4; transform-origin: bottom left; animation: headBob 0.3s ease-in-out infinite alternate; }
+        .fox-head { top: 5px; left: 5px; width: 40px; height: 40px; background: #e86a28; border-radius: 50%; }
+        .fox-snout { top: 20px; left: 25px; width: 35px; height: 20px; background: #e86a28; border-radius: 0 15px 15px 0; overflow: hidden; }
+        /* White under-snout */
+        .fox-snout::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 10px; background: #fff; }
+        .fox-nose { top: 20px; left: 55px; width: 7px; height: 7px; background: #111; border-radius: 50%; z-index: 5; }
+        .fox-eye { top: 15px; left: 25px; width: 6px; height: 6px; background: #111; border-radius: 50%; z-index: 5; }
+        .fox-ear { width: 16px; height: 25px; background: #e86a28; border-radius: 5px 15px 0 0; }
+        .fox-ear.left { top: -5px; left: 10px; transform: rotate(-25deg); z-index: -1; background: #c25217; border-top: 4px solid #111;}
+        .fox-ear.right { top: 0px; left: 25px; transform: rotate(10deg); z-index: 1; border-top: 4px solid #111;}
+
+        /* Leg container with black "socks" via ::after */
+        .fox-leg { width: 12px; height: 35px; background: #e86a28; top: 55px; transform-origin: top center; border-radius: 5px; z-index: 2; overflow: hidden; }
+        .fox-leg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 15px; background: #111; }
+        
+        .fox-leg.back-left { left: 45px; background: #c25217; animation: runLeg1 0.25s linear infinite; z-index: 1; }
+        .fox-leg.back-right { left: 55px; animation: runLeg2 0.25s linear infinite; z-index: 4; }
+        .fox-leg.front-left { left: 95px; background: #c25217; animation: runLeg2 0.25s linear infinite; z-index: 1; }
+        .fox-leg.front-right { left: 105px; animation: runLeg1 0.25s linear infinite; z-index: 4; }
+        
+        @keyframes runLeg1 { 0%, 100% { transform: rotate(-35deg); } 50% { transform: rotate(45deg); } }
+        @keyframes runLeg2 { 0%, 100% { transform: rotate(45deg); } 50% { transform: rotate(-35deg); } }
         @keyframes tailWag { 0% { transform: rotate(-5deg); } 100% { transform: rotate(15deg); } }
-        @keyframes runLeg1 { 0%, 100% { transform: rotate(-45deg); } 50% { transform: rotate(45deg); } }
-        @keyframes runLeg2 { 0%, 100% { transform: rotate(45deg); } 50% { transform: rotate(-45deg); } }
-        @keyframes foxRunRight { 0% { transform: translateX(0); } 100% { transform: translateX(140vw); } }
-        /* Squash and stretch physics for organic feel */
+        @keyframes headBob { 0% { transform: rotate(0deg); } 100% { transform: rotate(4deg); } }
         @keyframes foxHop { 
-            0%, 100% { transform: translateY(0) scaleX(1.05) scaleY(0.95) rotate(0deg); } 
-            50% { transform: translateY(-40px) scaleX(0.95) scaleY(1.05) rotate(4deg); } 
+            0%, 100% { transform: translateY(0) scaleX(1.03) scaleY(0.97); } 
+            50% { transform: translateY(-20px) scaleX(0.97) scaleY(1.03); } 
         }
+        @keyframes foxRunRight { 0% { transform: translateX(0); } 100% { transform: translateX(140vw); } }
 
         /* Button Effects CSS */
         .btn-particle { position: fixed; z-index: 100000; pointer-events: none; user-select: none; display: flex; justify-content: center; align-items: center; }
@@ -445,54 +448,44 @@
                 ctx.translate(this.x, this.y);
                 ctx.scale(scale, scale);
                 
-                // Flip horizontally if swimming left
                 if (this.vx < 0) {
                     ctx.scale(-1, 1);
                 }
                 
-                // Slight tilt based on its vertical velocity
                 ctx.rotate(this.vy * 0.05 * (this.vx < 0 ? -1 : 1));
 
                 let segments = 25; let segLen = 3.5; 
                 ctx.lineCap = 'round'; ctx.lineJoin = 'round';
                 
-                // Wiggling spine logic
                 let spine = [];
                 for(let i=0; i<segments; i++) { 
                     spine.push({x: -i * segLen, y: Math.sin(pt * 8 - i * 0.4) * 8}); 
                 }
                 
-                // Base dark brown body
                 ctx.lineWidth = 14; ctx.strokeStyle = '#2a1710'; 
                 ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
                 
-                // Orange bands
                 ctx.lineWidth = 14; ctx.strokeStyle = '#ff8c00'; ctx.setLineDash([6, 6]);
                 ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
                 ctx.setLineDash([]);
                 
-                // Pale Underbelly
                 ctx.lineWidth = 4; ctx.strokeStyle = '#e6cba3';
                 ctx.beginPath(); spine.forEach((p, i) => { if(i===0) ctx.moveTo(p.x, p.y + 4); else ctx.lineTo(p.x, p.y + 4); }); ctx.stroke();
 
                 let hX = spine[0].x, hY = spine[0].y;
                 
-                // Side Fins
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y + 6, 5, 2.5, Math.PI/6, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.ellipse(spine[3].x, spine[3].y - 6, 5, 2.5, -Math.PI/6, 0, Math.PI*2); ctx.fill();
                 
-                // Eyes
                 ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(hX - 3, hY - 3, 1.5, 0, Math.PI*2); ctx.fill(); 
                 
-                // Barbels (Whiskers)
                 ctx.lineWidth = 1.5; ctx.strokeStyle = '#e6cba3'; ctx.beginPath();
                 ctx.moveTo(hX, hY); ctx.lineTo(hX + 6, hY - 4);
                 ctx.moveTo(hX, hY); ctx.lineTo(hX + 8, hY);
                 ctx.moveTo(hX, hY+1); ctx.lineTo(hX + 6, hY + 4);
                 ctx.stroke();
                 
-                // Tail fin
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                 ctx.beginPath(); ctx.ellipse(spine[segments-1].x - 3, spine[segments-1].y, 6, 4, 0, 0, Math.PI*2); ctx.fill();
                 
@@ -513,7 +506,6 @@
             update() {
                 this.seed += 0.04;
                 let direction = this.vx > 0 ? 1 : -1;
-                // Gliding motion (less wavy than Kuhli)
                 this.vx = Math.cos(this.seed * 0.5) * 2 + (direction * 6); 
                 this.vy = Math.sin(this.seed * 0.7) * 3;
 
@@ -537,7 +529,6 @@
                 
                 let flutter = Math.sin(pt * 25) * 1.5;
 
-                // Small Fan Tail
                 ctx.fillStyle = '#2d241b';
                 ctx.beginPath();
                 ctx.moveTo(-15, 0);
@@ -546,16 +537,14 @@
                 ctx.lineTo(-30, 6 + flutter);
                 ctx.fill();
 
-                // Broad flat body (Shield shape like a miniature stingray)
                 ctx.fillStyle = '#5c4a36';
                 ctx.beginPath();
-                ctx.moveTo(18, 0); // nose
-                ctx.bezierCurveTo(18, -20, -5, -22, -15, -6); // top fin edge
+                ctx.moveTo(18, 0); 
+                ctx.bezierCurveTo(18, -20, -5, -22, -15, -6); 
                 ctx.lineTo(-15, 6);
-                ctx.bezierCurveTo(-5, 22, 18, 20, 18, 0); // bottom fin edge
+                ctx.bezierCurveTo(-5, 22, 18, 20, 18, 0); 
                 ctx.fill();
 
-                // Fin ripples (darker edges fluttering)
                 ctx.strokeStyle = 'rgba(45, 36, 27, 0.5)';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -567,18 +556,12 @@
                 ctx.bezierCurveTo(5, -18 - flutter, -10, -18 + flutter, -15, -6);
                 ctx.stroke();
                 
-                // Spotted Pattern (Beaufortia kweichowensis style)
-                ctx.fillStyle = '#d6b88a'; // Pale sandy spots
+                ctx.fillStyle = '#d6b88a';
                 const spots = [
-                    // Center row
                     [-8, 0, 1.5], [-2, 0, 1.5], [4, 0, 1.5], [12, 0, 1.2],
-                    // Inner Top row
                     [-10, -5, 1], [-4, -6, 1.2], [2, -7, 1.2], [8, -5, 1], [14, -3, 0.8],
-                    // Inner Bottom row
                     [-10, 5, 1], [-4, 6, 1.2], [2, 7, 1.2], [8, 5, 1], [14, 3, 0.8],
-                    // Outer top fin
                     [-6, -11, 1], [0, -14, 1], [6, -11, 0.8], [-11, -9, 0.8],
-                    // Outer bottom fin
                     [-6, 11, 1], [0, 14, 1], [6, 11, 0.8], [-11, 9, 0.8]
                 ];
                 
@@ -588,7 +571,6 @@
                     ctx.fill();
                 });
 
-                // Eyes (Top down, slightly bulging)
                 ctx.fillStyle = '#000';
                 ctx.beginPath();
                 ctx.arc(10, -5, 1.8, 0, Math.PI*2);
@@ -610,7 +592,7 @@
             glitch: 'https://www.soundjay.com/mechanical/sounds/tv-static-05.mp3',
             wood: 'https://www.soundjay.com/buttons/sounds/button-3.mp3',
             splash: 'https://www.soundjay.com/nature/sounds/water-splash-1.mp3',
-            sip: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3' // Used for Radar Pings
+            sip: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3' 
         };
 
         function playSfx(src) { new Audio(src).play().catch(()=>{}); }
@@ -622,17 +604,16 @@
             const overlay = document.getElementById('cinematic-overlay');
             overlay.innerHTML = '';
             overlay.style.display = 'block';
-            void overlay.offsetWidth; // force reflow
+            void overlay.offsetWidth; 
             overlay.style.opacity = '1';
 
-            let cinematicDuration = 3800; // Default duration
+            let cinematicDuration = 3800; 
 
             if (type === 'programming') {
                 cinematicDuration = 4000;
                 overlay.style.background = 'rgba(0, 20, 0, 0.95)';
                 playSfx(sfx.glitch);
                 
-                // Typing Terminal
                 let terminal = document.createElement('div');
                 terminal.style.cssText = "position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); color:#0f0; font-family:'Courier New', monospace; font-size:2.5rem; text-align:left; text-shadow: 0 0 10px #0f0; width:80%; max-width:800px; font-weight:bold;";
                 overlay.appendChild(terminal);
@@ -645,7 +626,6 @@
                     }, i * 600);
                 });
 
-                // Matrix Rain
                 for(let i=0; i<80; i++) {
                     let span = document.createElement('span');
                     span.innerText = Math.random()>0.5 ? '0' : '1';
@@ -658,13 +638,12 @@
                 overlay.style.background = 'linear-gradient(to bottom, rgba(0,20,50,0.95), rgba(0,50,100,0.98))';
                 playSfx(sfx.splash);
                 
-                // Falling Rocks
                 for(let i=0; i<15; i++) {
                     let rock = document.createElement('div');
-                    let size = Math.random() * 130 + 70; // 70px to 200px
-                    let left = Math.random() * 95; // 0vw to 95vw
-                    let rot = (Math.random() - 0.5) * 120; // rotation
-                    let duration = Math.random() * 0.5 + 0.4; // 0.4s to 0.9s
+                    let size = Math.random() * 130 + 70; 
+                    let left = Math.random() * 95; 
+                    let rot = (Math.random() - 0.5) * 120; 
+                    let duration = Math.random() * 0.5 + 0.4; 
                     let delay = Math.random() * 0.4;
                     
                     let br = `${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% / ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}% ${Math.random()*20+40}%`;
@@ -683,7 +662,6 @@
                     }, (duration + delay) * 1000);
                 }
 
-                // Growing Foliage
                 setTimeout(() => {
                     for(let i=0; i<18; i++) {
                         let plantGroup = document.createElement('div');
@@ -702,14 +680,12 @@
                     }
                 }, 600); 
 
-                // Bubbles
                 for(let i=0; i<40; i++) {
                     let b = document.createElement('div');
                     b.style.cssText = `position:absolute; left:${Math.random()*100}vw; bottom:-10vh; width:${Math.random()*20+5}px; height:${Math.random()*20+5}px; border-radius:50%; border:2px solid rgba(255,255,255,0.4); animation: bubbleUp ${Math.random()*3+2}s ease-in infinite; box-shadow: inset 0 0 5px rgba(255,255,255,0.2); z-index:3;`;
                     overlay.appendChild(b);
                 }
 
-                // --- CINEMATIC KUHLI & HILLSTREAM LOACHES ---
                 let cCanvas = document.createElement('canvas');
                 cCanvas.width = window.innerWidth;
                 cCanvas.height = window.innerHeight;
@@ -746,41 +722,34 @@
                 cinematicDuration = 5500;
                 overlay.style.background = 'rgba(30, 15, 5, 0.95)';
                 
-                // Giant Planks with Nails and Hammers
                 for(let i=0; i<6; i++) {
-                    let plankX = 10 + i*14; // spacing along width
+                    let plankX = 10 + i*14; 
                     
-                    // Create Plank
                     let plank = document.createElement('div');
                     plank.style.cssText = `position:absolute; left:${plankX}vw; top:-60vh; width:8vw; height:60vh; background:#8b5a2b; border:3px solid #5c3a21; box-shadow: 0 10px 30px #000; animation: slamDown 0.4s ${i*0.1}s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border-radius: 4px;`;
                     plank.style.backgroundImage = "radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%), repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px)";
                     overlay.appendChild(plank);
                     
-                    // Plank Impact
                     setTimeout(() => { 
                         playSfx(sfx.wood); 
                         document.body.classList.add('shake-active-target'); 
                         setTimeout(()=>document.body.classList.remove('shake-active-target'), 150); 
                     }, 400 + (i*100));
 
-                    // Create Nail (Resting on top of the plank)
                     let nail = document.createElement('div');
                     nail.style.cssText = `position:absolute; left:${plankX + 3.75}vw; top:18vh; width:0.5vw; height:50px; background:linear-gradient(to right, #ccc, #fff, #999); border-radius:0 0 3px 3px; box-shadow: 2px 5px 5px rgba(0,0,0,0.5); opacity:0; z-index: 2;`;
                     
-                    // The Flat Nail Head
                     let nailHead = document.createElement('div');
                     nailHead.style.cssText = `position:absolute; top:-3px; left:-0.5vw; width:1.5vw; height:5px; background:linear-gradient(to bottom, #eee, #888); border-radius:2px; box-shadow: 0 2px 4px rgba(0,0,0,0.6);`;
                     nail.appendChild(nailHead);
 
                     overlay.appendChild(nail);
 
-                    // Create Hammer (Hovering above the nail)
                     let hammer = document.createElement('i');
                     hammer.className = 'fa-solid fa-hammer';
                     hammer.style.cssText = `position:absolute; left:${plankX + 1}vw; top:10vh; font-size:4.5rem; color:#999; filter:drop-shadow(5px 5px 5px rgba(0,0,0,0.6)); opacity:0; z-index: 3; transform-origin: bottom left;`;
                     overlay.appendChild(hammer);
 
-                    // Animate Nail and Hammer after planks settle
                     setTimeout(() => {
                         nail.style.opacity = '1';
                         hammer.style.opacity = '1';
@@ -788,18 +757,16 @@
                         const strike = (animHammer, animNail, topOffset) => {
                             hammer.style.animation = 'none';
                             nail.style.animation = 'none';
-                            void hammer.offsetWidth; // force reflow
+                            void hammer.offsetWidth; 
                             
                             hammer.style.animation = `${animHammer} 0.5s ease-in-out forwards`;
                             nail.style.animation = `${animNail} 0.5s ease-in-out forwards`;
 
-                            // Impact effects
                             setTimeout(() => {
                                 playSfx(sfx.wood);
                                 document.body.classList.add('shake-active-target'); 
                                 setTimeout(()=>document.body.classList.remove('shake-active-target'), 150);
                                 
-                                // Sawdust explosion from the nail head
                                 for(let j=0; j<15; j++) {
                                     let dust = document.createElement('div');
                                     dust.style.cssText = `position:absolute; left:${plankX + 4}vw; top:${topOffset}vh; width:${Math.random()*8+4}px; height:${Math.random()*8+4}px; background:#d4a373; border-radius:2px; transform:translate(-50%,-50%); animation: explode 0.8s ease-out forwards; z-index:4; pointer-events: none;`;
@@ -807,19 +774,18 @@
                                     dust.style.setProperty('--ty', `${(Math.random()-0.5)*15}vh`);
                                     overlay.appendChild(dust);
                                 }
-                            }, 225); // 45% of 500ms
+                            }, 225); 
                         };
 
-                        strike('hammerStrike1', 'nailDrive1', 20); // Strike 1
+                        strike('hammerStrike1', 'nailDrive1', 20); 
                         
                         setTimeout(() => {
-                            strike('hammerStrike2', 'nailDrive2', 22); // Strike 2
+                            strike('hammerStrike2', 'nailDrive2', 22); 
                         }, 800);
 
                     }, 1200 + i*150);
                 }
 
-                // Final massive sawdust explosion to cap off the animation
                 setTimeout(() => {
                     for(let i=0; i<80; i++) {
                         let dust = document.createElement('div');
@@ -834,12 +800,10 @@
                 cinematicDuration = 4500;
                 overlay.style.background = 'rgba(50, 40, 10, 0.95)';
                 
-                // Glowing Sun
                 let sun = document.createElement('div');
                 sun.style.cssText = "position:absolute; top:-20vh; right:-10vw; width:60vw; height:60vw; background:radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,215,0,0) 70%); animation: pulseSun 2s infinite alternate;";
                 overlay.appendChild(sun);
                 
-                // Wheat Field Growing
                 for(let i=0; i<25; i++) {
                     let wheat = document.createElement('i');
                     wheat.className = "fa-solid fa-wheat-awn";
@@ -847,7 +811,6 @@
                     overlay.appendChild(wheat);
                 }
                 
-                // Falling Leaves
                 for(let i=0; i<15; i++) {
                     let leaf = document.createElement('div');
                     leaf.innerHTML = '🍃';
@@ -855,7 +818,6 @@
                     overlay.appendChild(leaf);
                 }
 
-                // Tractor driving by
                 let tractor = document.createElement('div');
                 tractor.innerHTML = '🚜';
                 tractor.style.cssText = "position:absolute; font-size:14rem; bottom:5vh; left:-40vw; animation: driveRight 3.5s linear forwards; z-index:3; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.9));";
@@ -871,7 +833,6 @@
                 text.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#ff3333; font-family:'Oxanium', sans-serif; font-size:6rem; font-weight:800; text-align:center; text-shadow: 0 0 25px #ff3333; width: 100%;";
                 overlay.appendChild(text);
 
-                // Falling 8-bit coins
                 for(let i=0; i<30; i++) {
                     let coin = document.createElement('div');
                     coin.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:-10vh; width:30px; height:30px; background:#ffd700; border-radius:50%; border:4px dashed #b8860b; animation: rain ${Math.random()*2+1}s linear forwards; box-shadow: 0 0 10px #ffd700;`;
@@ -881,15 +842,13 @@
                 }
             }
             else if (type === 'fox') {
-                cinematicDuration = 5500; // Increased duration for a longer run
+                cinematicDuration = 5500; 
                 overlay.style.background = 'rgba(25, 10, 5, 0.95)';
                 
-                // Add a glowing moon
                 let moon = document.createElement('div');
                 moon.style.cssText = "position:absolute; top:-10vh; right:-10vw; width:50vw; height:50vw; background:radial-gradient(circle, rgba(255,100,50,0.6) 0%, transparent 60%); animation: pulseSun 2s infinite alternate;";
                 overlay.appendChild(moon);
 
-                // Falling hearts
                 for(let i=0; i<25; i++) {
                     let heart = document.createElement('i');
                     heart.className = "fa-solid fa-heart";
@@ -897,37 +856,43 @@
                     overlay.appendChild(heart);
                 }
 
-                // Full Body CSS Fox Container
+                // Full Body CSS Fox Container (with separated scale & animation)
                 let foxWrap = document.createElement('div');
                 foxWrap.style.cssText = "position:absolute; bottom:15vh; left:-20vw; animation: foxRunRight 5s linear forwards; z-index:4;";
                 
+                let foxScaler = document.createElement('div');
+                foxScaler.className = "fox-scaler";
+
                 let fox = document.createElement('div');
                 fox.className = "css-fox";
-                fox.style.animation = "foxHop 0.4s ease-in-out infinite alternate";
+                fox.style.animation = "foxHop 0.3s ease-in-out infinite alternate";
                 
-                // Injecting detailed CSS Fox parts
+                // Injecting grouped CSS Fox parts
                 fox.innerHTML = `
-                    <div class="fox-tail"></div>
-                    <div class="fox-leg back-2"></div>
-                    <div class="fox-leg front-2"></div>
-                    <div class="fox-body"></div>
-                    <div class="fox-leg back-1"></div>
-                    <div class="fox-leg front-1"></div>
-                    <div class="fox-ear left"></div>
-                    <div class="fox-ear right"></div>
-                    <div class="fox-head"></div>
-                    <div class="fox-eye"></div>
-                    <div class="fox-snout"></div>
-                    <div class="fox-nose"></div>
+                    <div class="fox-part fox-tail"></div>
+                    <div class="fox-part fox-leg back-left"></div>
+                    <div class="fox-part fox-leg front-left"></div>
+                    <div class="fox-part fox-body"></div>
+                    <div class="fox-part fox-leg back-right"></div>
+                    <div class="fox-part fox-leg front-right"></div>
+                    
+                    <!-- Head Group ensures features never separate -->
+                    <div class="fox-part fox-head-group">
+                        <div class="fox-part fox-ear left"></div>
+                        <div class="fox-part fox-ear right"></div>
+                        <div class="fox-part fox-head"></div>
+                        <div class="fox-part fox-snout"></div>
+                        <div class="fox-part fox-nose"></div>
+                        <div class="fox-part fox-eye"></div>
+                    </div>
                 `;
                 
-                foxWrap.appendChild(fox);
+                foxScaler.appendChild(fox);
+                foxWrap.appendChild(foxScaler);
                 overlay.appendChild(foxWrap);
                 
-                // Dust trail kicked up by the running fox
                 let dustInterval = setInterval(() => {
                     let foxRect = foxWrap.getBoundingClientRect();
-                    // Stop creating dust if fox is off screen
                     if(foxRect.left > window.innerWidth) {
                         clearInterval(dustInterval);
                         return;
@@ -937,7 +902,6 @@
                     overlay.appendChild(dust);
                 }, 100);
 
-                // Ensure the interval stops if cinematic ends early
                 setTimeout(() => clearInterval(dustInterval), cinematicDuration);
 
                 playSfx(sfx.click);
@@ -946,49 +910,40 @@
                 cinematicDuration = 5500; 
                 overlay.style.background = 'linear-gradient(to bottom, #070d1c, #1a0f2e)';
 
-                // Background Stars
                 for(let i=0; i<40; i++) {
                     let star = document.createElement('div');
                     star.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:${Math.random()*70}vh; width:${Math.random()*3}px; height:${Math.random()*3}px; background:#fff; border-radius:50%; opacity:${Math.random()}; animation: blink ${Math.random()*2+1}s infinite; box-shadow: 0 0 5px #fff;`;
                     overlay.appendChild(star);
                 }
 
-                // The Mountain / Cliff Base
                 let cliff = document.createElement('div');
                 cliff.style.cssText = "position:absolute; left:50vw; bottom:0; width:50vw; height:40vh; background:linear-gradient(135deg, #232a3b, #090a0f); border-top-left-radius: 15px; box-shadow: -15px 0 40px rgba(0,0,0,0.8); border-top: 2px solid #3a445c; border-left: 2px solid #232a3b;";
                 overlay.appendChild(cliff);
 
-                // Helper (Player 1 - Blue) safe on the cliff
                 let p1 = document.createElement('i');
                 p1.className = 'fa-solid fa-person';
                 p1.style.cssText = "position:absolute; left:53vw; bottom:40vh; font-size:7rem; color:#00f2fe; filter:drop-shadow(0 0 20px rgba(0,242,254,0.6)); transform-origin: bottom center; transition: transform 0.5s ease-out; z-index: 2;";
                 overlay.appendChild(p1);
 
-                // Helpee (Player 2 - Red) hanging below
                 let p2 = document.createElement('i');
                 p2.className = 'fa-solid fa-person';
                 p2.style.cssText = "position:absolute; left:44vw; bottom:5vh; font-size:7rem; color:#ff3333; filter:drop-shadow(0 0 20px rgba(255,51,51,0.6)); transition: all 1.5s ease-in-out; z-index: 2;";
                 overlay.appendChild(p2);
 
-                // The Rope
                 let rope = document.createElement('div');
                 rope.style.cssText = "position:absolute; left:49.5vw; top:60vh; width:4px; height:0; background:#e0e0e0; box-shadow: 0 0 10px #fff; transform-origin: top; transition: height 0.5s ease-out; z-index: 1;";
                 overlay.appendChild(rope);
 
-                // Animation Sequence
                 setTimeout(() => {
-                    // P1 leans down over the edge
                     p1.style.transform = "rotate(-45deg)";
                 }, 200);
 
                 setTimeout(() => {
-                    // Throw the rope down
                     playSfx(sfx.wood); 
                     rope.style.height = "35vh";
                 }, 700);
 
                 setTimeout(() => {
-                    // P2 grabs and gets pulled up
                     playSfx(sfx.click);
                     rope.style.transition = "height 1.5s ease-in-out";
                     rope.style.height = "0";
@@ -997,13 +952,11 @@
                 }, 1300);
 
                 setTimeout(() => {
-                    // P2 moves to safety, P1 stands up
                     p1.style.transform = "rotate(0deg)";
                     p2.style.left = "62vw"; 
                 }, 2800);
 
                 setTimeout(() => {
-                    // Epic Sync Flash
                     playSfx(sfx.glitch);
                     let flash = document.createElement('div');
                     flash.style.cssText = "position:absolute; top:0; left:0; width:100vw; height:100vh; background:#fff; animation: flashOverlay 0.5s ease-out forwards; z-index: 10;";
@@ -1014,7 +967,6 @@
                     text.style.cssText = "position:absolute; top:25%; left:50%; color:#fff; font-family:'Oxanium', sans-serif; font-size:4.5rem; font-weight:800; letter-spacing:5px; text-shadow:0 0 30px #00f2fe; animation: scaleUpFade 0.6s ease-out forwards; z-index: 11;";
                     overlay.appendChild(text);
 
-                    // High-five Sparks!
                     for(let i=0; i<50; i++) {
                         let spark = document.createElement('div');
                         spark.style.cssText = `position:absolute; left:58vw; top:55vh; width:${Math.random()*8+4}px; height:${Math.random()*8+4}px; background:${Math.random()>0.5?'#00f2fe':'#ff3333'}; border-radius:50%; box-shadow:0 0 15px ${spark.style.background}; animation: explode 1.2s ease-out forwards; z-index: 5;`;
@@ -1033,7 +985,6 @@
                 shield.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:18rem; color:#ff3333; filter:drop-shadow(0 0 40px #ff3333); transition: transform 0.1s;";
                 overlay.appendChild(shield);
 
-                // Incoming projectiles that bounce off the shield
                 for(let i=0; i<18; i++) {
                     setTimeout(() => {
                         let proj = document.createElement('div');
@@ -1052,14 +1003,12 @@
                             playSfx(sfx.wood); 
                             proj.remove();
                             
-                            // Deflection spark
                             let spark = document.createElement('div');
                             spark.style.cssText = `position:absolute; left:50vw; top:50vh; width:40px; height:40px; border-radius:50%; background:radial-gradient(circle, #fff, transparent); filter:drop-shadow(0 0 20px #fff); animation: flashOverlay 0.3s ease-out forwards;`;
                             let sparkAngle = angle + Math.PI + (Math.random()-0.5)*1;
                             spark.style.transform = `translate(${Math.cos(sparkAngle)*15}vw, ${Math.sin(sparkAngle)*15}vh)`;
                             overlay.appendChild(spark);
 
-                            // Shield pulse
                             shield.style.transform = "translate(-50%,-50%) scale(1.15)";
                             setTimeout(() => shield.style.transform = "translate(-50%,-50%) scale(1)", 50);
                         }, 350);
@@ -1067,30 +1016,25 @@
                 }
             }
 
-            // Cleanup & Fade out
             setTimeout(() => {
                 overlay.style.opacity = '0';
                 setTimeout(() => { 
                     overlay.style.display = 'none'; 
                     overlay.innerHTML = ''; 
-                    isCinematicPlaying = false; // Unlock clicks
+                    isCinematicPlaying = false; 
                 }, 500);
             }, cinematicDuration);
         }
 
-        /* Master Button Click Handler */
         function btnEffect(e, type) {
-            // Ignore clicks if an animation is already active
             if (isCinematicPlaying) return;
 
-            // Trigger cinematic overlay for all tags
             if (['programming', 'aquascaping', 'carpentry', 'farmhand', 'player2', 'fox', 'coop', 'loyal'].includes(type)) {
-                isCinematicPlaying = true; // Lock further clicks
+                isCinematicPlaying = true; 
                 triggerCinematic(type);
                 return;
             }
 
-            // Otherwise, fallback to standard particle logic
             playSfx(sfx.click);
         }
 
