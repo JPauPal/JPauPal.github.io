@@ -173,6 +173,11 @@
         @keyframes extremeShake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-4px, -4px); } 100% { transform: translate(2px, 2px); } }
         .shake-active-target { animation: extremeShake 0.1s infinite !important; }
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        
+        @keyframes pageTwitch { 0% { transform: translate(4px, 2px) skewX(2deg); filter: contrast(120%) hue-rotate(15deg); } 20% { transform: translate(-4px, -3px) skewX(-3deg); filter: contrast(150%) hue-rotate(-15deg); } 40% { transform: translate(3px, 4px) skewX(0deg); filter: contrast(100%) hue-rotate(0deg); } 60% { transform: translate(-3px, 3px) skewX(3deg); filter: invert(15%) hue-rotate(25deg); } 80% { transform: translate(2px, -3px) skewX(-2deg); filter: contrast(110%) hue-rotate(-15deg); } 100% { transform: translate(0, 0) skewX(0); filter: none; } }
+        .twitch-active { animation: pageTwitch 0.4s steps(5) !important; }
+
+        .btn-particle { position: fixed; z-index: 100000; pointer-events: none; user-select: none; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
@@ -464,7 +469,19 @@
             const rect = e.currentTarget.getBoundingClientRect(), startX = e.clientX || rect.left+rect.width/2, startY = e.clientY || rect.top+rect.height/2;
             const color = getComputedStyle(e.currentTarget).getPropertyValue('--brand-color').trim() || '#fff';
 
-            if (type === 'glitch') { document.body.style.filter = 'hue-rotate(90deg) invert(1)'; setTimeout(()=>document.body.style.filter='none',150); }
+            if (type === 'glitch') { 
+                document.body.classList.add('twitch-active'); 
+                setTimeout(()=>document.body.classList.remove('twitch-active'),400); 
+            }
+            if (type === 'crack') { 
+                document.body.classList.add('shake-active-target'); 
+                setTimeout(()=>document.body.classList.remove('shake-active-target'),350); 
+                const c = document.createElement('div'); 
+                c.className='btn-particle'; c.style.left=startX+'px'; c.style.top=startY+'px'; 
+                c.innerHTML=`<svg width="400" height="400" viewBox="-200 -200 400 400" style="filter:drop-shadow(0 0 8px ${color});"><path d="M0,0 L40,-80 L120,-140 M0,0 L70,-20 L160,10 M0,0 L30,60 L90,150 M0,0 L-40,80 L-100,160 M0,0 L-80,20 L-170,-10 M0,0 L-60,-70 L-130,-150 M40,-80 L70,-20 L30,60 L-40,80 L-80,20 L-60,-70 Z M80,-110 L110,-5 L60,100 M-70,110 L-120,5 L-90,-110" stroke="#fff" stroke-width="3" fill="none" opacity="0.9"/><path d="M0,0 L20,-40 L60,-70 M0,0 L35,-10 L80,5 M0,0 L15,30 L45,75 M0,0 L-20,40 L-50,80 M0,0 L-40,10 L-85,-5 M0,0 L-30,-35 L-65,-75" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.6"/><circle cx="0" cy="0" r="15" fill="rgba(255,255,255,0.2)"/></svg>`; 
+                document.body.appendChild(c); 
+                setTimeout(()=>{c.style.transition='opacity 0.6s';c.style.opacity='0';setTimeout(()=>c.remove(),600);},300); 
+            }
 
             let particleCount = 12;
             if (['steam', 'blocks'].includes(type)) particleCount = 6;
@@ -472,6 +489,7 @@
 
             for (let i = 0; i < particleCount; i++) {
                 const p = document.createElement('div');
+                p.className = 'btn-particle';
                 p.style.position = 'fixed';
                 p.style.left = startX + 'px';
                 p.style.top = startY + 'px';
