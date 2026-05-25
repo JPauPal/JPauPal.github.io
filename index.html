@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPauPal // Core Console</title>
     
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;800&family=Share+Tech+Mono&family=Cinzel:wght@400;700&family=Creepster&family=MedievalSharp&family=Metal+Mania&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
@@ -85,7 +84,6 @@
             background: rgba(0,0,0,0.2); padding: 10px 14px; border-radius: 8px;
             border-left: 3px solid var(--accent-color); font-family: var(--font-mono); font-size: 0.9rem;
         }
-        .telemetry-item style-cursor { cursor: pointer; }
         .telemetry-item span:first-child { color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; }
         .telemetry-item span:last-child { color: var(--text-main); font-weight: 500; }
 
@@ -185,7 +183,6 @@
 </head>
 <body>
 
-    <!-- CONTROL AND ALIGNMENT OVERLAYS -->
     <div id="coconut-modal"><div class="modal-content" style="background:#0e0f17; border:1px solid #ff4d4d; padding:30px; border-radius:12px; text-align:center;"><div style="color:#ff4d4d; font-weight:bold; margin-bottom:10px; font-size:1.2rem; font-family:var(--font-mono)">⚠ SYSTEM CORRUPTION WARNING</div><div style="color:#94a3b8; font-size:0.95rem; margin-bottom:20px;">Load-bearing file <b>load_bearing_coconut.vtf</b> has destabilized.</div><div style="display:flex; gap:10px; justify-content:center;"><button class="m-btn" onclick="closeCoconutModal()" style="background:#1e293b; color:#fff; border:0; padding:10px 20px; border-radius:6px; cursor:pointer;">Isolate</button><button class="m-btn" onclick="deleteCoconut()" style="background:#ff4d4d; color:#000; border:0; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer;">Purge Asset</button></div></div></div>
     <div id="crash-overlay"><div id="crash-text" style="white-space: pre-wrap;"></div></div>
     <div id="jumpscare-container"><img src="MichaelMyers.jpg" alt="SYSTEM BREACH" class="jumpscare-img"></div>
@@ -203,10 +200,8 @@
     <canvas id="particle-canvas"></canvas>
     <button class="sound-toggle" onclick="toggleSound()"><span id="sound-icon">🔇</span></button>
 
-    <!-- CORE DASHBOARD CONTAINER -->
     <main class="dashboard">
         
-        <!-- CONTROL DECK (LEFT COLUMN) -->
         <section class="control-deck">
             <div class="module profile-card">
                 <div class="avatar-frame" onclick="handleAvatarInteraction()" title="Query Telemetry">
@@ -222,12 +217,6 @@
                     <div class="telemetry-item"><span>Identity</span><span id="player-class">Chaos Avenger</span></div>
                     <div class="telemetry-item"><span>Registry</span><span id="player-level">21</span></div>
                 </div>
-                <div class="telemetry-list" style="margin-top:10px;">
-                    <div class="telemetry-item style-cursor" onclick="btnEffect(event,'programming')"><span>Engine</span><span>[PROG VECTOR]</span></div>
-                    <div class="telemetry-item style-cursor" onclick="btnEffect(event,'aquascaping')"><span>Fauna</span><span>[AQUA FLUID]</span></div>
-                    <div class="telemetry-item style-cursor" onclick="btnEffect(event,'carpentry')"><span>Staging</span><span>[CARP SPLINTER]</span></div>
-                    <div class="telemetry-item style-cursor" onclick="btnEffect(event,'farmhand')"><span>Herd</span><span>[FARM MAT]</span></div>
-                </div>
                 <button id="roll-btn-main" class="roll-faction-btn" onclick="handleRoll()" style="width:100%; margin-top:20px; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); color:var(--text-main); padding:12px; border-radius:8px; font-family:var(--font-mono); text-transform:uppercase; font-size:0.85rem; letter-spacing:1px; cursor:pointer; transition:all 0.3s;">Cycle Matrix</button>
             </div>
 
@@ -242,7 +231,6 @@
             </nav>
         </section>
 
-        <!-- CONTENT STAGE (RIGHT COLUMN) -->
         <section class="content-stage">
             <div class="module" style="flex: 1;">
                 <div class="section-header"><h2>Communication Arrays</h2></div>
@@ -294,7 +282,6 @@
         </section>
     </main>
 
-    <!-- RUNTIME EXECUTION SCRIPT -->
     <script>
         const sfx = {
             click: 'https://www.soundjay.com/buttons/sounds/button-16.mp3',
@@ -565,7 +552,7 @@
                 document.body.classList.add('shake-active-target'); setTimeout(()=>document.body.classList.remove('shake-active-target'),400);
                 playSfx(sfx.shatter);
                 const faic = document.createElement('div');
-                faic.className = 'btn-particle'; faic.innerHTML = '&gt;:-(';
+                faic.className = 'btn-particle'; faic.innerHTML = '>:-(';
                 faic.style.color = '#fdb813'; faic.style.fontFamily = "'Arial Black', Impact, sans-serif"; faic.style.fontWeight = '900'; faic.style.fontSize = '90px'; faic.style.letterSpacing = '-5px'; faic.style.textShadow = '5px 5px 0 #000, -5px -5px 0 #000, 5px -5px 0 #000, -5px 5px 0 #000'; faic.style.left = startX + 'px'; faic.style.top = startY + 'px'; faic.style.zIndex = '999999';
                 document.body.appendChild(faic);
 
@@ -715,7 +702,7 @@
                         this.vx=Math.cos(a)*s; this.vy=Math.sin(a)*s; this.size=Math.random()*12+6; this.maxLife=35+Math.random()*25; this.opacity=1; 
                         break;
                     case 'baseball': 
-                        this.x=canvas.width/2+(Math.random()-0.5)*100; this.y=Math.random()*canvas.height*0.6+canvas.height*0.2; 
+                        this.x=canvas.width/2+(Math.random()-0.5)*100; this.y=canvas.height*0.6+canvas.height*0.2; 
                         this.vx=(Math.random()>0.5?1:-1)*(Math.random()*5+15); this.vy=(Math.random()-0.5)*4; this.size=8; 
                         this.team=this.vx>0?'blue':'red'; this.ballColor=this.team==='blue'?'rgba(0,85,255,0.9)':'rgba(255,30,30,0.9)'; 
                         break;
